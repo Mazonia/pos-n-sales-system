@@ -350,8 +350,8 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
           {/* Grand Total Row */}
           <div className={`flex justify-between items-baseline pt-1 pb-1`}>
             <span className="text-[11px] uppercase font-extrabold tracking-widest text-[#8B9DB5]">Total Due:</span>
-            <span className={`text-[28px] font-extrabold font-mono tabular-nums tracking-tight leading-none ${
-              isDark ? 'text-[#F0F4F8]' : 'text-[#0F172A]'
+            <span className={`text-[28px] font-extrabold font-mono tabular-nums tracking-tight leading-none animate-count-up ${
+              isDark ? 'text-[#F0F4F8] text-glow-emerald' : 'text-[#0F172A]'
             }`}>
               {formatGhs(grandTotal)}
             </span>
@@ -390,11 +390,7 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
           <button
             type="button"
             onClick={onInitiateCheckout}
-            className={`w-full py-4 px-4 rounded-[14px] text-[13px] flex items-center justify-between transition-all duration-200 active:scale-[0.98] cursor-pointer font-black ${
-              isDark
-                ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-[#06080C] shadow-[0_4px_16px_rgba(16,185,129,0.2),0_0_0_1px_rgba(16,185,129,0.3)] hover:shadow-[0_6px_24px_rgba(16,185,129,0.3)]'
-                : 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-[0_4px_12px_rgba(5,150,105,0.2)] hover:shadow-[0_6px_20px_rgba(5,150,105,0.25)]'
-            }`}
+            className={`w-full py-4 px-4 rounded-[14px] text-[13px] flex items-center justify-between cursor-pointer font-black btn-checkout-gradient text-[#06080C] shadow-[0_4px_16px_rgba(16,185,129,0.2),0_0_0_1px_rgba(16,185,129,0.3)]`}
           >
             <div className="flex items-center gap-2.5">
               <Banknote className="w-[18px] h-[18px]" strokeWidth={2} />

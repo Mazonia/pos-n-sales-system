@@ -30,16 +30,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <div
       onClick={handleCardClick}
-      className={`group relative flex flex-col justify-between p-4 rounded-[16px] border cursor-pointer select-none text-left transition-all duration-250 ${
+      className={`group relative flex flex-col justify-between p-4 rounded-[16px] border cursor-pointer select-none text-left product-card-premium card-accent-strip pos-ripple ${
         isPressed ? 'scale-[0.96] opacity-80' : ''
       } ${
         isOutOfStock
           ? 'opacity-30 pointer-events-none grayscale'
           : isDark
-          ? 'bg-[#0D1117] border-[rgba(48,62,80,0.4)] hover:border-emerald-500/30 hover:bg-[#151B23] hover:shadow-[0_4px_20px_rgba(16,185,129,0.06)]'
-          : 'bg-white border-[rgba(209,215,224,0.5)] hover:border-emerald-400/40 hover:bg-[#FAFBFC] shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)]'
+          ? 'bg-[#0D1117] border-[rgba(48,62,80,0.4)] hover:border-emerald-500/30 hover:bg-[#151B23]'
+          : 'bg-white border-[rgba(209,215,224,0.5)] hover:border-emerald-400/40 hover:bg-[#FAFBFC] shadow-[0_1px_3px_rgba(0,0,0,0.04)]'
       }`}
-      style={{ transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)' }}
     >
       <div>
         {/* Top Meta: Category & Inventory Health */}

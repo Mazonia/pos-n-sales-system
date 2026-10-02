@@ -214,8 +214,33 @@ export const LoginPage: React.FC<LoginPageProps> = ({
     <div className={`min-h-screen w-screen flex flex-col justify-between overflow-y-auto select-none transition-colors duration-350 ${
       isDark ? 'bg-[#06080C] text-[#F0F4F8]' : 'theme-light bg-[#F6F8FA] text-[#0F172A]'
     }`}>
-      {/* Subtle Background Gradient Mesh */}
-      <div className="fixed inset-0 pointer-events-none bg-gradient-mesh opacity-60" />
+      {/* ═══ DRAMATIC ANIMATED BACKGROUND ═══ */}
+      {/* Aurora gradient sweep */}
+      <div className={`fixed inset-0 pointer-events-none ${isDark ? 'bg-aurora-intense opacity-100' : 'bg-aurora opacity-40'}`} />
+      {/* Radial spotlight from top-center */}
+      <div className={`fixed inset-0 pointer-events-none ${
+        isDark 
+          ? 'bg-[radial-gradient(ellipse_at_top_center,rgba(16,185,129,0.12)_0%,transparent_60%)]' 
+          : 'bg-[radial-gradient(ellipse_at_top_center,rgba(5,150,105,0.06)_0%,transparent_60%)]'
+      }`} />
+      {/* Floating Orb Decorations */}
+      <div className={`fixed pointer-events-none w-[400px] h-[400px] rounded-full orb-float-1 ${
+        isDark 
+          ? 'bg-emerald-500/[0.04] blur-[100px]' 
+          : 'bg-emerald-400/[0.06] blur-[80px]'
+      }`} style={{ top: '10%', left: '15%' }} />
+      <div className={`fixed pointer-events-none w-[350px] h-[350px] rounded-full orb-float-2 ${
+        isDark 
+          ? 'bg-sky-500/[0.03] blur-[100px]' 
+          : 'bg-sky-400/[0.05] blur-[80px]'
+      }`} style={{ top: '60%', right: '10%' }} />
+      <div className={`fixed pointer-events-none w-[300px] h-[300px] rounded-full orb-float-3 ${
+        isDark 
+          ? 'bg-purple-500/[0.03] blur-[100px]' 
+          : 'bg-purple-400/[0.04] blur-[80px]'
+      }`} style={{ bottom: '20%', left: '40%' }} />
+      {/* Subtle noise texture overlay */}
+      <div className="fixed inset-0 pointer-events-none glass-noise opacity-30" />
 
       {/* Toast Notification */}
       {terminalSuccessToast && (
@@ -314,7 +339,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         <div className="w-full max-w-[900px] grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch animate-fade-slide-in">
           
           {/* Left Column: User Selection & Branch Context */}
-          <div className={`lg:col-span-6 rounded-[22px] border p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 ${
+          <div className={`lg:col-span-6 rounded-[22px] border p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 card-accent-strip ${
             isDark 
               ? 'bg-[rgba(13,17,23,0.6)] backdrop-blur-xl border-[rgba(48,62,80,0.35)] shadow-[0_4px_24px_rgba(0,0,0,0.3)]' 
               : 'bg-white/90 backdrop-blur-xl border-[rgba(209,215,224,0.5)] shadow-[0_4px_20px_rgba(0,0,0,0.05)]'
@@ -327,7 +352,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                   <ShieldCheck className="w-4 h-4" />
                 </div>
                 <span className={`text-[10px] font-bold uppercase tracking-widest font-mono ${
-                  isDark ? 'text-emerald-400' : 'text-emerald-600'
+                  isDark ? 'text-emerald-400 text-glow-emerald' : 'text-emerald-600'
                 }`}>Workstation & Non-Repudiation</span>
               </div>
               <h1 className={`text-xl sm:text-2xl font-black tracking-tight mb-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
@@ -459,7 +484,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           </div>
 
           {/* Right Column: Tactile PIN Pad */}
-          <div className={`lg:col-span-6 rounded-[22px] border p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 ${
+          <div className={`lg:col-span-6 rounded-[22px] border p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 animate-border-glow ${
             isDark 
               ? 'bg-[rgba(13,17,23,0.6)] backdrop-blur-xl border-[rgba(48,62,80,0.35)] shadow-[0_4px_24px_rgba(0,0,0,0.3)]' 
               : 'bg-white/90 backdrop-blur-xl border-[rgba(209,215,224,0.5)] shadow-[0_4px_20px_rgba(0,0,0,0.05)]'

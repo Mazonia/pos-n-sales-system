@@ -392,3 +392,328 @@
 .card-lift:active {
   transform: translateY(0) scale(0.98);
 }
+
+/* ─── Animated Aurora Background ─── */
+@keyframes auroraShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.bg-aurora {
+  background: linear-gradient(
+    -45deg,
+    rgba(16, 185, 129, 0.08),
+    rgba(56, 189, 248, 0.06),
+    rgba(139, 92, 246, 0.05),
+    rgba(16, 185, 129, 0.04),
+    rgba(244, 114, 182, 0.04),
+    rgba(16, 185, 129, 0.08)
+  );
+  background-size: 400% 400%;
+  animation: auroraShift 15s ease infinite;
+}
+
+.bg-aurora-intense {
+  background: linear-gradient(
+    -45deg,
+    rgba(16, 185, 129, 0.15),
+    rgba(56, 189, 248, 0.1),
+    rgba(139, 92, 246, 0.08),
+    rgba(16, 185, 129, 0.06),
+    rgba(244, 114, 182, 0.08),
+    rgba(56, 189, 248, 0.12),
+    rgba(16, 185, 129, 0.15)
+  );
+  background-size: 400% 400%;
+  animation: auroraShift 12s ease infinite;
+}
+
+/* ─── Animated Glow Border ─── */
+@keyframes borderGlow {
+  0%, 100% { 
+    border-color: rgba(16, 185, 129, 0.15);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.06);
+  }
+  50% { 
+    border-color: rgba(16, 185, 129, 0.35);
+    box-shadow: 0 0 24px rgba(16, 185, 129, 0.12);
+  }
+}
+
+.animate-border-glow {
+  animation: borderGlow 3s ease-in-out infinite;
+}
+
+/* ─── Rotating Gradient Border (conic) ─── */
+@keyframes rotateBorder {
+  from { --angle: 0deg; }
+  to   { --angle: 360deg; }
+}
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.gradient-border {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--angle),
+    rgba(16, 185, 129, 0.5),
+    rgba(56, 189, 248, 0.3),
+    rgba(139, 92, 246, 0.3),
+    rgba(244, 114, 182, 0.2),
+    rgba(16, 185, 129, 0.5)
+  );
+  animation: rotateBorder 8s linear infinite;
+  z-index: -1;
+}
+
+.gradient-border::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: calc(20px - 2px);
+  background: var(--bg-surface, #0D1117);
+  z-index: -1;
+}
+
+/* ─── Shimmer Loading / Skeleton Effect ─── */
+.shimmer-loading {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.04) 40%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* ─── Floating Orb Decorations ─── */
+@keyframes floatOrb1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25%  { transform: translate(30px, -40px) scale(1.1); }
+  50%  { transform: translate(-20px, -80px) scale(0.95); }
+  75%  { transform: translate(10px, -30px) scale(1.05); }
+}
+
+@keyframes floatOrb2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25%  { transform: translate(-40px, -20px) scale(1.08); }
+  50%  { transform: translate(30px, -60px) scale(0.92); }
+  75%  { transform: translate(-15px, -40px) scale(1.03); }
+}
+
+@keyframes floatOrb3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(20px, -50px) scale(1.12); }
+  66%  { transform: translate(-30px, -30px) scale(0.9); }
+}
+
+.orb-float-1 { animation: floatOrb1 20s ease-in-out infinite; }
+.orb-float-2 { animation: floatOrb2 25s ease-in-out infinite; }
+.orb-float-3 { animation: floatOrb3 18s ease-in-out infinite; }
+
+/* ─── Typewriter Cursor Blink ─── */
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: cursorBlink 1s ease infinite;
+}
+
+/* ─── Ripple Click Effect ─── */
+@keyframes rippleExpand {
+  0%   { transform: scale(0); opacity: 0.4; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+.pos-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.pos-ripple::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(16, 185, 129, 0.25) 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10);
+  opacity: 0;
+  transition: transform 0.5s, opacity 0.5s;
+}
+
+.pos-ripple:active::after {
+  transform: scale(0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+/* ─── Neon Text Glow ─── */
+.text-glow-emerald {
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.4), 0 0 20px rgba(16, 185, 129, 0.15);
+}
+
+.text-glow-amber {
+  text-shadow: 0 0 8px rgba(245, 158, 11, 0.4), 0 0 20px rgba(245, 158, 11, 0.15);
+}
+
+/* ─── Animated Number Counter ─── */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-count-up {
+  animation: countUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ─── Card Gradient Accent Strip ─── */
+.card-accent-strip {
+  position: relative;
+}
+
+.card-accent-strip::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+  height: 3px;
+  border-radius: 0 0 6px 6px;
+  background: linear-gradient(90deg, #10B981, #34D399, #38BDF8);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card-accent-strip:hover::before {
+  opacity: 1;
+}
+
+/* ─── Enhanced Product Card Hover ─── */
+.product-card-premium {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
+}
+
+.product-card-premium:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 
+    0 0 0 1px rgba(16, 185, 129, 0.15),
+    0 12px 40px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(16, 185, 129, 0.06);
+}
+
+.product-card-premium:active {
+  transform: translateY(-1px) scale(0.98);
+  transition-duration: 0.12s;
+}
+
+/* ─── Status Badge Pulse ─── */
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  50%      { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+}
+
+.status-dot-pulse {
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+/* ─── Gradient Checkout Button ─── */
+.btn-checkout-gradient {
+  background: linear-gradient(135deg, #059669, #10B981, #34D399);
+  background-size: 200% 200%;
+  animation: auroraShift 6s ease infinite;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-checkout-gradient:hover {
+  background-size: 300% 300%;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3), 0 0 40px rgba(16, 185, 129, 0.1);
+  transform: translateY(-2px);
+}
+
+.btn-checkout-gradient:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* ─── Glass Card with Noise Texture ─── */
+.glass-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+}
+
+/* ─── Slide-In from Left (for mobile drawers) ─── */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ─── Bounce In (for success states) ─── */
+@keyframes bounceIn {
+  0%   { transform: scale(0.3); opacity: 0; }
+  50%  { transform: scale(1.05); }
+  70%  { transform: scale(0.95); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-bounce-in {
+  animation: bounceIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ─── Animated Gradient Underline ─── */
+.gradient-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.gradient-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #10B981, #38BDF8, #A855F7);
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+}
+
+/* ─── Mobile Bottom Nav Enhancement ─── */
+.mobile-bottom-action {
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+}

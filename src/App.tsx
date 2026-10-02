@@ -351,6 +351,15 @@ export default function App() {
       isDark ? 'bg-[var(--bg-base)] text-[var(--text-primary)]' : 'theme-light bg-[var(--bg-base)] text-[var(--text-primary)]'
     }`}>
       
+      {/* ═══ ANIMATED BACKGROUND LAYER ═══ */}
+      <div className={`fixed inset-0 pointer-events-none z-0 ${isDark ? 'bg-aurora opacity-60' : 'bg-aurora opacity-25'}`} />
+      {/* Floating ambient orbs */}
+      <div className={`fixed pointer-events-none z-0 w-[500px] h-[500px] rounded-full orb-float-1 ${
+        isDark ? 'bg-emerald-500/[0.025] blur-[120px]' : 'bg-emerald-400/[0.04] blur-[100px]'
+      }`} style={{ top: '5%', right: '10%' }} />
+      <div className={`fixed pointer-events-none z-0 w-[400px] h-[400px] rounded-full orb-float-2 ${
+        isDark ? 'bg-sky-500/[0.02] blur-[120px]' : 'bg-sky-400/[0.03] blur-[100px]'
+      }`} style={{ bottom: '10%', left: '5%' }} />
       {/* ═══ PREMIUM TOP NAVIGATION BAR ═══ */}
       <header className={`h-[56px] border-b flex items-center justify-between px-3 sm:px-5 shrink-0 z-40 transition-all duration-300 ${
         isDark 
@@ -380,7 +389,7 @@ export default function App() {
             </div>
             <div>
               <div className="font-extrabold text-[13px] tracking-tight flex items-center gap-2">
-                <span className={isDark ? 'text-white' : 'text-[#0F172A]'}>Akwaaba OS</span>
+                <span className={`gradient-underline ${isDark ? 'text-white text-glow-emerald' : 'text-[#0F172A]'}`}>Akwaaba OS</span>
                 <span className={`text-[10px] px-1.5 py-[1px] rounded-md font-mono font-semibold ${
                   isDark ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                 }`}>
@@ -493,9 +502,9 @@ export default function App() {
               }`}
               title="Click to view till reconciliation and cash drops"
             >
-              <span className="relative flex h-2 w-2">
+              <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 status-dot-pulse"></span>
               </span>
               <span className="hidden sm:inline font-mono font-medium">Till Active</span>
             </button>
