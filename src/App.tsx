@@ -63,8 +63,27 @@ import {
 } from './utils/terminalConfig';
 
 export default function App() {
-  // Theme State: 'dark' (Deep Obsidian & Alpine Emerald) | 'light' (Soft Alabaster)
-  const [isDark, setIsDark] = useState<boolean>(true);
+  // Theme State: Crisp Light Mode by default, with dark mode toggle support
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('akwaaba_theme') === 'dark';
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('akwaaba_theme', isDark ? 'dark' : 'light');
+    } catch {}
+    if (isDark) {
+      document.documentElement.classList.add('theme-dark');
+      document.documentElement.classList.remove('theme-light');
+    } else {
+      document.documentElement.classList.add('theme-light');
+      document.documentElement.classList.remove('theme-dark');
+    }
+  }, [isDark]);
 
   // Authentication State for Non-Repudiation
   const [currentUser, setCurrentUser] = useState<SystemUser | null>(() => {
@@ -301,44 +320,39 @@ export default function App() {
     );
   }
 
-  // Filter available tabs based on role to keep the navbar sleek and UN-CLUSTERED
+  // Navigation tabs tailored for role but intuitive for all retail staff
   const getNavTabsForRole = () => {
     const role = currentUser.role;
     switch (role) {
       case 'CASHIER':
         return [
-          { id: 'POS', label: 'POS Checkout', icon: ShoppingBag },
-          { id: 'BISA', label: 'CRM & Loyalty', icon: Award },
+          { id: 'POS', label: 'POS Register', icon: ShoppingBag },
+          { id: 'FINANCIALS', label: 'Daily Sales', icon: TrendingUp },
+          { id: 'BISA', label: 'Customer Credit', icon: BookOpen },
         ];
       case 'INVENTORY_OFFICER':
         return [
-          { id: 'INVENTORY', label: 'Inventory & POs', icon: Boxes, badge: lowStockProducts.length > 0 ? lowStockProducts.length : null },
-          { id: 'POS', label: 'Till Monitor', icon: ShoppingBag },
+          { id: 'INVENTORY', label: 'Stock & POs', icon: Boxes, badge: lowStockProducts.length > 0 ? lowStockProducts.length : null },
+          { id: 'POS', label: 'POS Register', icon: ShoppingBag },
+          { id: 'FINANCIALS', label: 'Valuation', icon: TrendingUp },
         ];
       case 'AUDITOR':
         return [
-          { id: 'FINANCIALS', label: 'Financial Analytics', icon: TrendingUp },
-          { id: 'GRA', label: 'GRA Tax Reports', icon: Landmark },
-          { id: 'BISA', label: 'CRM & Credit Audit', icon: Award },
-          { id: 'DOCS', label: 'Fiscal Specs & APIs', icon: Database },
+          { id: 'FINANCIALS', label: 'Financials', icon: TrendingUp },
+          { id: 'GRA', label: 'GRA Tax', icon: Landmark },
+          { id: 'BISA', label: 'Credit Audit', icon: BookOpen },
+          { id: 'DOCS', label: 'Specs & APIs', icon: Database },
         ];
       case 'BRANCH_MANAGER':
-        return [
-          { id: 'POS', label: 'POS Till', icon: ShoppingBag },
-          { id: 'FINANCIALS', label: 'Financials', icon: TrendingUp },
-          { id: 'BISA', label: 'CRM & Loyalty', icon: Award },
-          { id: 'INVENTORY', label: 'Inventory & POs', icon: Boxes, badge: lowStockProducts.length > 0 ? lowStockProducts.length : null },
-          { id: 'GRA', label: 'GRA Tax', icon: Landmark },
-        ];
       case 'GENERAL_MANAGER':
       case 'SUPER_ADMIN':
       default:
         return [
-          { id: 'POS', label: 'POS Till', icon: ShoppingBag },
-          { id: 'FINANCIALS', label: 'Financials', icon: TrendingUp },
-          { id: 'STAFF', label: 'Staff & Roles', icon: Users },
-          { id: 'INVENTORY', label: 'Inventory & POs', icon: Boxes, badge: lowStockProducts.length > 0 ? lowStockProducts.length : null },
-          { id: 'BISA', label: 'CRM & Loyalty', icon: Award },
+          { id: 'POS', label: 'POS Register', icon: ShoppingBag },
+          { id: 'INVENTORY', label: 'Stock & POs', icon: Boxes, badge: lowStockProducts.length > 0 ? lowStockProducts.length : null },
+          { id: 'FINANCIALS', label: 'Daily Sales & Reports', icon: TrendingUp },
+          { id: 'BISA', label: 'Credit Book', icon: BookOpen },
+          { id: 'STAFF', label: 'Staff', icon: Users },
           { id: 'GRA', label: 'GRA Tax', icon: Landmark },
         ];
     }
@@ -347,69 +361,56 @@ export default function App() {
   const navTabs = getNavTabsForRole();
 
   return (
-    <div className={`flex flex-col h-screen w-screen overflow-hidden select-none transition-colors duration-300 ${
-      isDark ? 'bg-[var(--bg-base)] text-[var(--text-primary)]' : 'theme-light bg-[var(--bg-base)] text-[var(--text-primary)]'
+    <div className={`flex flex-col h-screen w-screen overflow-hidden select-none transition-colors duration-200 ${
+      isDark ? 'bg-[#0B0F17] text-slate-100' : 'bg-slate-50 text-slate-900'
     }`}>
       
-      {/* ═══ ANIMATED BACKGROUND LAYER ═══ */}
-      <div className={`fixed inset-0 pointer-events-none z-0 ${isDark ? 'bg-aurora opacity-60' : 'bg-aurora opacity-25'}`} />
-      {/* Floating ambient orbs */}
-      <div className={`fixed pointer-events-none z-0 w-[500px] h-[500px] rounded-full orb-float-1 ${
-        isDark ? 'bg-emerald-500/[0.025] blur-[120px]' : 'bg-emerald-400/[0.04] blur-[100px]'
-      }`} style={{ top: '5%', right: '10%' }} />
-      <div className={`fixed pointer-events-none z-0 w-[400px] h-[400px] rounded-full orb-float-2 ${
-        isDark ? 'bg-sky-500/[0.02] blur-[120px]' : 'bg-sky-400/[0.03] blur-[100px]'
-      }`} style={{ bottom: '10%', left: '5%' }} />
-      {/* ═══ PREMIUM TOP NAVIGATION BAR ═══ */}
-      <header className={`h-[56px] border-b flex items-center justify-between px-3 sm:px-5 shrink-0 z-40 transition-all duration-300 ${
+      {/* ═══ CLEAN MODERN TOP NAVIGATION BAR ═══ */}
+      <header className={`h-[58px] border-b flex items-center justify-between px-3 sm:px-6 shrink-0 z-40 transition-colors ${
         isDark 
-          ? 'border-[rgba(48,62,80,0.4)] bg-[rgba(13,17,23,0.85)] backdrop-blur-xl' 
-          : 'border-[rgba(209,215,224,0.5)] bg-[rgba(255,255,255,0.88)] backdrop-blur-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]'
+          ? 'border-slate-800 bg-[#131A26]' 
+          : 'border-slate-200 bg-white shadow-2xs'
       }`}>
         
         {/* Left: Mobile Toggle & Brand Identity */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`md:hidden p-2 rounded-xl border transition-all duration-200 active:scale-90 ${
-              isDark ? 'border-[rgba(48,62,80,0.5)] text-[#8B9DB5] hover:text-white hover:bg-[#1C2333]' : 'border-[rgba(209,215,224,0.5)] text-[#64748B] hover:text-black hover:bg-[#F0F2F5]'
+            className={`md:hidden p-2 rounded-xl border transition active:scale-95 ${
+              isDark ? 'border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800' : 'border-slate-200 text-slate-600 hover:text-black hover:bg-slate-100'
             }`}
           >
             {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
 
-          <div className="flex items-center gap-3">
-            {/* Premium Logo Mark */}
-            <div className={`w-9 h-9 rounded-[12px] flex items-center justify-center font-black text-sm tracking-tighter transition-all duration-300 ${
-              isDark 
-                ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-[#06080C] shadow-[0_2px_12px_rgba(16,185,129,0.25)]' 
-                : 'bg-gradient-to-br from-emerald-600 to-emerald-700 text-white shadow-[0_2px_8px_rgba(5,150,105,0.2)]'
-            }`}>
+          <div className="flex items-center gap-2.5">
+            {/* Clean Logo Mark */}
+            <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
               AK
             </div>
             <div>
-              <div className="font-extrabold text-[13px] tracking-tight flex items-center gap-2">
-                <span className={`gradient-underline ${isDark ? 'text-white text-glow-emerald' : 'text-[#0F172A]'}`}>Akwaaba OS</span>
-                <span className={`text-[10px] px-1.5 py-[1px] rounded-md font-mono font-semibold ${
-                  isDark ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+              <div className="font-extrabold text-sm tracking-tight flex items-center gap-2">
+                <span className={isDark ? 'text-white' : 'text-slate-900'}>Akwaaba POS</span>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-bold ${
+                  isDark ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/40' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                 }`}>
                   v2.6
                 </span>
               </div>
-              <div className="text-[10px] text-[#8B9DB5] font-mono flex items-center gap-1.5 mt-[1px]">
+              <div className="text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
                 <Store className="w-2.5 h-2.5 text-amber-500" />
                 <span className="hidden sm:inline truncate max-w-[160px]">{branchName}</span>
-                <span className="hidden sm:inline text-amber-500/70 font-bold">[{terminalBranch.code}]</span>
+                <span className="hidden sm:inline text-amber-600 dark:text-amber-400 font-bold">[{terminalBranch.code}]</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Center: Navigation Pills with Active Indicator */}
-        <nav className={`hidden md:flex items-center gap-[3px] p-[3px] rounded-[14px] border transition-all duration-300 ${
+        {/* Center: Clean Navigation Pills */}
+        <nav className={`hidden md:flex items-center gap-1 p-1 rounded-xl border ${
           isDark 
-            ? 'bg-[#0D1117]/80 border-[rgba(48,62,80,0.4)]' 
-            : 'bg-[#F0F2F5] border-[rgba(209,215,224,0.5)]'
+            ? 'bg-slate-900/80 border-slate-800' 
+            : 'bg-slate-100 border-slate-200'
         }`}>
           {navTabs.map(tab => {
             const Icon = tab.icon;
@@ -418,21 +419,19 @@ export default function App() {
               <button
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
-                className={`relative px-3.5 py-[7px] rounded-[11px] flex items-center gap-1.5 text-[12px] font-semibold transition-all duration-200 active:scale-[0.97] cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-bold transition active:scale-95 cursor-pointer ${
                   isActive
-                    ? isDark
-                      ? 'bg-emerald-500 text-[#06080C] font-bold shadow-[0_1px_8px_rgba(16,185,129,0.2)]'
-                      : 'bg-emerald-600 text-white font-bold shadow-[0_1px_6px_rgba(5,150,105,0.18)]'
+                    ? 'bg-emerald-600 text-white shadow-sm'
                     : isDark
-                    ? 'text-[#8B9DB5] hover:text-[#F0F4F8] hover:bg-[rgba(255,255,255,0.04)]'
-                    : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[rgba(0,0,0,0.03)]'
+                    ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
                 }`}
               >
-                <Icon className="w-[14px] h-[14px]" strokeWidth={isActive ? 2.2 : 1.8} />
+                <Icon className="w-3.5 h-3.5" strokeWidth={isActive ? 2.5 : 2} />
                 <span>{tab.label}</span>
                 {tab.badge && (
                   <span className={`min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-mono font-bold flex items-center justify-center ${
-                    isActive ? 'bg-[#06080C]/20 text-white' : 'bg-amber-500/15 text-amber-500'
+                    isActive ? 'bg-white/20 text-white' : 'bg-amber-500 text-slate-950'
                   }`}>
                     {tab.badge}
                   </span>

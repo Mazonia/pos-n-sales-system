@@ -22,7 +22,7 @@ export const PwaInstallBanner: React.FC<PwaInstallBannerProps> = ({ isDark }) =>
   const { isInstallable, isInstalled, isIOS, isOffline, install } = usePwaInstall();
   const [isDismissed, setIsDismissed] = useState<boolean>(() => {
     try {
-      return sessionStorage.getItem('akwaaba_pwa_banner_dismissed') === 'true';
+      return localStorage.getItem('akwaaba_pwa_banner_dismissed') === 'true';
     } catch (e) {
       return false;
     }
@@ -64,17 +64,17 @@ export const PwaInstallBanner: React.FC<PwaInstallBannerProps> = ({ isDark }) =>
     triggerHaptic('tap');
     setIsDismissed(true);
     try {
-      sessionStorage.setItem('akwaaba_pwa_banner_dismissed', 'true');
+      localStorage.setItem('akwaaba_pwa_banner_dismissed', 'true');
     } catch (e) {}
   };
 
   return (
     <>
-      {/* PWA INSTALL BANNER */}
-      <div className={`border-b px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shrink-0 relative transition-all ${
+      {/* PWA INSTALL BANNER - Sleek, Unobtrusive */}
+      <div className={`border-b px-4 py-2 flex flex-wrap items-center justify-between gap-3 shrink-0 relative transition-colors ${
         isDark
-          ? 'bg-gradient-to-r from-[#11151A] via-[#161D24] to-[#11151A] border-emerald-500/30 text-white'
-          : 'bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-emerald-200 text-slate-900'
+          ? 'bg-[#16202E] border-slate-800 text-slate-100'
+          : 'bg-emerald-50/70 border-emerald-100 text-slate-800'
       }`}>
         {/* Left: App Identity & Offline Capability Details */}
         <div className="flex items-center gap-3">

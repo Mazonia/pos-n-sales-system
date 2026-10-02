@@ -13,7 +13,6 @@ import {
   PauseCircle,
   Banknote,
   UserCheck,
-  ShieldCheck,
   ArrowRight,
   Receipt
 } from 'lucide-react';
@@ -64,28 +63,24 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
   const selectedCustomer = customers.find(c => c.id === selectedCustomerId);
 
   return (
-    <div className={`flex flex-col h-full select-none ${
-      isDark ? 'bg-[#0A0D12]' : 'bg-[#FAFBFC]'
+    <div className={`flex flex-col h-full select-none border-l ${
+      isDark ? 'bg-[#131A26] border-slate-800' : 'bg-white border-slate-200'
     }`}>
       
-      {/* Top Header: Active Ticket & Customer Context */}
+      {/* Top Header: Active Ticket & Held Carts */}
       <div className={`p-4 border-b shrink-0 flex items-center justify-between gap-3 ${
-        isDark 
-          ? 'border-[rgba(48,62,80,0.35)] bg-[rgba(13,17,23,0.6)]' 
-          : 'border-[rgba(209,215,224,0.5)] bg-white'
+        isDark ? 'border-slate-800 bg-[#16202E]' : 'border-slate-100 bg-slate-50/70'
       }`}>
-        <div className="flex items-center gap-3">
-          <div className={`w-9 h-9 rounded-[12px] flex items-center justify-center transition-all duration-200 ${
-            isDark ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/15' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-          }`}>
-            <Receipt className="w-4 h-4" strokeWidth={1.8} />
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+            <Receipt className="w-4 h-4" />
           </div>
           <div>
-            <h3 className={`text-[13px] font-bold tracking-tight ${isDark ? 'text-[#F0F4F8]' : 'text-[#0F172A]'}`}>
+            <h3 className={`text-sm font-bold ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
               Current Ticket
             </h3>
-            <span className="text-[10px] text-[#8B9DB5] font-mono tabular-nums">
-              {totalItemCount} {totalItemCount === 1 ? 'item' : 'items'} in queue
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+              {totalItemCount} {totalItemCount === 1 ? 'item' : 'items'}
             </span>
           </div>
         </div>
@@ -94,41 +89,41 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
         <button
           type="button"
           onClick={onOpenParkedModal}
-          className={`relative px-2.5 py-[7px] rounded-[12px] border text-[11px] font-semibold flex items-center gap-1.5 transition-all duration-200 active:scale-[0.96] ${
+          className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 ${
             isDark
-              ? 'border-[rgba(48,62,80,0.5)] bg-[#151B23] hover:bg-[#1C2333] text-[#F0F4F8]'
-              : 'border-[rgba(209,215,224,0.5)] bg-white hover:bg-[#F0F2F5] text-[#0F172A] shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
+              ? 'border-slate-700 bg-slate-800/80 text-slate-200 hover:bg-slate-700'
+              : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 shadow-sm'
           }`}
-          title="View Held Carts"
+          title="View Held Orders"
         >
           <PauseCircle className="w-3.5 h-3.5 text-amber-500" />
           <span>Held</span>
           {parkedCartCount > 0 && (
-            <span className="w-[18px] h-[18px] rounded-full bg-amber-500 text-[#06080C] text-[10px] font-bold flex items-center justify-center font-mono shadow-[0_0_6px_rgba(245,158,11,0.25)]">
+            <span className="w-5 h-5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-bold flex items-center justify-center font-mono">
               {parkedCartCount}
             </span>
           )}
         </button>
       </div>
 
-      {/* Customer Selection */}
+      {/* Customer Selector */}
       <div className={`px-4 py-2.5 border-b flex items-center justify-between gap-2 shrink-0 ${
-        isDark ? 'border-[rgba(48,62,80,0.25)] bg-[rgba(13,17,23,0.35)]' : 'border-[rgba(209,215,224,0.4)] bg-[#F6F8FA]'
+        isDark ? 'border-slate-800 bg-[#0E1420]' : 'border-slate-100 bg-slate-50/40'
       }`}>
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <UserCheck className="w-3.5 h-3.5 text-[#8B9DB5] shrink-0" strokeWidth={1.8} />
+          <UserCheck className="w-4 h-4 text-slate-400 shrink-0" />
           <select
             value={selectedCustomerId}
             onChange={e => onSelectCustomerId(e.target.value)}
-            className={`text-xs font-medium bg-transparent focus:outline-none w-full truncate cursor-pointer ${
-              isDark ? 'text-[#F0F4F8]' : 'text-[#0F172A]'
+            className={`text-xs font-semibold bg-transparent focus:outline-none w-full truncate cursor-pointer py-1 ${
+              isDark ? 'text-slate-200' : 'text-slate-800'
             }`}
           >
-            <option value="" className={isDark ? 'bg-[#0D1117] text-[#8B9DB5]' : 'bg-white text-[#64748B]'}>
+            <option value="" className={isDark ? 'bg-slate-900 text-slate-300' : 'bg-white text-slate-700'}>
               Walk-in Customer (General)
             </option>
             {customers.map(c => (
-              <option key={c.id} value={c.id} className={isDark ? 'bg-[#0D1117] text-white' : 'bg-white text-black'}>
+              <option key={c.id} value={c.id} className={isDark ? 'bg-slate-900 text-white' : 'bg-white text-black'}>
                 {c.fullName} ({c.phone})
               </option>
             ))}
@@ -136,112 +131,105 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
         </div>
 
         {selectedCustomer && (
-          <span className={`text-[10px] font-mono font-semibold px-2 py-[3px] rounded-[8px] whitespace-nowrap tabular-nums ${
-            isDark 
-              ? 'bg-amber-500/8 text-amber-400 border border-amber-500/15' 
-              : 'bg-amber-50 text-amber-700 border border-amber-200'
-          }`}>
+          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 shrink-0">
             Debt: {formatGhs(selectedCustomer.currentDebt)}
           </span>
         )}
       </div>
 
       {/* Cart Items List */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+      <div className="flex-1 overflow-y-auto p-3.5 space-y-2.5">
         {cart.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-8 space-y-4">
-            <div className={`w-14 h-14 rounded-[16px] flex items-center justify-center animate-float-soft ${
-              isDark ? 'bg-[#151B23] text-[#556575] border border-[rgba(48,62,80,0.3)]' : 'bg-[#F0F2F5] text-[#94A3B8] border border-[rgba(209,215,224,0.3)]'
+          <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-3">
+            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${
+              isDark ? 'bg-slate-800/60 text-slate-600' : 'bg-slate-100 text-slate-400'
             }`}>
-              <ShoppingBag className="w-6 h-6 stroke-[1.4]" />
+              <ShoppingBag className="w-6 h-6 stroke-[1.5]" />
             </div>
             <div>
-              <p className={`text-sm font-semibold ${isDark ? 'text-[#F0F4F8]' : 'text-[#0F172A]'}`}>
+              <p className={`text-sm font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
                 Ticket is empty
               </p>
-              <p className="text-[11px] text-[#8B9DB5] max-w-[220px] mt-1.5 leading-relaxed">
-                Scan barcode or click items in the catalog to add. Press <kbd className={`px-1.5 py-[2px] rounded-[6px] font-mono text-[10px] font-medium ${
-                  isDark ? 'bg-[#1C2333] text-[#8B9DB5] border border-[rgba(48,62,80,0.3)]' : 'bg-[#E2E5E9] text-[#64748B]'
-                }`}>F9</kbd> to search.
+              <p className="text-xs text-slate-400 max-w-[200px] mt-1 leading-relaxed">
+                Click or scan any item from the left catalog to add it to this sale.
               </p>
             </div>
           </div>
         ) : (
-          cart.map((item, idx) => (
+          cart.map((item) => (
             <div
               key={item.id}
-              style={{ animationDelay: `${idx * 30}ms` }}
-              className={`p-3.5 rounded-[14px] border transition-all duration-200 animate-fade-slide-in ${
+              className={`p-3 rounded-xl border transition-all ${
                 isDark
-                  ? 'bg-[#0D1117] border-[rgba(48,62,80,0.35)] hover:border-[rgba(48,62,80,0.6)]'
-                  : 'bg-white border-[rgba(209,215,224,0.4)] hover:border-[rgba(175,184,196,0.5)] shadow-[0_1px_2px_rgba(0,0,0,0.03)]'
+                  ? 'bg-[#192333] border-slate-800 hover:border-slate-700'
+                  : 'bg-white border-slate-200 hover:border-slate-300 shadow-sm'
               }`}
             >
               <div className="flex justify-between items-start gap-2">
                 <div className="flex-1 min-w-0">
-                  <h5 className={`font-semibold text-[12px] leading-snug truncate ${isDark ? 'text-[#F0F4F8]' : 'text-[#0F172A]'}`}>
+                  <h5 className={`font-bold text-xs leading-snug truncate ${
+                    isDark ? 'text-slate-100' : 'text-slate-900'
+                  }`}>
                     {item.name}
                   </h5>
-                  <div className="flex items-center gap-1.5 mt-1 text-[10px] text-[#8B9DB5] font-mono tabular-nums">
+                  <div className="flex items-center gap-1.5 mt-1 text-[11px] text-slate-400 font-mono tabular-nums">
                     <span>{item.unitName}</span>
-                    <span className="opacity-40">·</span>
-                    <span>{formatGhs(item.unitPrice)}</span>
+                    <span>·</span>
+                    <span className="font-semibold">{formatGhs(item.unitPrice)}</span>
                     {item.discountAmount > 0 && (
-                      <span className="text-[#EF4444] font-medium">(-{formatGhs(item.discountAmount)})</span>
+                      <span className="text-rose-500 font-bold">(-{formatGhs(item.discountAmount)})</span>
                     )}
                     {item.priceOverridden && (
-                      <span className={`text-amber-500 font-medium px-1 py-[1px] rounded text-[9px] ${
-                        isDark ? 'bg-amber-500/8' : 'bg-amber-50'
-                      }`}>Override</span>
+                      <span className="text-amber-500 font-bold text-[9px] bg-amber-50 dark:bg-amber-950/40 px-1 py-0.5 rounded">
+                        Override
+                      </span>
                     )}
                   </div>
                 </div>
 
-                <span className={`font-mono font-extrabold text-[12px] tabular-nums ${
+                <span className={`font-mono font-black text-sm tabular-nums ${
                   isDark ? 'text-emerald-400' : 'text-emerald-700'
                 }`}>
                   {formatGhs(item.lineTotal)}
                 </span>
               </div>
 
-              {/* Quantity Controls & Tools */}
+              {/* Quantity Stepper & Quick Tools */}
               <div className={`flex items-center justify-between pt-2.5 mt-2.5 border-t ${
-                isDark ? 'border-[rgba(48,62,80,0.2)]' : 'border-[rgba(209,215,224,0.3)]'
+                isDark ? 'border-slate-800' : 'border-slate-100'
               }`}>
-                {/* Stepper with tactile feel */}
-                <div className={`flex items-center rounded-[10px] border ${
-                  isDark ? 'border-[rgba(48,62,80,0.4)] bg-[#0A0D12]' : 'border-[rgba(209,215,224,0.5)] bg-[#F6F8FA]'
+                {/* Stepper with Large, Easy Touch Targets */}
+                <div className={`flex items-center rounded-lg border ${
+                  isDark ? 'border-slate-700 bg-slate-900/60' : 'border-slate-200 bg-slate-50'
                 }`}>
                   <button
                     type="button"
                     onClick={() => onUpdateQuantity(item.id, -1)}
-                    className={`p-1.5 transition-all duration-150 active:scale-90 rounded-l-[9px] ${
-                      isDark ? 'text-[#8B9DB5] hover:text-emerald-400 hover:bg-[#151B23]' : 'text-[#64748B] hover:text-emerald-600 hover:bg-[#F0F2F5]'
-                    }`}
+                    className="p-1.5 px-2 text-slate-500 hover:text-emerald-600 transition active:scale-90"
+                    title="Decrease quantity"
                   >
-                    <Minus className="w-3 h-3" />
+                    <Minus className="w-3.5 h-3.5" />
                   </button>
-                  <span className={`px-3 text-[12px] font-mono font-bold tabular-nums ${isDark ? 'text-[#F0F4F8]' : 'text-[#0F172A]'}`}>
+                  <span className={`px-2 text-xs font-mono font-black tabular-nums min-w-[28px] text-center ${
+                    isDark ? 'text-white' : 'text-slate-900'
+                  }`}>
                     {item.quantity}
                   </span>
                   <button
                     type="button"
                     onClick={() => onUpdateQuantity(item.id, 1)}
-                    className={`p-1.5 transition-all duration-150 active:scale-90 rounded-r-[9px] ${
-                      isDark ? 'text-[#8B9DB5] hover:text-emerald-400 hover:bg-[#151B23]' : 'text-[#64748B] hover:text-emerald-600 hover:bg-[#F0F2F5]'
-                    }`}
+                    className="p-1.5 px-2 text-slate-500 hover:text-emerald-600 transition active:scale-90"
+                    title="Increase quantity"
                   >
-                    <Plus className="w-3 h-3" />
+                    <Plus className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                <div className="flex items-center gap-0.5">
+                <div className="flex items-center gap-1">
                   <button
                     type="button"
                     onClick={() => onOpenPriceOverride(item)}
-                    className={`p-1.5 rounded-[8px] transition-all duration-150 active:scale-90 ${
-                      isDark ? 'text-[#556575] hover:text-amber-400 hover:bg-amber-500/8' : 'text-[#94A3B8] hover:text-amber-600 hover:bg-amber-50'
-                    }`}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition"
                     title="Price Override"
                   >
                     <Tag className="w-3.5 h-3.5" />
@@ -249,10 +237,8 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
                   <button
                     type="button"
                     onClick={() => onRequestDeleteItem(item)}
-                    className={`p-1.5 rounded-[8px] transition-all duration-150 active:scale-90 ${
-                      isDark ? 'text-[#556575] hover:text-rose-400 hover:bg-rose-500/8' : 'text-[#94A3B8] hover:text-rose-600 hover:bg-rose-50'
-                    }`}
-                    title="Void Line Item"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition"
+                    title="Remove item"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -266,106 +252,89 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
       {/* Bottom Sticky Panel: Order Summary & Checkout */}
       {cart.length > 0 && (
         <div className={`p-4 border-t space-y-3 shrink-0 ${
-          isDark 
-            ? 'border-[rgba(48,62,80,0.35)] bg-[rgba(13,17,23,0.6)]' 
-            : 'border-[rgba(209,215,224,0.5)] bg-white'
+          isDark ? 'border-slate-800 bg-[#16202E]' : 'border-slate-200 bg-white'
         }`}>
-          
           {/* Subtotal line */}
-          <div className="flex justify-between text-[11px]">
-            <span className="text-[#8B9DB5]">Gross Subtotal:</span>
-            <span className={`font-mono tabular-nums font-semibold ${isDark ? 'text-[#F0F4F8]' : 'text-[#0F172A]'}`}>
+          <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
+            <span>Subtotal ({totalItemCount} items):</span>
+            <span className={`font-mono font-bold tabular-nums ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
               {formatGhs(grossSubtotal)}
             </span>
           </div>
 
           {discountTotal > 0 && (
-            <div className="flex justify-between text-[11px] text-[#EF4444] font-medium">
+            <div className="flex justify-between text-xs text-rose-600 dark:text-rose-400 font-semibold">
               <span>Discounts Applied:</span>
               <span className="font-mono tabular-nums">-{formatGhs(discountTotal)}</span>
             </div>
           )}
 
-          {/* Tax Accordion */}
-          <div className={`rounded-[12px] border transition-all duration-250 overflow-hidden ${
-            isDark ? 'bg-[#0A0D12] border-[rgba(48,62,80,0.3)]' : 'bg-[#F6F8FA] border-[rgba(209,215,224,0.4)]'
+          {/* Tax Breakdown Accordion */}
+          <div className={`rounded-xl border overflow-hidden ${
+            isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-50 border-slate-200'
           }`}>
             <button
               type="button"
               onClick={() => setTaxAccordionOpen(!taxAccordionOpen)}
-              className={`w-full p-2.5 flex items-center justify-between text-[11px] transition-colors duration-150 ${
-                isDark ? 'text-[#8B9DB5] hover:text-[#F0F4F8]' : 'text-[#64748B] hover:text-[#0F172A]'
+              className={`w-full p-2.5 flex items-center justify-between text-xs font-semibold transition ${
+                isDark ? 'text-slate-300 hover:text-white' : 'text-slate-700 hover:text-slate-900'
               }`}
             >
-              <div className="flex items-center gap-1.5 font-medium">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" strokeWidth={1.8} />
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 <span>GRA Statutory Taxes & Levies:</span>
-                <span className="font-mono font-bold text-emerald-500 tabular-nums">
-                  {formatGhs(taxDetail.totalTax)}
-                </span>
               </div>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-250 ${taxAccordionOpen ? 'rotate-180' : ''}`} />
+              <div className="flex items-center gap-1 font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+                <span>{formatGhs(taxDetail.totalTax)}</span>
+                {taxAccordionOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              </div>
             </button>
 
-            <div className={`grid transition-all duration-300 ${taxAccordionOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-              <div className="overflow-hidden">
-                <div className={`px-3 pb-2.5 pt-1 border-t text-[10px] font-mono tabular-nums space-y-1 ${
-                  isDark ? 'border-[rgba(48,62,80,0.2)] text-[#8B9DB5]' : 'border-[rgba(209,215,224,0.3)] text-[#64748B]'
-                }`}>
-                  <div className="flex justify-between">
-                    <span>Taxable Base (P):</span>
-                    <span>{formatGhs(taxDetail.taxableBase)}</span>
-                  </div>
-                  {taxScheme === 'STANDARD_VAT' && (
-                    <>
-                      <div className="flex justify-between">
-                        <span>NHIL (2.5%):</span>
-                        <span>{formatGhs(taxDetail.nhil)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>GETFund (2.5%):</span>
-                        <span>{formatGhs(taxDetail.getfund)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>COVID-19 (1.0%):</span>
-                        <span>{formatGhs(taxDetail.covid)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>VAT (15% on Base+Levies):</span>
-                        <span>{formatGhs(taxDetail.vat)}</span>
-                      </div>
-                    </>
-                  )}
-                  <div className={`flex justify-between font-bold text-emerald-500 border-t border-dashed pt-1.5 mt-1 ${
-                    isDark ? 'border-[rgba(48,62,80,0.3)]' : 'border-[rgba(209,215,224,0.4)]'
-                  }`}>
-                    <span>Effective Tax Included:</span>
-                    <span>{taxDetail.effectiveRatePct.toFixed(2)}% ({formatGhs(taxDetail.totalTax)})</span>
-                  </div>
+            {taxAccordionOpen && (
+              <div className={`p-2.5 pt-0 border-t space-y-1.5 text-[11px] font-mono ${
+                isDark ? 'border-slate-800 text-slate-400' : 'border-slate-200 text-slate-600'
+              }`}>
+                <div className="flex justify-between">
+                  <span>NHIL (2.5%):</span>
+                  <span>{formatGhs(taxDetail.nhil)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>GETFund (2.5%):</span>
+                  <span>{formatGhs(taxDetail.getfund)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>COVID-19 Levy (1.0%):</span>
+                  <span>{formatGhs(taxDetail.covid)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Standard VAT (15.0%):</span>
+                  <span>{formatGhs(taxDetail.vat)}</span>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Grand Total Row */}
-          <div className={`flex justify-between items-baseline pt-1 pb-1`}>
-            <span className="text-[11px] uppercase font-extrabold tracking-widest text-[#8B9DB5]">Total Due:</span>
-            <span className={`text-[28px] font-extrabold font-mono tabular-nums tracking-tight leading-none animate-count-up ${
-              isDark ? 'text-[#F0F4F8] text-glow-emerald' : 'text-[#0F172A]'
+          <div className="flex justify-between items-baseline pt-1">
+            <span className="text-xs uppercase font-extrabold tracking-wider text-slate-400">
+              Total Due:
+            </span>
+            <span className={`text-2xl font-black font-mono tabular-nums leading-none ${
+              isDark ? 'text-slate-100' : 'text-slate-900'
             }`}>
               {formatGhs(grandTotal)}
             </span>
           </div>
 
-          {/* Secondary Action Row */}
+          {/* Secondary Actions (Hold, Discount) */}
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={onHoldCart}
-              className={`py-2.5 px-3 rounded-[12px] border text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.96] ${
+              className={`py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 ${
                 isDark
-                  ? 'border-[rgba(48,62,80,0.5)] bg-[#151B23] hover:bg-[#1C2333] text-[#F0F4F8]'
-                  : 'border-[rgba(209,215,224,0.5)] bg-white hover:bg-[#F0F2F5] text-[#0F172A] shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
+                  ? 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700'
+                  : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 shadow-sm'
               }`}
             >
               <PauseCircle className="w-3.5 h-3.5 text-amber-500" />
@@ -375,10 +344,10 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
             <button
               type="button"
               onClick={onOpenDiscountModal}
-              className={`py-2.5 px-3 rounded-[12px] border text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.96] ${
+              className={`py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 ${
                 isDark
-                  ? 'border-[rgba(48,62,80,0.5)] bg-[#151B23] hover:bg-[#1C2333] text-[#F0F4F8]'
-                  : 'border-[rgba(209,215,224,0.5)] bg-white hover:bg-[#F0F2F5] text-[#0F172A] shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
+                  ? 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700'
+                  : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 shadow-sm'
               }`}
             >
               <Percent className="w-3.5 h-3.5 text-emerald-500" />
@@ -386,24 +355,23 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
             </button>
           </div>
 
-          {/* Big Checkout Button */}
+          {/* Big Solid Primary Checkout Button */}
           <button
             type="button"
             onClick={onInitiateCheckout}
-            className={`w-full py-4 px-4 rounded-[14px] text-[13px] flex items-center justify-between cursor-pointer font-black btn-checkout-gradient text-[#06080C] shadow-[0_4px_16px_rgba(16,185,129,0.2),0_0_0_1px_rgba(16,185,129,0.3)]`}
+            className="w-full py-3.5 px-5 rounded-xl text-sm font-black flex items-center justify-between cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/20 active:scale-[0.98] transition-all"
           >
-            <div className="flex items-center gap-2.5">
-              <Banknote className="w-[18px] h-[18px]" strokeWidth={2} />
-              <span>PROCESS PAYMENT</span>
-            </div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-base font-extrabold tabular-nums tracking-tight">
+              <Banknote className="w-4 h-4" />
+              <span>CHARGE / PAY</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="font-mono text-base font-extrabold tabular-nums">
                 {formatGhs(grandTotal)}
               </span>
-              <ArrowRight className="w-4 h-4" strokeWidth={2.2} />
+              <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
             </div>
           </button>
-
         </div>
       )}
 

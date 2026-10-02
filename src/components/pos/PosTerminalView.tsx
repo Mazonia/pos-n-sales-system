@@ -437,17 +437,17 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
       
       {/* LEFT 65%: PRODUCT CATALOG & ACTIONS */}
       <div className={`flex-1 flex flex-col h-full overflow-hidden border-r ${
-        isDark ? 'border-[rgba(48,62,80,0.35)]' : 'border-[rgba(209,215,224,0.4)]'
+        isDark ? 'border-slate-800' : 'border-slate-200'
       }`}>
         
         {/* Top Controls: Search Bar & Barcode Quick-Scanner */}
         <div className={`p-4 border-b space-y-3 shrink-0 ${
-          isDark ? 'border-[rgba(48,62,80,0.3)] bg-[rgba(13,17,23,0.6)] backdrop-blur-xl' : 'border-[rgba(209,215,224,0.4)] bg-white/80 backdrop-blur-xl'
+          isDark ? 'border-slate-800 bg-[#131A26]' : 'border-slate-200 bg-white'
         }`}>
           <div className="flex items-center gap-2.5">
             {/* Search Input */}
             <div className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8B9DB5]" strokeWidth={1.8} />
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" strokeWidth={2} />
               <input
                 ref={searchInputRef}
                 type="text"
@@ -455,20 +455,24 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                 onChange={e => setSearchQuery(e.target.value)}
                 onKeyDown={handleSearchKeyDown}
                 placeholder="Search products by title, SKU, or scan barcode..."
-                className={`w-full pl-10 pr-20 py-2.5 rounded-[12px] text-xs sm:text-sm font-medium border outline-none transition-all duration-200 focus:ring-2 ${
+                className={`w-full pl-10 pr-24 py-2.5 rounded-xl text-xs sm:text-sm font-semibold border outline-none transition-all ${
                   isDark
-                    ? 'bg-[#0A0D12] border-[rgba(48,62,80,0.5)] text-white placeholder-[#556575] focus:border-emerald-500 focus:ring-emerald-500/20'
-                    : 'bg-[#F6F8FA] border-[rgba(209,215,224,0.5)] text-[#0F172A] placeholder-[#94A3B8] focus:border-emerald-500 focus:ring-emerald-500/15'
+                    ? 'bg-slate-900 border-slate-700 text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
+                    : 'bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
                 }`}
               />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                <span className={`text-[10px] font-mono font-bold px-1.5 py-[2px] rounded-[6px] ${
-                  isDark ? 'text-[#556575] bg-[#151B23] border border-[rgba(48,62,80,0.3)]' : 'text-[#94A3B8] bg-[#F0F2F5] border border-[rgba(209,215,224,0.4)]'
-                }`}>
-                  ⌘K
-                </span>
-                <span className={`text-[10px] font-mono font-bold px-1.5 py-[2px] rounded-[6px] ${
-                  isDark ? 'text-emerald-500 bg-emerald-500/8 border border-emerald-500/15' : 'text-emerald-600 bg-emerald-50 border border-emerald-200'
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="p-1 rounded-full text-slate-400 hover:text-slate-600 transition"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+                <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                  isDark ? 'text-slate-400 bg-slate-800' : 'text-slate-500 bg-slate-200'
                 }`}>
                   F9
                 </span>
@@ -476,34 +480,44 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
             </div>
 
             {/* Scanner Status */}
-            <div className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-[12px] border text-xs font-medium shrink-0 ${
-              isDark ? 'border-[rgba(48,62,80,0.4)] bg-[#0A0D12] text-[#8B9DB5]' : 'border-[rgba(209,215,224,0.5)] bg-white text-[#64748B] shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
+            <div className={`hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold shrink-0 ${
+              isDark ? 'border-slate-800 bg-slate-900 text-slate-300' : 'border-slate-200 bg-slate-50 text-slate-700'
             }`}>
-              <Barcode className="w-4 h-4 text-emerald-500" strokeWidth={1.8} />
+              <Barcode className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>Scanner Ready</span>
             </div>
           </div>
 
           {/* Category Filter Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none text-xs">
+          <div className="flex items-center gap-2 overflow-x-auto pb-0.5 scrollbar-none text-xs">
             {categories.map(cat => {
               const isActive = selectedCategory === cat;
+              const count = cat === 'ALL'
+                ? products.length
+                : products.filter(p => p.category === cat).length;
               return (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-[6px] rounded-[10px] whitespace-nowrap text-[11px] font-semibold transition-all duration-200 active:scale-[0.96] ${
+                  className={`px-3 py-1.5 rounded-xl whitespace-nowrap text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
                     isActive
-                      ? isDark
-                        ? 'bg-emerald-500 text-[#06080C] font-bold shadow-[0_1px_6px_rgba(16,185,129,0.15)]'
-                        : 'bg-emerald-600 text-white font-bold shadow-[0_1px_4px_rgba(5,150,105,0.12)]'
+                      ? 'bg-emerald-600 text-white shadow-sm'
                       : isDark
-                      ? 'bg-[#151B23] text-[#8B9DB5] hover:text-[#F0F4F8] hover:bg-[#1C2333] border border-transparent hover:border-[rgba(48,62,80,0.3)]'
-                      : 'bg-[#F0F2F5] text-[#64748B] hover:text-[#0F172A] hover:bg-[#E2E5E9]'
+                      ? 'bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700'
+                      : 'bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200/80'
                   }`}
                 >
-                  {cat}
+                  <span>{cat}</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                    isActive
+                      ? 'bg-emerald-700 text-emerald-100'
+                      : isDark
+                      ? 'bg-slate-900 text-slate-400'
+                      : 'bg-slate-200 text-slate-600'
+                  }`}>
+                    {count}
+                  </span>
                 </button>
               );
             })}
@@ -511,47 +525,59 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
         </div>
 
         {/* Product Grid */}
-        <div className={`flex-1 p-4 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 content-start pb-24 lg:pb-16 ${isDark ? 'bg-gradient-mesh' : ''}`}>
-          {filteredProducts.map(product => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={addToCart}
-              isDark={isDark}
-            />
-          ))}
+        <div className="flex-1 p-4 sm:p-5 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-3.5 content-start pb-24 md:pb-6">
+          {filteredProducts.length === 0 ? (
+            <div className="col-span-full py-16 text-center text-slate-400 space-y-2">
+              <p className="text-sm font-bold">No products found</p>
+              <p className="text-xs">Try searching for a different keyword or SKU.</p>
+              <button
+                type="button"
+                onClick={() => { setSearchQuery(''); setSelectedCategory('ALL'); }}
+                className="text-xs text-emerald-600 font-bold hover:underline"
+              >
+                Clear all filters
+              </button>
+            </div>
+          ) : (
+            filteredProducts.map(product => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={addToCart}
+                isDark={isDark}
+              />
+            ))
+          )}
         </div>
 
         {/* Keyboard Shortcut Bar */}
-        <div className={`hidden sm:flex items-center justify-between px-4 py-2 border-t text-[10px] font-mono shrink-0 select-none ${
-          isDark ? 'border-[rgba(48,62,80,0.3)] bg-[rgba(13,17,23,0.6)] text-[#556575]' : 'border-[rgba(209,215,224,0.4)] bg-[#F6F8FA] text-[#94A3B8]'
+        <div className={`hidden sm:flex items-center justify-between px-4 py-2 border-t text-[11px] font-mono shrink-0 select-none ${
+          isDark ? 'border-slate-800 bg-[#101622] text-slate-400' : 'border-slate-200 bg-slate-50 text-slate-500'
         }`}>
           <div className="flex items-center gap-4">
             {[
-              { key: 'F1', label: 'Cash', color: 'emerald' },
-              { key: 'F2', label: 'MoMo', color: 'emerald' },
-              { key: 'F4', label: 'Hold', color: 'amber' },
-              { key: 'Space', label: 'Pay', color: 'emerald' },
+              { key: 'F1', label: 'Cash' },
+              { key: 'F2', label: 'MoMo' },
+              { key: 'F4', label: 'Hold' },
+              { key: 'Space', label: 'Pay' },
             ].map(s => (
-              <span key={s.key} className="flex items-center gap-1">
-                <kbd className={`px-1.5 py-[2px] rounded-[5px] font-bold text-[9px] ${
-                  isDark 
-                    ? `bg-[#151B23] text-${s.color === 'emerald' ? 'emerald-500' : 'amber-500'} border border-[rgba(48,62,80,0.3)]`
-                    : `bg-[#F0F2F5] text-${s.color === 'emerald' ? 'emerald-600' : 'amber-600'} border border-[rgba(209,215,224,0.4)]`
+              <span key={s.key} className="flex items-center gap-1.5">
+                <kbd className={`px-1.5 py-0.5 rounded font-bold text-[10px] ${
+                  isDark ? 'bg-slate-800 text-emerald-400 border border-slate-700' : 'bg-white text-emerald-700 border border-slate-300 shadow-2xs'
                 }`}>{s.key}</kbd>
                 <span>{s.label}</span>
               </span>
             ))}
           </div>
-          <div className="text-[10px] font-sans">
-            Shift: <span className={isDark ? 'font-semibold text-emerald-500' : 'font-semibold text-emerald-600'}>{cashierName.split(' ')[0]}</span>
+          <div className="text-xs font-sans">
+            Cashier: <strong className="text-emerald-600 dark:text-emerald-400">{cashierName.split(' ')[0]}</strong>
           </div>
         </div>
 
       </div>
 
-      {/* RIGHT 35%: ACTIVE ORDER & TICKET LEDGER (Desktop View) */}
-      <div className="hidden lg:flex w-[380px] xl:w-[420px] flex-col h-full shrink-0">
+      {/* RIGHT 35%: ACTIVE ORDER & TICKET LEDGER (Desktop View: visible on md and up) */}
+      <div className="hidden md:flex w-[350px] lg:w-[380px] xl:w-[420px] flex-col h-full shrink-0">
         <CartLedger
           cart={cart}
           customers={customers}
@@ -573,30 +599,24 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
         />
       </div>
 
-      {/* MOBILE FLOATING TICKET SUMMARY */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 p-3">
-        <div className={`p-3 rounded-[18px] border flex items-center justify-between backdrop-blur-xl ${
-          isDark 
-            ? 'bg-[rgba(13,17,23,0.88)] border-[rgba(48,62,80,0.4)] shadow-[0_-4px_24px_rgba(0,0,0,0.4)]' 
-            : 'bg-[rgba(255,255,255,0.92)] border-[rgba(209,215,224,0.5)] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]'
+      {/* MOBILE FLOATING TICKET SUMMARY (for screens < 768px) */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 p-3">
+        <div className={`p-3 rounded-2xl border flex items-center justify-between shadow-xl ${
+          isDark ? 'bg-[#16202E] border-slate-700' : 'bg-white border-slate-200'
         }`}>
           <button
             type="button"
             onClick={() => setMobileCartOpen(true)}
             className="flex items-center gap-3 flex-1 text-left"
           >
-            <div className={`w-10 h-10 rounded-[12px] flex items-center justify-center font-extrabold font-mono text-sm ${
-              isDark 
-                ? 'bg-emerald-500 text-[#06080C] shadow-[0_2px_8px_rgba(16,185,129,0.2)]' 
-                : 'bg-emerald-600 text-white shadow-[0_2px_6px_rgba(5,150,105,0.15)]'
-            }`}>
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white font-black font-mono text-sm flex items-center justify-center">
               {totalItemCount}
             </div>
             <div>
-              <span className={`text-xs block font-bold ${isDark ? 'text-white' : 'text-[#0F172A]'}`}>
+              <span className={`text-xs block font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 Current Ticket
               </span>
-              <span className={`text-sm font-extrabold font-mono tabular-nums ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
+              <span className="text-sm font-black font-mono tabular-nums text-emerald-600 dark:text-emerald-400">
                 {formatGhs(grandTotal)}
               </span>
             </div>
@@ -606,11 +626,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
             type="button"
             disabled={cart.length === 0}
             onClick={() => setShowPaymentModal(true)}
-            className={`px-5 py-2.5 active:scale-[0.96] disabled:opacity-40 font-black rounded-[12px] text-xs flex items-center gap-1.5 transition-all duration-200 ${
-              isDark 
-                ? 'bg-emerald-500 hover:bg-emerald-400 text-[#06080C] shadow-[0_2px_8px_rgba(16,185,129,0.2)]' 
-                : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_2px_6px_rgba(5,150,105,0.15)]'
-            }`}
+            className="px-5 py-2.5 font-black rounded-xl text-xs flex items-center gap-1.5 transition active:scale-95 bg-emerald-600 text-white shadow-md disabled:opacity-40"
           >
             <Banknote className="w-4 h-4" />
             <span>Pay</span>
@@ -620,7 +636,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
 
       {/* MOBILE TICKET DRAWER MODAL */}
       {mobileCartOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 flex flex-col justify-end bg-black/60 backdrop-blur-md animate-fade-slide-in">
+        <div className="md:hidden fixed inset-0 z-50 flex flex-col justify-end bg-black/60 backdrop-blur-md animate-fade-slide-in">
           <div className={`h-[88vh] w-full rounded-t-[24px] flex flex-col overflow-hidden border-t animate-slide-in-bottom ${
             isDark 
               ? 'bg-[#0A0D12] border-[rgba(48,62,80,0.4)] shadow-[0_-8px_32px_rgba(0,0,0,0.5)]' 
