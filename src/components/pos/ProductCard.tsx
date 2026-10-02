@@ -13,49 +13,49 @@ const getCategoryMeta = (category: string) => {
   const cat = (category || '').toLowerCase();
   if (cat.includes('grain') || cat.includes('provision')) {
     return {
-      badgeClass: 'bg-amber-50 text-amber-700 border-amber-200/80 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/40',
-      iconBg: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+      badgeClass: 'bg-amber-50 text-amber-800 border-amber-200/80 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/40',
+      iconBg: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/25',
       Icon: Package,
     };
   }
   if (cat.includes('beverage') || cat.includes('breakfast')) {
     return {
-      badgeClass: 'bg-sky-50 text-sky-700 border-sky-200/80 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800/40',
-      iconBg: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20',
+      badgeClass: 'bg-stone-100 text-stone-800 border-stone-200 dark:bg-stone-900/60 dark:text-stone-300 dark:border-stone-800',
+      iconBg: 'bg-stone-500/10 text-stone-700 dark:text-stone-400 border-stone-500/25',
       Icon: Coffee,
     };
   }
   if (cat.includes('cooking') || cat.includes('seasoning')) {
     return {
-      badgeClass: 'bg-orange-50 text-orange-700 border-orange-200/80 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/40',
-      iconBg: 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20',
+      badgeClass: 'bg-orange-50 text-orange-800 border-orange-200/80 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/40',
+      iconBg: 'bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-500/25',
       Icon: Flame,
     };
   }
   if (cat.includes('dairy') || cat.includes('frozen')) {
     return {
-      badgeClass: 'bg-teal-50 text-teal-700 border-teal-200/80 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-800/40',
-      iconBg: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20',
+      badgeClass: 'bg-emerald-50 text-emerald-800 border-emerald-200/80 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/40',
+      iconBg: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/25',
       Icon: Snowflake,
     };
   }
   if (cat.includes('snack') || cat.includes('confectionery')) {
     return {
-      badgeClass: 'bg-purple-50 text-purple-700 border-purple-200/80 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800/40',
-      iconBg: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20',
+      badgeClass: 'bg-purple-50 text-purple-800 border-purple-200/80 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800/40',
+      iconBg: 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/25',
       Icon: Sparkles,
     };
   }
   if (cat.includes('pharma') || cat.includes('otc')) {
     return {
-      badgeClass: 'bg-rose-50 text-rose-700 border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/40',
-      iconBg: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20',
+      badgeClass: 'bg-rose-50 text-rose-800 border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/40',
+      iconBg: 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/25',
       Icon: Pill,
     };
   }
   return {
-    badgeClass: 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
-    iconBg: 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20',
+    badgeClass: 'bg-stone-100 text-stone-800 border-stone-200 dark:bg-stone-800 dark:text-stone-300 dark:border-stone-700',
+    iconBg: 'bg-stone-500/10 text-stone-700 dark:text-stone-400 border-stone-500/25',
     Icon: Package,
   };
 };
@@ -84,7 +84,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     <div
       onClick={handleCardClick}
       className={`pos-card group relative flex flex-col justify-between p-3.5 sm:p-4 select-none text-left min-h-[160px] cursor-pointer ${
-        justAdded ? 'ring-2 ring-emerald-500 ring-offset-2 scale-[0.985]' : ''
+        justAdded ? 'ring-2 ring-amber-500 ring-offset-2 scale-[0.985]' : ''
       } ${
         isOutOfStock ? 'opacity-40 pointer-events-none grayscale' : ''
       }`}
@@ -107,12 +107,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 Out of Stock
               </span>
             ) : isLowStock ? (
-              <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/50 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/50 px-2 py-0.5 rounded-full flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
                 {product.currentStock} left
               </span>
             ) : (
-              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 tabular-nums">
+              <span className="text-[11px] font-medium text-stone-500 dark:text-stone-400 tabular-nums">
                 {product.currentStock} in stock
               </span>
             )}
@@ -120,25 +120,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         </div>
 
         {/* Product Title */}
-        <h4 className="font-semibold text-[13.5px] sm:text-[14px] leading-snug line-clamp-2 text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+        <h4 className="font-semibold text-[13.5px] sm:text-[14px] leading-snug line-clamp-2 text-stone-900 dark:text-stone-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
           {product.name}
         </h4>
 
         {/* Localized / Variant Subtitle */}
         {product.localName && (
-          <p className="text-[11.5px] text-slate-500 dark:text-slate-400 mt-0.5 truncate font-normal">
+          <p className="text-[11.5px] text-stone-500 dark:text-stone-400 mt-0.5 truncate font-normal">
             {product.localName}
           </p>
         )}
       </div>
 
       {/* Bottom Row: Price & Modern Add Trigger */}
-      <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
+      <div className="mt-3 pt-2.5 border-t border-stone-100 dark:border-[#282B34] flex items-center justify-between gap-2">
         <div>
-          <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-400 block">
+          <span className="text-[10px] uppercase font-semibold tracking-wider text-stone-400 dark:text-stone-500 block">
             Price
           </span>
-          <span className="text-[17px] font-bold tracking-tight text-slate-900 dark:text-white tabular-nums">
+          <span className="text-[17px] font-bold tracking-tight text-stone-900 dark:text-amber-400 tabular-nums">
             {formatGhs(product.retailPrice)}
           </span>
         </div>
@@ -157,7 +157,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
               {showUomMenu && (
                 <div className="pos-card absolute bottom-full right-0 mb-2 z-30 w-52 p-1.5 text-xs space-y-1 shadow-lg">
-                  <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  <div className="px-2 py-1 text-[10px] font-bold text-stone-400 uppercase tracking-wider">
                     Package Sizes:
                   </div>
                   {product.uomOptions.map(uom => (
@@ -171,7 +171,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                       className="neo-list-item-hover w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex justify-between items-center"
                     >
                       <span className="truncate">{uom.name}</span>
-                      <span className="font-bold text-emerald-600 dark:text-emerald-400 ml-2 tabular-nums">
+                      <span className="font-bold text-amber-600 dark:text-amber-400 ml-2 tabular-nums">
                         {formatGhs(uom.price)}
                       </span>
                     </button>
@@ -189,11 +189,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               e.stopPropagation();
               handleCardClick();
             }}
-            className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs transition-all bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-emerald-500 dark:hover:text-slate-950 active:scale-90"
+            className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs transition-all bg-stone-100 hover:bg-amber-600 hover:text-white text-stone-700 dark:bg-[#20232B] dark:text-amber-300 dark:hover:bg-amber-500 dark:hover:text-stone-950 active:scale-90"
             title="Add to Ticket"
           >
             {justAdded ? (
-              <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" strokeWidth={3} />
+              <Check className="w-4 h-4 text-amber-600 dark:text-amber-400" strokeWidth={3} />
             ) : (
               <Plus className="w-4 h-4" strokeWidth={2.5} />
             )}

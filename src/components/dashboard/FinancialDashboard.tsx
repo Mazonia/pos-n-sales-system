@@ -333,11 +333,11 @@ const BASE_7DAY_TREND: DayDrillDownData[] = [
 
 // Baseline Category Sales
 const CATEGORY_COLORS = [
-  '#10B981', // Alpine Emerald
   '#F59E0B', // Warm Amber
-  '#06B6D4', // Deep Cyan
-  '#6366F1', // Indigo Slate
-  '#EC4899', // Berry Rose
+  '#D97706', // Burnt Amber
+  '#78716C', // Warm Stone
+  '#A1A1AA', // Ash Charcoal
+  '#EA580C', // Terracotta
   '#8B5CF6', // Royal Purple
 ];
 
@@ -772,7 +772,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
           {/* Filter 3: Category Segment Filter */}
           <div className="flex items-center gap-1.5">
             <span className="text-[11px] font-mono text-[#8A99A8] flex items-center gap-1">
-              <Layers className="w-3.5 h-3.5 text-cyan-500" />
+              <Layers className="w-3.5 h-3.5 text-amber-500" />
               <span>Category:</span>
             </span>
             <select
@@ -795,7 +795,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
           {/* Filter 4: Branch Scope */}
           <div className="flex items-center gap-1.5">
             <span className="text-[11px] font-mono text-[#8A99A8] flex items-center gap-1">
-              <Building className="w-3.5 h-3.5 text-indigo-400" />
+              <Building className="w-3.5 h-3.5 text-stone-400" />
               <span>Branch Scope:</span>
             </span>
             <select
@@ -878,11 +878,11 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
           }`}>
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[11px] font-mono uppercase tracking-wider text-[#8A99A8]">Physical Cash Till</span>
-              <div className="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-stone-500/10 text-stone-300 dark:text-stone-300 flex items-center justify-center">
                 <Banknote className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-lg sm:text-xl font-black font-mono tabular-nums text-cyan-400">
+            <div className="text-lg sm:text-xl font-black font-mono tabular-nums text-stone-900 dark:text-stone-100">
               {formatGhs(totalCash)}
             </div>
             <div className="text-[10px] text-[#8A99A8] font-mono mt-1">
@@ -896,11 +896,11 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
           }`}>
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[11px] font-mono uppercase tracking-wider text-[#8A99A8]">GRA Levies & VAT</span>
-              <div className="w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-amber-600/10 text-amber-500 flex items-center justify-center">
                 <Landmark className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-lg sm:text-xl font-black font-mono tabular-nums text-indigo-400">
+            <div className="text-lg sm:text-xl font-black font-mono tabular-nums text-amber-500 dark:text-amber-400">
               {formatGhs(totalTax)}
             </div>
             <div className="text-[10px] text-[#8A99A8] font-mono mt-1">
@@ -1188,9 +1188,9 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                         type="monotone"
                         dataKey="cash"
                         name="Physical Cash"
-                        stroke="#06B6D4"
+                        stroke="#A1A1AA"
                         strokeWidth={2}
-                        dot={{ r: 3, fill: '#06B6D4' }}
+                        dot={{ r: 3, fill: '#A1A1AA' }}
                       />
                     )}
                   </LineChart>
@@ -1499,9 +1499,9 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                       {activeDataset.map(row => (
                         <tr key={row.day} className="hover:bg-white/[0.01]">
                           <td className="p-2.5 font-bold font-sans">{row.day}</td>
-                          <td className="p-2.5 text-right font-bold text-emerald-400">{formatGhs(row.revenue)}</td>
+                          <td className="p-2.5 text-right font-bold text-amber-500">{formatGhs(row.revenue)}</td>
                           <td className="p-2.5 text-right text-amber-400">{formatGhs(row.momoMtn + row.momoTelecel)}</td>
-                          <td className="p-2.5 text-right text-cyan-400">{formatGhs(row.cash)}</td>
+                          <td className="p-2.5 text-right font-mono text-stone-700 dark:text-stone-300">{formatGhs(row.cash)}</td>
                           <td className="p-2.5 text-right text-rose-400">{formatGhs(row.refunds)}</td>
                           <td className={`p-2.5 text-right font-bold ${row.cashierVariance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                             {row.cashierVariance >= 0 ? `+${formatGhs(row.cashierVariance)}` : formatGhs(row.cashierVariance)}

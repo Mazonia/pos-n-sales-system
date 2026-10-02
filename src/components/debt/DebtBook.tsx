@@ -54,7 +54,7 @@ export function getLoyaltyTier(points: number): {
   }
   if (points >= 750) {
     return {
-      name: 'Gold Elite',
+      name: 'Amber Elite',
       color: '#F59E0B',
       badgeClass: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
       min: 750,
@@ -65,17 +65,17 @@ export function getLoyaltyTier(points: number): {
   if (points >= 250) {
     return {
       name: 'Silver Member',
-      color: '#38BDF8',
-      badgeClass: 'bg-sky-500/15 text-sky-400 border-sky-500/30',
+      color: '#A1A1AA',
+      badgeClass: 'bg-stone-500/15 text-stone-300 border-stone-500/30',
       min: 250,
-      nextTier: 'Gold Elite',
+      nextTier: 'Amber Elite',
       nextThreshold: 750,
     };
   }
   return {
     name: 'Bronze Club',
-    color: '#10B981',
-    badgeClass: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+    color: '#D97706',
+    badgeClass: 'bg-amber-700/15 text-amber-600 dark:text-amber-500 border-amber-700/30',
     min: 0,
     nextTier: 'Silver Member',
     nextThreshold: 250,

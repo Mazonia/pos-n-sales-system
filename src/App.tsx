@@ -362,14 +362,14 @@ export default function App() {
 
   return (
     <div className={`flex flex-col h-screen w-screen overflow-hidden select-none transition-colors duration-200 ${
-      isDark ? 'bg-[#0A0F1D] text-slate-100' : 'bg-[#F4F6F8] text-slate-900'
+      isDark ? 'bg-[#121316] text-[#F4F4F6]' : 'bg-[#F5F5F7] text-stone-900'
     }`}>
       
       {/* ═══ CLEAN UNCLUTTERED TOP NAVIGATION BAR ═══ */}
       <header className={`h-14 border-b flex items-center justify-between px-3 sm:px-6 shrink-0 z-40 transition-colors ${
         isDark 
-          ? 'border-slate-800 bg-[#131A2A]' 
-          : 'border-slate-200/90 bg-white shadow-2xs'
+          ? 'border-[#282B34] bg-[#1A1C22]' 
+          : 'border-stone-200/90 bg-white shadow-2xs'
       }`}>
         
         {/* Left: Brand Identity */}
@@ -377,7 +377,7 @@ export default function App() {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={`lg:hidden p-2 rounded-xl border transition active:scale-95 ${
-              isDark ? 'border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800' : 'border-slate-200 text-slate-600 hover:text-black hover:bg-slate-100'
+              isDark ? 'border-[#282B34] text-stone-300 hover:text-white hover:bg-[#232630]' : 'border-stone-200 text-stone-600 hover:text-black hover:bg-stone-100'
             }`}
             title="Open Menu"
           >
@@ -385,14 +385,14 @@ export default function App() {
           </button>
 
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-xs tracking-tight">
+            <div className="w-8 h-8 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center font-black text-xs shadow-xs tracking-tight">
               AK
             </div>
             <div>
-              <div className="font-bold text-sm tracking-tight text-slate-900 dark:text-white">
+              <div className="font-bold text-sm tracking-tight text-stone-900 dark:text-stone-100">
                 Akwaaba POS
               </div>
-              <div className="text-[11px] text-slate-400 font-medium truncate max-w-[140px] sm:max-w-[200px]">
+              <div className="text-[11px] text-stone-400 font-medium truncate max-w-[140px] sm:max-w-[200px]">
                 {branchName}
               </div>
             </div>
@@ -402,8 +402,8 @@ export default function App() {
         {/* Center: Clean Segmented Navigation (Desktop >= 1024px) */}
         <nav className={`hidden lg:flex items-center gap-1 p-1 rounded-xl border ${
           isDark 
-            ? 'bg-slate-900/80 border-slate-800' 
-            : 'bg-slate-100 border-slate-200/80'
+            ? 'bg-[#141519] border-[#282B34]' 
+            : 'bg-stone-100 border-stone-200/80'
         }`}>
           {navTabs.map(tab => {
             const Icon = tab.icon;
@@ -414,17 +414,17 @@ export default function App() {
                 onClick={() => handleTabChange(tab.id)}
                 className={`px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition active:scale-95 cursor-pointer ${
                   isActive
-                    ? 'bg-slate-900 text-white dark:bg-emerald-600 dark:text-white shadow-xs font-bold'
+                    ? 'bg-stone-900 text-white dark:bg-amber-500 dark:text-stone-950 shadow-xs font-bold'
                     : isDark
-                    ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
-                    : 'text-slate-600 hover:text-slate-950 hover:bg-white/80'
+                    ? 'text-stone-400 hover:text-stone-200 hover:bg-[#20232B]'
+                    : 'text-stone-600 hover:text-stone-950 hover:bg-white/80'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" strokeWidth={isActive ? 2.2 : 1.8} />
                 <span>{tab.label}</span>
                 {tab.badge && (
                   <span className={`min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center tabular-nums ${
-                    isActive ? 'bg-white/20 text-white' : 'bg-amber-500 text-slate-950'
+                    isActive ? 'bg-white/20 text-white dark:bg-stone-950/20 dark:text-stone-950' : 'bg-amber-500 text-stone-950'
                   }`}>
                     {tab.badge}
                   </span>
@@ -443,21 +443,21 @@ export default function App() {
               onClick={() => setShowShiftModal(true)}
               className={`px-2.5 py-1.5 rounded-xl border text-xs font-medium flex items-center gap-2 transition-all active:scale-95 cursor-pointer ${
                 isDark
-                  ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15'
-                  : 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                  ? 'border-amber-500/20 bg-amber-500/10 text-amber-400 hover:bg-amber-500/15'
+                  : 'border-stone-200 bg-stone-100 text-stone-700 hover:bg-stone-200/80'
               }`}
               title="Till status and cash drops"
             >
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-60"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
               </span>
               <span className="hidden sm:inline font-semibold">Till Active</span>
             </button>
           ) : (
             <button
               onClick={() => setShowOpenShiftPrompt(true)}
-              className="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition active:scale-95 shadow-xs"
+              className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-stone-950 transition active:scale-95 shadow-xs"
             >
               Open Shift
             </button>
@@ -471,8 +471,8 @@ export default function App() {
             }}
             className={`p-2 rounded-xl border transition-all duration-200 active:scale-90 cursor-pointer ${
               isDark
-                ? 'border-slate-800 text-amber-400 hover:bg-slate-800'
-                : 'border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-slate-800'
+                ? 'border-[#282B34] text-amber-400 hover:bg-[#20232B]'
+                : 'border-stone-200 text-stone-600 hover:bg-stone-100 hover:text-stone-900'
             }`}
             title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
           >
@@ -485,40 +485,40 @@ export default function App() {
               onClick={() => setUserMenuOpen(!userMenuOpen)}
               className={`flex items-center gap-2 p-1 sm:pr-2.5 sm:pl-1 rounded-xl border transition-all active:scale-95 cursor-pointer ${
                 isDark
-                  ? 'border-slate-800 bg-[#162034] text-slate-200 hover:bg-[#1E2B45]'
-                  : 'border-slate-200 bg-white text-slate-800 hover:bg-slate-50 shadow-2xs'
+                  ? 'border-[#282B34] bg-[#1A1C22] text-stone-200 hover:bg-[#232630]'
+                  : 'border-stone-200 bg-white text-stone-800 hover:bg-stone-50 shadow-2xs'
               }`}
             >
               <div
-                className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs text-slate-950 font-mono shadow-xs"
-                style={{ backgroundColor: currentUser.avatarColor || '#10B981' }}
+                className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs text-stone-950 font-mono shadow-xs"
+                style={{ backgroundColor: currentUser.avatarColor || '#F59E0B' }}
               >
                 {currentUser.fullName.split(' ').map(n => n[0]).join('')}
               </div>
               <span className="font-semibold text-xs hidden sm:inline max-w-[85px] truncate">
                 {currentUser.fullName.split(' ')[0]}
               </span>
-              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-3.5 h-3.5 text-stone-400 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {/* User Details & Logout Dropdown */}
             {userMenuOpen && (
               <div className={`absolute right-0 top-full mt-2 w-72 rounded-2xl p-3 z-50 text-xs border shadow-xl animate-expand-in ${
                 isDark 
-                  ? 'bg-[#131A2A] border-slate-800 text-slate-200' 
-                  : 'bg-white border-slate-200 text-slate-800'
+                  ? 'bg-[#1A1C22] border-[#282B34] text-stone-200' 
+                  : 'bg-white border-stone-200 text-stone-800'
               }`}>
                 {/* User Identity Info */}
-                <div className={`p-3 rounded-xl mb-2.5 ${isDark ? 'bg-[#0E1422]' : 'bg-slate-50'}`}>
+                <div className={`p-3 rounded-xl mb-2.5 ${isDark ? 'bg-[#141519]' : 'bg-stone-50'}`}>
                   <div className="font-bold text-sm flex items-center gap-2">
                     <span>{currentUser.fullName}</span>
-                    <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                    <ShieldCheck className="w-4 h-4 text-amber-500" />
                   </div>
-                  <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">
+                  <div className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold mt-0.5">
                     {currentUser.role}
                   </div>
-                  <div className="text-[10px] text-slate-400 mt-1 flex items-center gap-1.5">
-                    <span className={`w-2 h-2 rounded-full ${isOnline ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                  <div className="text-[10px] text-stone-400 mt-1 flex items-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${isOnline ? 'bg-amber-500' : 'bg-stone-500'}`} />
                     <span>{isOnline ? 'Connected (Cloud Synced)' : 'Offline (Local Dexie Mode)'}</span>
                   </div>
                 </div>
@@ -533,15 +533,15 @@ export default function App() {
                     }}
                     className={`w-full text-left p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between mb-2 transition-all border active:scale-[0.98] ${
                       isDark
-                        ? 'bg-purple-950/40 border-purple-800/40 text-purple-300 hover:bg-purple-900/40'
-                        : 'bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100'
+                        ? 'bg-[#20232B] border-[#282B34] text-amber-300 hover:bg-[#282B34]'
+                        : 'bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <UserPlus className="w-3.5 h-3.5" />
                       <span>Manage Employees</span>
                     </div>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 dark:text-purple-300">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300">
                       Admin
                     </span>
                   </button>
@@ -549,7 +549,7 @@ export default function App() {
 
                 {/* Switch User Helper */}
                 <div className="space-y-1 mb-2.5">
-                  <div className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 text-slate-400">
+                  <div className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 text-stone-400">
                     Switch Active Cashier:
                   </div>
                   {systemUsersList.filter(u => u.id !== currentUser.id).slice(0, 5).map(u => (
@@ -561,11 +561,11 @@ export default function App() {
                         setUserMenuOpen(false);
                       }}
                       className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between transition-all ${
-                        isDark ? 'hover:bg-slate-800 text-slate-300' : 'hover:bg-slate-100 text-slate-700'
+                        isDark ? 'hover:bg-[#232630] text-stone-300' : 'hover:bg-stone-100 text-stone-700'
                       }`}
                     >
                       <span className="truncate">{u.fullName}</span>
-                      <span className="text-[10px] text-slate-400">{u.role.split('_')[0]}</span>
+                      <span className="text-[10px] text-stone-400">{u.role.split('_')[0]}</span>
                     </button>
                   ))}
                 </div>
@@ -576,8 +576,8 @@ export default function App() {
                   onClick={handleLogout}
                   className={`w-full py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
                     isDark 
-                      ? 'bg-rose-950/40 hover:bg-rose-900/40 text-rose-400 border border-rose-800/40' 
-                      : 'bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200'
+                      ? 'bg-rose-950/30 hover:bg-rose-900/40 text-rose-400 border border-rose-900/40' 
+                      : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'
                   }`}
                 >
                   <LogOut className="w-3.5 h-3.5" />
@@ -594,8 +594,8 @@ export default function App() {
       {mobileMenuOpen && (
         <div className={`lg:hidden p-3 border-b space-y-1 animate-slide-in-top z-40 ${
           isDark 
-            ? 'bg-[#131A2A]/95 backdrop-blur-md border-slate-800' 
-            : 'bg-white/95 backdrop-blur-md border-slate-200 shadow-md'
+            ? 'bg-[#1A1C22]/95 backdrop-blur-md border-[#282B34]' 
+            : 'bg-white/95 backdrop-blur-md border-stone-200 shadow-md'
         }`}>
           {navTabs.map((item) => {
             const Icon = item.icon;
@@ -609,10 +609,10 @@ export default function App() {
                 }}
                 className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-between transition-all ${
                   isActive
-                    ? 'bg-emerald-600 text-white font-bold shadow-xs'
+                    ? 'bg-amber-500 text-stone-950 font-bold shadow-xs'
                     : isDark
-                    ? 'text-slate-300 hover:text-white hover:bg-slate-800'
-                    : 'text-slate-700 hover:text-slate-950 hover:bg-slate-100'
+                    ? 'text-stone-300 hover:text-white hover:bg-[#232630]'
+                    : 'text-stone-700 hover:text-stone-950 hover:bg-stone-100'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
@@ -621,7 +621,7 @@ export default function App() {
                 </div>
                 {item.badge && (
                   <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] tabular-nums ${
-                    isActive ? 'bg-white/20 text-white' : 'bg-amber-500 text-slate-950'
+                    isActive ? 'bg-stone-950/20 text-stone-950' : 'bg-amber-500 text-stone-950'
                   }`}>
                     {item.badge}
                   </span>
@@ -636,8 +636,8 @@ export default function App() {
       {syncToast && (
         <div className={`flex items-center justify-center gap-2 py-2 px-4 text-xs font-bold animate-slide-in-top ${
           isDark 
-            ? 'bg-emerald-500 text-[#06080C]' 
-            : 'bg-emerald-600 text-white'
+            ? 'bg-amber-500 text-stone-950' 
+            : 'bg-amber-600 text-white'
         }`}>
           <CheckCircle2 className="w-4 h-4" />
           <span>{syncToast}</span>
@@ -753,34 +753,34 @@ export default function App() {
       {/* PROMPT OPEN NEW SHIFT */}
       {showOpenShiftPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-fade-slide-in">
-          <form onSubmit={handleOpenNewShift} className={`w-full max-w-sm rounded-[22px] border p-6 space-y-5 animate-scale-in ${
+          <form onSubmit={handleOpenNewShift} className={`w-full max-w-sm rounded-2xl border p-6 space-y-5 animate-scale-in ${
             isDark 
-              ? 'bg-[#0D1117] border-[rgba(48,62,80,0.5)] shadow-[0_16px_48px_rgba(0,0,0,0.5)]' 
-              : 'bg-white border-[rgba(209,215,224,0.5)] shadow-[0_16px_40px_rgba(0,0,0,0.1)]'
+              ? 'bg-[#1A1C22] border-[#282B34] text-stone-100 shadow-2xl' 
+              : 'bg-white border-stone-200 text-stone-900 shadow-xl'
           }`}>
-            <h3 className={`font-bold text-sm flex items-center gap-2.5 ${isDark ? 'text-white' : 'text-[#0F172A]'}`}>
-              <div className={`w-8 h-8 rounded-[10px] flex items-center justify-center ${
-                isDark ? 'bg-emerald-500/10 text-emerald-400' : 'bg-emerald-50 text-emerald-600'
+            <h3 className={`font-bold text-sm flex items-center gap-2.5 ${isDark ? 'text-white' : 'text-stone-900'}`}>
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                isDark ? 'bg-amber-500/15 text-amber-400' : 'bg-amber-50 text-amber-700'
               }`}>
                 <DollarSign className="w-4 h-4" />
               </div>
               <span>Open New Cashier Till Shift</span>
             </h3>
-            <p className="text-xs text-[#8B9DB5]">
-              Assigned Cashier: <span className="font-semibold text-emerald-500">{currentUser.fullName}</span>
+            <p className="text-xs text-stone-400">
+              Assigned Cashier: <span className="font-semibold text-amber-500">{currentUser.fullName}</span>
             </p>
 
             <div>
-              <label className="text-[11px] text-[#8B9DB5] font-medium block mb-1.5">Opening Cash Float (GH₵):</label>
+              <label className="text-[11px] text-stone-400 font-medium block mb-1.5">Opening Cash Float (GH₵):</label>
               <input
                 type="number"
                 step="1"
                 value={openingFloatInput || ''}
                 onChange={e => setOpeningFloatInput(parseFloat(e.target.value) || 0)}
-                className={`w-full px-4 py-2.5 rounded-[12px] font-mono tabular-nums text-sm outline-none border transition-all duration-200 focus:ring-2 focus:ring-emerald-500/30 ${
+                className={`w-full px-4 py-2.5 rounded-xl font-mono tabular-nums text-sm outline-none border transition-all duration-200 focus:ring-2 focus:ring-amber-500/30 ${
                   isDark 
-                    ? 'bg-[#151B23] border-[rgba(48,62,80,0.5)] text-white focus:border-emerald-500' 
-                    : 'bg-[#F6F8FA] border-[rgba(209,215,224,0.5)] text-[#0F172A] focus:border-emerald-500'
+                    ? 'bg-[#141519] border-[#282B34] text-white focus:border-amber-500' 
+                    : 'bg-stone-50 border-stone-200 text-stone-900 focus:border-amber-500'
                 }`}
               />
             </div>
@@ -789,20 +789,20 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setShowOpenShiftPrompt(false)}
-                className={`flex-1 py-2.5 rounded-[12px] text-xs font-semibold border transition-all duration-200 active:scale-[0.97] ${
+                className={`flex-1 py-2.5 rounded-xl text-xs font-semibold border transition-all duration-200 active:scale-[0.97] ${
                   isDark 
-                    ? 'border-[rgba(48,62,80,0.5)] text-[#8B9DB5] hover:text-white hover:bg-[#1C2333]' 
-                    : 'border-[rgba(209,215,224,0.5)] text-[#64748B] hover:text-[#0F172A] hover:bg-[#F0F2F5]'
+                    ? 'border-[#282B34] text-stone-400 hover:text-white hover:bg-[#232630]' 
+                    : 'border-stone-200 text-stone-600 hover:text-stone-900 hover:bg-stone-100'
                 }`}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className={`flex-1 py-2.5 font-bold rounded-[12px] text-xs transition-all duration-200 active:scale-[0.97] ${
+                className={`flex-1 py-2.5 font-bold rounded-xl text-xs transition-all duration-200 active:scale-[0.97] ${
                   isDark
-                    ? 'bg-emerald-500 hover:bg-emerald-400 text-[#06080C] shadow-[0_2px_8px_rgba(16,185,129,0.2)]'
-                    : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_2px_6px_rgba(5,150,105,0.15)]'
+                    ? 'bg-amber-500 hover:bg-amber-400 text-stone-950 shadow-md'
+                    : 'bg-amber-600 hover:bg-amber-500 text-white shadow-sm'
                 }`}
               >
                 Start Shift

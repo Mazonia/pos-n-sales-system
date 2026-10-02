@@ -543,7 +543,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
             isDark ? 'bg-[#090B0E]/50 border-[#242D37]' : 'bg-slate-50 border-[#E2E5E9]'
           }`}>
             <h4 className="font-bold text-[11px] uppercase tracking-wider text-[#8A99A8] flex items-center gap-1.5">
-              <Truck className="w-3.5 h-3.5 text-blue-400" />
+              <Truck className="w-3.5 h-3.5 text-amber-400" />
               <span>Supplier, Lot & Expiry Batch Data</span>
             </h4>
 

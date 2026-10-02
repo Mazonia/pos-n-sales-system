@@ -44,13 +44,13 @@ interface EmployeeManagementViewProps {
 }
 
 const AVATAR_COLORS = [
-  '#10B981', // Emerald (Cashier)
   '#F59E0B', // Amber (Manager)
+  '#D97706', // Burnt Amber
   '#8B5CF6', // Purple (General Manager)
-  '#6366F1', // Indigo (Super Admin)
+  '#78716C', // Warm Stone
   '#EC4899', // Pink (Inventory)
-  '#06B6D4', // Cyan (Auditor)
-  '#3B82F6', // Blue
+  '#EA580C', // Terracotta
+  '#10B981', // Emerald (Cashier)
   '#14B8A6', // Teal
 ];
 
@@ -252,11 +252,11 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
 
   const handleRoleChange = (newRole: SystemUser['role']) => {
     let color = '#10B981';
-    if (newRole === 'SUPER_ADMIN') color = '#6366F1';
+    if (newRole === 'SUPER_ADMIN') color = '#F59E0B';
     else if (newRole === 'GENERAL_MANAGER') color = '#8B5CF6';
-    else if (newRole === 'BRANCH_MANAGER') color = '#F59E0B';
+    else if (newRole === 'BRANCH_MANAGER') color = '#D97706';
     else if (newRole === 'INVENTORY_OFFICER') color = '#EC4899';
-    else if (newRole === 'AUDITOR') color = '#06B6D4';
+    else if (newRole === 'AUDITOR') color = '#78716C';
 
     const cleanName = formData.fullName.toLowerCase().replace(/[^a-z0-9]/g, '');
     const suggestedUsername = cleanName
@@ -395,7 +395,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
       case 'SUPER_ADMIN':
         return {
           label: 'Super Admin',
-          color: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30',
+          color: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
         };
       case 'GENERAL_MANAGER':
         return {
@@ -410,7 +410,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
       case 'CASHIER':
         return {
           label: 'Cashier / Till',
-          color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+          color: 'bg-stone-500/15 text-stone-300 border-stone-500/30',
         };
       case 'INVENTORY_OFFICER':
         return {
@@ -420,7 +420,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
       case 'AUDITOR':
         return {
           label: 'Tax Auditor',
-          color: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
+          color: 'bg-stone-500/15 text-stone-300 border-stone-500/30',
         };
       default:
         return {
@@ -539,7 +539,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
 
         <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'}`}>
           <div className="text-[10px] text-[#8A99A8] font-bold uppercase tracking-wider">Super Admins</div>
-          <div className="text-lg font-black font-mono mt-0.5 text-indigo-400">
+          <div className="text-lg font-black font-mono mt-0.5 text-amber-400">
             {users.filter(u => u.role === 'SUPER_ADMIN').length}
           </div>
         </div>

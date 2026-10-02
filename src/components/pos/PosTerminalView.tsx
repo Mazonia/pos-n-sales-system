@@ -481,9 +481,9 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
 
             {/* Scanner Status */}
             <div className={`hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold shrink-0 ${
-              isDark ? 'border-slate-800 bg-slate-900 text-slate-300' : 'border-slate-200 bg-slate-50 text-slate-700'
+              isDark ? 'border-[#282B34] bg-[#1A1C22] text-stone-300' : 'border-stone-200 bg-stone-50 text-stone-700'
             }`}>
-              <Barcode className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <Barcode className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               <span>Scanner Ready</span>
             </div>
           </div>
@@ -502,19 +502,19 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-3.5 py-1.5 rounded-full whitespace-nowrap text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 cursor-pointer ${
                     isActive
-                      ? 'bg-slate-900 text-white dark:bg-emerald-500 dark:text-slate-950 shadow-xs font-bold'
+                      ? 'bg-stone-900 text-white dark:bg-amber-500 dark:text-stone-950 shadow-xs font-bold'
                       : isDark
-                      ? 'bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700/60'
-                      : 'bg-white text-slate-600 hover:text-slate-950 hover:bg-slate-100 border border-slate-200/80'
+                      ? 'bg-[#1A1C22] text-stone-300 hover:text-white hover:bg-[#252833] border border-[#282B34]'
+                      : 'bg-white text-stone-600 hover:text-stone-950 hover:bg-stone-100 border border-stone-200'
                   }`}
                 >
                   <span>{cat}</span>
                   <span className={`text-[10.5px] px-1.5 py-0.2 rounded-full tabular-nums font-medium ${
                     isActive
-                      ? isDark ? 'bg-slate-950/20 text-slate-950 font-bold' : 'bg-white/20 text-white'
+                      ? isDark ? 'bg-stone-950/20 text-stone-950 font-bold' : 'bg-white/20 text-white'
                       : isDark
-                      ? 'bg-slate-900/60 text-slate-400'
-                      : 'bg-slate-100 text-slate-500'
+                      ? 'bg-[#121316] text-stone-400'
+                      : 'bg-stone-100 text-stone-500'
                   }`}>
                     {count}
                   </span>
@@ -525,15 +525,15 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
         </div>
 
         {/* Product Grid */}
-        <div className="flex-1 p-4 sm:p-5 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-3.5 content-start pb-24 md:pb-6">
+        <div className="flex-1 p-4 sm:p-5 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-3.5 content-start pb-24 md:pb-6 bg-[#F5F5F7] dark:bg-[#121316]">
           {filteredProducts.length === 0 ? (
-            <div className="col-span-full py-16 text-center text-slate-400 space-y-2">
+            <div className="col-span-full py-16 text-center text-stone-400 space-y-2">
               <p className="text-sm font-bold">No products found</p>
               <p className="text-xs">Try searching for a different keyword or SKU.</p>
               <button
                 type="button"
                 onClick={() => { setSearchQuery(''); setSelectedCategory('ALL'); }}
-                className="text-xs text-emerald-600 font-bold hover:underline"
+                className="text-xs text-amber-600 dark:text-amber-400 font-bold hover:underline"
               >
                 Clear all filters
               </button>
@@ -551,8 +551,8 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
         </div>
 
         {/* Keyboard Shortcut Bar */}
-        <div className={`hidden sm:flex items-center justify-between px-4 py-2 border-t text-[11px] font-mono shrink-0 select-none ${
-          isDark ? 'border-slate-800 bg-[#101622] text-slate-400' : 'border-slate-200 bg-slate-50 text-slate-500'
+        <div className={`hidden sm:flex items-center justify-between px-4 py-2 border-t text-[11.5px] tabular-nums shrink-0 select-none ${
+          isDark ? 'border-[#282B34] bg-[#16181F] text-stone-400' : 'border-stone-200 bg-stone-50 text-stone-500'
         }`}>
           <div className="flex items-center gap-4">
             {[
@@ -563,14 +563,14 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
             ].map(s => (
               <span key={s.key} className="flex items-center gap-1.5">
                 <kbd className={`px-1.5 py-0.5 rounded font-bold text-[10px] ${
-                  isDark ? 'bg-slate-800 text-emerald-400 border border-slate-700' : 'bg-white text-emerald-700 border border-slate-300 shadow-2xs'
+                  isDark ? 'bg-[#1F222B] text-amber-400 border border-[#2D313C]' : 'bg-white text-amber-800 border border-stone-300 shadow-2xs'
                 }`}>{s.key}</kbd>
                 <span>{s.label}</span>
               </span>
             ))}
           </div>
           <div className="text-xs font-sans">
-            Cashier: <strong className="text-emerald-600 dark:text-emerald-400">{cashierName.split(' ')[0]}</strong>
+            Cashier: <strong className="text-amber-600 dark:text-amber-400 font-bold">{cashierName.split(' ')[0]}</strong>
           </div>
         </div>
 

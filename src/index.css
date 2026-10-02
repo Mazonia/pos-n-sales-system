@@ -3,34 +3,34 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Modern Clean POS Color Tokens (Square / Shopify POS inspired) */
-  --pos-canvas: #F4F6F8;
+  /* Modern Clean Light Theme: Warm Alabaster, Deep Charcoal & Rich Burnt Amber */
+  --pos-canvas: #F5F5F7;
   --pos-card: #FFFFFF;
-  --pos-card-border: #E2E8F0;
-  --pos-card-hover: #F8FAFC;
-  --pos-text-main: #0F172A;
-  --pos-text-muted: #64748B;
-  --pos-text-subtle: #94A3B8;
-  --pos-accent: #059669;
-  --pos-accent-hover: #047857;
+  --pos-card-border: #E4E4E7;
+  --pos-card-hover: #FAFAFA;
+  --pos-text-main: #18181B;
+  --pos-text-muted: #71717A;
+  --pos-text-subtle: #A1A1AA;
+  --pos-accent: #D97706;
+  --pos-accent-hover: #B45309;
 }
 
 .theme-dark, .dark {
-  /* Modern Clean POS Dark Tokens */
-  --pos-canvas: #0A0F1D;
-  --pos-card: #131A2A;
-  --pos-card-border: #1E293B;
-  --pos-card-hover: #192238;
-  --pos-text-main: #F8FAFC;
-  --pos-text-muted: #94A3B8;
-  --pos-text-subtle: #64748B;
-  --pos-accent: #10B981;
-  --pos-accent-hover: #059669;
+  /* Dark Theme: Pure Ashy Charcoal & Glowing Amber */
+  --pos-canvas: #121316;
+  --pos-card: #1A1C22;
+  --pos-card-border: #282B34;
+  --pos-card-hover: #22252E;
+  --pos-text-main: #F4F4F6;
+  --pos-text-muted: #9CA3AF;
+  --pos-text-subtle: #6B7280;
+  --pos-accent: #F59E0B;
+  --pos-accent-hover: #D97706;
 }
 
 @layer base {
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: var(--pos-canvas);
     color: var(--pos-text-main);
     letter-spacing: -0.011em;
@@ -52,7 +52,7 @@
     -webkit-tap-highlight-color: transparent;
   }
   
-  /* Modern Banking/Retail Tabular Typography for Prices & Figures (No ugly coder monospace) */
+  /* Modern Banking/Retail Tabular Typography for Prices & Figures (Inter Tabular Figures) */
   .font-mono, .tabular-nums, [data-num] {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     font-feature-settings: "cv02" 1, "cv03" 1, "cv04" 1, "cv11" 1, "tnum" 1;
@@ -60,13 +60,13 @@
   }
 
   ::selection {
-    background: rgba(5, 150, 105, 0.2);
+    background: rgba(217, 119, 6, 0.25);
     color: inherit;
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+    scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
   }
 
   ::-webkit-scrollbar {
@@ -75,13 +75,13 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: rgba(148, 163, 184, 0.3);
+    background-color: rgba(156, 163, 175, 0.3);
     border-radius: 9999px;
   }
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   MODERN POS DESIGN SYSTEM UTILITIES (Square / Shopify POS standard)
+   RETAIL POS DESIGN SYSTEM (Ashy Charcoal & Amber Palette)
    ══════════════════════════════════════════════════════════════════════ */
 
 /* Clean Canvas */
@@ -89,134 +89,149 @@
   background-color: var(--pos-canvas) !important;
 }
 
-/* Crisp Clean Product / Container Card */
+/* Crisp Clean Card */
 .pos-card, .neo-card {
   background-color: var(--pos-card) !important;
+  color: var(--pos-text-main);
   border: 1px solid var(--pos-card-border) !important;
   border-radius: 1rem;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04), 0 1px 1px -1px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pos-card:hover, .neo-card:hover {
-  border-color: #CBD5E1 !important;
-  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+  border-color: #D4D4D8 !important;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
 }
 
 .theme-dark .pos-card:hover, .dark .pos-card:hover,
 .theme-dark .neo-card:hover, .dark .neo-card:hover {
-  border-color: #334155 !important;
-  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  border-color: #353A47 !important;
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.4);
 }
 
-/* Inset Container / Well (Search, customer bar, secondary areas) */
+/* Inset Container / Well */
 .pos-inset, .neo-card-inset, .neo-inset {
-  background-color: #F1F4F8 !important;
-  border: 1px solid #E2E8F0 !important;
+  background-color: #EEEEF1 !important;
+  border: 1px solid #E4E4E7 !important;
   border-radius: 0.875rem;
-  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.02);
 }
 
 .theme-dark .pos-inset, .theme-dark .neo-card-inset, .theme-dark .neo-inset,
 .dark .pos-inset, .dark .neo-card-inset, .dark .neo-inset {
-  background-color: #0E1422 !important;
-  border-color: #1E293B !important;
-  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  background-color: #14161A !important;
+  border-color: #242730 !important;
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.3);
 }
 
-/* Clean Touch-Optimized POS Button */
+/* Touch-Optimized POS Button */
 .pos-btn, .neo-btn {
   background-color: #FFFFFF !important;
-  border: 1px solid #E2E8F0 !important;
+  border: 1px solid #E4E4E7 !important;
   border-radius: 0.75rem;
   font-weight: 600;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
-  color: #1E293B;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  color: #18181B;
   transition: all 0.15s ease-in-out;
   cursor: pointer;
 }
 
 .theme-dark .pos-btn, .theme-dark .neo-btn,
 .dark .pos-btn, .dark .neo-btn {
-  background-color: #162034 !important;
-  border-color: #27354E !important;
-  color: #F1F5F9;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+  background-color: #20232B !important;
+  border-color: #2D313C !important;
+  color: #F4F4F6;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
 }
 
 .pos-btn:hover, .neo-btn:hover {
-  background-color: #F8FAFC !important;
-  border-color: #CBD5E1 !important;
-  color: #0F172A;
+  background-color: #F4F4F5 !important;
+  border-color: #D4D4D8 !important;
+  color: #09090B;
 }
 
 .theme-dark .pos-btn:hover, .theme-dark .neo-btn:hover,
 .dark .pos-btn:hover, .dark .neo-btn:hover {
-  background-color: #1E293B !important;
-  border-color: #334155 !important;
+  background-color: #272B35 !important;
+  border-color: #383D4A !important;
   color: #FFFFFF;
 }
 
 .pos-btn:active, .neo-btn:active {
   transform: scale(0.97);
-  background-color: #F1F5F9 !important;
+  background-color: #E4E4E7 !important;
 }
 
 .theme-dark .pos-btn:active, .theme-dark .neo-btn:active,
 .dark .pos-btn:active, .dark .neo-btn:active {
-  background-color: #111827 !important;
+  background-color: #16181E !important;
 }
 
-/* Primary POS Action Button (Large Checkout / Charge) */
+/* Primary Amber POS Checkout Button */
 .pos-btn-primary, .neo-btn-accent {
-  background: linear-gradient(180deg, #059669 0%, #047857 100%) !important;
+  background: linear-gradient(180deg, #D97706 0%, #B45309 100%) !important;
   color: #FFFFFF !important;
   font-weight: 700;
   border-radius: 0.875rem;
-  border: 1px solid #047857 !important;
-  box-shadow: 0 2px 8px 0 rgba(5, 150, 105, 0.3), inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  border: 1px solid #B45309 !important;
+  box-shadow: 0 2px 8px 0 rgba(217, 119, 6, 0.28), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 }
 
+.theme-dark .pos-btn-primary, .dark .pos-btn-primary,
+.theme-dark .neo-btn-accent, .dark .neo-btn-accent {
+  background: linear-gradient(180deg, #F59E0B 0%, #D97706 100%) !important;
+  color: #121316 !important;
+  border: 1px solid #D97706 !important;
+  box-shadow: 0 2px 10px 0 rgba(245, 158, 11, 0.3), inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+}
+
 .pos-btn-primary:hover, .neo-btn-accent:hover {
-  background: linear-gradient(180deg, #047857 0%, #065F46 100%) !important;
-  box-shadow: 0 4px 12px 0 rgba(5, 150, 105, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  background: linear-gradient(180deg, #B45309 0%, #92400E 100%) !important;
+  box-shadow: 0 4px 14px 0 rgba(217, 119, 6, 0.38);
+  transform: translateY(-1px);
+}
+
+.theme-dark .pos-btn-primary:hover, .dark .pos-btn-primary:hover,
+.theme-dark .neo-btn-accent:hover, .dark .neo-btn-accent:hover {
+  background: linear-gradient(180deg, #FBBF24 0%, #F59E0B 100%) !important;
+  box-shadow: 0 4px 16px 0 rgba(245, 158, 11, 0.45);
   transform: translateY(-1px);
 }
 
 .pos-btn-primary:active, .neo-btn-accent:active {
   transform: scale(0.99);
-  box-shadow: 0 1px 4px 0 rgba(5, 150, 105, 0.25);
 }
 
 /* Clean Input Field */
 .pos-input, .neo-input {
   background-color: #FFFFFF !important;
-  border: 1px solid #E2E8F0 !important;
+  border: 1px solid #E4E4E7 !important;
   border-radius: 0.75rem;
-  color: #0F172A;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  color: #18181B;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
   outline: none;
   transition: all 0.15s ease-in-out;
 }
 
 .theme-dark .pos-input, .theme-dark .neo-input,
 .dark .pos-input, .dark .neo-input {
-  background-color: #0E1422 !important;
-  border-color: #1E293B !important;
-  color: #F8FAFC;
+  background-color: #14161A !important;
+  border-color: #282B34 !important;
+  color: #F4F4F6;
 }
 
 .pos-input:focus, .neo-input:focus {
-  border-color: #059669 !important;
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12) !important;
+  border-color: #D97706 !important;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12) !important;
 }
 
 .theme-dark .pos-input:focus, .theme-dark .neo-input:focus,
 .dark .pos-input:focus, .dark .neo-input:focus {
-  border-color: #10B981 !important;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
+  border-color: #F59E0B !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2) !important;
 }
 
 /* Soft Hover for Items in List */
@@ -224,25 +239,8 @@
   transition: background-color 0.12s ease-in-out;
 }
 .neo-list-item-hover:hover {
-  background-color: #F1F5F9 !important;
+  background-color: #F4F4F5 !important;
 }
 .theme-dark .neo-list-item-hover:hover, .dark .neo-list-item-hover:hover {
-  background-color: #1E293B !important;
-}
-
-/* Category Filter Pill Active / Inactive */
-.pos-filter-pill {
-  transition: all 0.15s ease;
-  font-weight: 600;
-  border-radius: 9999px;
-  padding: 0.375rem 0.875rem;
-}
-.pos-filter-pill-active {
-  background-color: #0F172A;
-  color: #FFFFFF;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-.theme-dark .pos-filter-pill-active {
-  background-color: #10B981;
-  color: #042416;
+  background-color: #242731 !important;
 }

@@ -333,9 +333,7 @@ export const SplitPaymentModal: React.FC<SplitPaymentModalProps> = ({
                   type="button"
                   onClick={handleAddCashPayment}
                   disabled={remainingDue <= 0 || cashTendered <= 0}
-                  className={`w-full py-3.5 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition ${
-                    isOverpaid ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black' : isUnderpaid ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-black' : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black'
-                  }`}
+                  className="w-full py-3.5 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition bg-amber-500 hover:bg-amber-400 text-stone-950 font-black"
                 >
                   <Plus className="w-4 h-4" />
                   <span>
@@ -359,11 +357,11 @@ export const SplitPaymentModal: React.FC<SplitPaymentModalProps> = ({
                     onClick={() => setMomoNetwork('MTN')}
                     className={`py-2 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 ${
                       momoNetwork === 'MTN'
-                        ? 'bg-amber-400 text-slate-950 border-amber-300 shadow'
-                        : 'bg-white/[0.04] text-slate-300 border-white/10'
+                        ? 'bg-amber-400 text-stone-950 border-amber-300 shadow'
+                        : 'bg-white/[0.04] text-stone-300 border-white/10'
                     }`}
                   >
-                    <span className="w-2 h-2 rounded-full bg-yellow-400"></span>
+                    <span className="w-2 h-2 rounded-full bg-amber-400"></span>
                     <span>MTN MoMo</span>
                   </button>
 
@@ -373,7 +371,7 @@ export const SplitPaymentModal: React.FC<SplitPaymentModalProps> = ({
                     className={`py-2 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 ${
                       momoNetwork === 'TELECEL'
                         ? 'bg-red-600 text-white border-red-500 shadow'
-                        : 'bg-white/[0.04] text-slate-300 border-white/10'
+                        : 'bg-white/[0.04] text-stone-300 border-white/10'
                     }`}
                   >
                     <span className="w-2 h-2 rounded-full bg-red-400"></span>
@@ -385,11 +383,11 @@ export const SplitPaymentModal: React.FC<SplitPaymentModalProps> = ({
                     onClick={() => setMomoNetwork('AT')}
                     className={`py-2 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 ${
                       momoNetwork === 'AT'
-                        ? 'bg-blue-600 text-white border-blue-500 shadow'
-                        : 'bg-white/[0.04] text-slate-300 border-white/10'
+                        ? 'bg-stone-700 text-white border-stone-600 shadow'
+                        : 'bg-white/[0.04] text-stone-300 border-white/10'
                     }`}
                   >
-                    <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+                    <span className="w-2 h-2 rounded-full bg-amber-400"></span>
                     <span>AT Money</span>
                   </button>
                 </div>
@@ -474,24 +472,24 @@ export const SplitPaymentModal: React.FC<SplitPaymentModalProps> = ({
                     )}
 
                     {momoPushStatus === 'WAITING_APPROVAL' && (
-                      <div className="p-3.5 bg-black/40 border border-yellow-500/40 rounded-xl space-y-2">
-                        <div className="flex items-center justify-between text-xs text-yellow-300 font-semibold">
+                      <div className="p-3.5 bg-black/40 border border-amber-500/40 rounded-xl space-y-2">
+                        <div className="flex items-center justify-between text-xs text-amber-300 font-semibold">
                           <span className="flex items-center gap-1.5">
-                            <Clock className="w-4 h-4 text-yellow-400 animate-pulse" />
+                            <Clock className="w-4 h-4 text-amber-400 animate-pulse" />
                             Awaiting Customer PIN on Handset...
                           </span>
-                          <span className="font-mono bg-yellow-950/80 text-yellow-400 px-2 py-0.5 rounded">
+                          <span className="font-mono bg-amber-950/80 text-amber-400 px-2 py-0.5 rounded">
                             {momoPushCountdown}s
                           </span>
                         </div>
-                        <div className="text-[11px] text-slate-400">
+                        <div className="text-[11px] text-stone-400">
                           Prompt sent to <span className="text-white font-mono">{momoPhone}</span> for{' '}
                           <span className="text-amber-400 font-bold">{formatGhs(remainingDue)}</span>.
                         </div>
                         <button
                           type="button"
                           onClick={() => setMomoPushStatus('SUCCESS')}
-                          className="w-full text-[10px] text-slate-400 hover:text-white underline text-right"
+                          className="w-full text-[10px] text-stone-400 hover:text-white underline text-right"
                         >
                           (Simulate instant user PIN confirmation)
                         </button>
@@ -499,15 +497,15 @@ export const SplitPaymentModal: React.FC<SplitPaymentModalProps> = ({
                     )}
 
                     {momoPushStatus === 'SUCCESS' && (
-                      <div className="p-3.5 bg-emerald-950/60 border border-emerald-500/50 rounded-xl space-y-2 text-center">
-                        <div className="flex items-center justify-center gap-1.5 text-emerald-400 font-bold text-xs">
+                      <div className="p-3.5 bg-amber-950/60 border border-amber-500/50 rounded-xl space-y-2 text-center">
+                        <div className="flex items-center justify-center gap-1.5 text-amber-400 font-bold text-xs">
                           <CheckCircle2 className="w-4 h-4" />
                           <span>USSD Payment Authorized!</span>
                         </div>
                         <button
                           type="button"
                           onClick={handleConfirmMoMoSuccess}
-                          className="w-full py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs"
+                          className="w-full py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold rounded-xl text-xs"
                         >
                           Add MoMo Tender ({formatGhs(remainingDue)})
                         </button>
@@ -656,7 +654,7 @@ export const SplitPaymentModal: React.FC<SplitPaymentModalProps> = ({
                 type="button"
                 onClick={handleCompleteSale}
                 disabled={remainingDue > 0.05}
-                className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-slate-950 font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/10 cursor-pointer"
+                className="w-full py-3 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-stone-950 font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/10 cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Complete Sale & Issue Receipt</span>
