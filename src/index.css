@@ -1,105 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  /* ─── Pristine Light Mode (Default for Fast, Intuitive Retail Workstations) ─── */
-  --bg-base: #F8FAFC;
-  --bg-surface: #FFFFFF;
-  --bg-elevated: #FFFFFF;
-  --bg-hover: #F1F5F9;
-  --bg-subtle: #F8FAFC;
-  --bg-glass: rgba(255, 255, 255, 0.92);
-  --bg-glass-elevated: rgba(255, 255, 255, 0.98);
-  
-  --border-subtle: #E2E8F0;
-  --border-default: #CBD5E1;
-  --border-active: #94A3B8;
-  --border-focus: #10B981;
-  
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-tertiary: #94A3B8;
+  /* GeekByte Neomorphism Design System - Light Canvas */
+  --neo-bg: #E6EEFA;
+  --neo-shadow-light: #ffffff;
+  --neo-shadow-dark: #b8c8e0;
+  --neo-shadow-dark-hover: #acbcd6;
+  --text-main: #1E293B;
   --text-muted: #64748B;
   
   --accent-primary: #059669;
-  --accent-primary-hover: #047857;
-  --accent-primary-muted: rgba(5, 150, 105, 0.08);
-  --accent-badge-bg: #ECFDF5;
-  --accent-badge-text: #065F46;
-  --accent-badge-border: #A7F3D0;
-  
-  --warning-amber: #D97706;
-  --warning-amber-bg: #FFFBEB;
-  --warning-amber-text: #92400E;
-  --warning-amber-border: #FDE68A;
-  
-  --danger-rose: #E11D48;
-  --danger-rose-bg: #FFF1F2;
-  --danger-rose-text: #9F1239;
-  --danger-rose-border: #FECDD3;
-
-  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-  --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
-  --shadow-elevated: 0 8px 20px -4px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.03);
-  --shadow-modal: 0 20px 40px -8px rgba(15, 23, 42, 0.16);
-  
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
+  --accent-blue: #2563EB;
 }
 
-.theme-dark {
-  /* ─── Refined Obsidian Slate Dark Mode (Clean, High Contrast, No Neon Rainbows) ─── */
-  --bg-base: #0B0F17;
-  --bg-surface: #131A26;
-  --bg-elevated: #192333;
-  --bg-hover: #202D42;
-  --bg-subtle: #0E1420;
-  --bg-glass: rgba(19, 26, 38, 0.88);
-  --bg-glass-elevated: rgba(25, 35, 51, 0.94);
-  
-  --border-subtle: #1E293B;
-  --border-default: #334155;
-  --border-active: #475569;
-  --border-focus: #10B981;
-  
-  --text-primary: #F8FAFC;
-  --text-secondary: #94A3B8;
-  --text-tertiary: #64748B;
-  --text-muted: #64748B;
+.theme-dark, .dark {
+  /* GeekByte Neomorphism Design System - Dark Canvas */
+  --neo-bg: #0B1729;
+  --neo-shadow-light: #122543;
+  --neo-shadow-dark: #040913;
+  --neo-shadow-dark-hover: #03070f;
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
   
   --accent-primary: #10B981;
-  --accent-primary-hover: #34D399;
-  --accent-primary-muted: rgba(16, 185, 129, 0.12);
-  --accent-badge-bg: rgba(16, 185, 129, 0.15);
-  --accent-badge-text: #34D399;
-  --accent-badge-border: rgba(16, 185, 129, 0.25);
-  
-  --warning-amber: #F59E0B;
-  --warning-amber-bg: rgba(245, 158, 11, 0.15);
-  --warning-amber-text: #FBBF24;
-  --warning-amber-border: rgba(245, 158, 11, 0.25);
-  
-  --danger-rose: #F43F5E;
-  --danger-rose-bg: rgba(244, 63, 94, 0.15);
-  --danger-rose-text: #FB7185;
-  --danger-rose-border: rgba(244, 63, 94, 0.25);
-
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
-  --shadow-elevated: 0 8px 24px -4px rgba(0, 0, 0, 0.6);
-  --shadow-modal: 0 24px 48px -12px rgba(0, 0, 0, 0.8);
+  --accent-blue: #3B82F6;
 }
 
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    background-color: var(--bg-base);
-    color: var(--text-primary);
+    background-color: var(--neo-bg);
+    color: var(--text-main);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   button, input, select, a, textarea {
@@ -117,7 +53,6 @@
     color: inherit;
   }
 
-  /* Custom Modern Scrollbars */
   * {
     scrollbar-width: thin;
     scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
@@ -128,166 +63,159 @@
     height: 6px;
   }
 
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
   ::-webkit-scrollbar-thumb {
     background-color: rgba(148, 163, 184, 0.3);
     border-radius: 9999px;
   }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(148, 163, 184, 0.5);
-  }
 }
 
-/* ─── Professional POS Surface Classes ─── */
-.pos-surface {
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-card);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+/* ══════════════════════════════════════════════════════════════════════
+   GEEKBYTE NEOMORPHISM CORE UTILITIES
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Background */
+.neo-bg {
+  background-color: #E6EEFA !important;
+}
+.theme-dark .neo-bg, .dark .neo-bg {
+  background-color: #0B1729 !important;
 }
 
-.pos-surface-elevated {
-  background-color: var(--bg-elevated);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-elevated);
+/* Extruded Neomorphic Card */
+.neo-card {
+  background-color: #E6EEFA !important;
+  border-radius: 1.25rem;
+  border: none !important;
+  box-shadow: 8px 8px 18px #b8c8e0, -8px -8px 18px #ffffff;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-/* ─── Tactile Button Interactions (for fast-touch POS) ─── */
-.pos-touch-btn {
-  transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1),
-              background-color 0.15s ease,
-              border-color 0.15s ease,
-              box-shadow 0.15s ease;
+.theme-dark .neo-card, .dark .neo-card {
+  background-color: #0B1729 !important;
+  box-shadow: 8px 8px 18px #040913, -8px -8px 18px #122543;
 }
-
-.pos-touch-btn:active {
-  transform: scale(0.97);
-}
-
-/* ─── Clean Product Card Styling ─── */
-.pos-product-card {
-  position: relative;
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-card);
-  border-radius: 16px;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
-  user-select: none;
-}
-
-.pos-product-card:hover {
+.neo-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-elevated);
-  border-color: #10B981;
+  box-shadow: 10px 10px 22px #acbcd6, -10px -10px 22px #ffffff;
+}
+.theme-dark .neo-card:hover, .dark .neo-card:hover {
+  box-shadow: 10px 10px 22px #03070f, -10px -10px 22px #15294a;
 }
 
-.pos-product-card:active {
+/* Inset Neomorphic Card / Well */
+.neo-card-inset, .neo-inset {
+  background-color: #E6EEFA !important;
+  border-radius: 1.25rem;
+  border: none !important;
+  box-shadow: inset 6px 6px 12px #b8c8e0, inset -6px -6px 12px #ffffff;
+}
+.theme-dark .neo-card-inset, .theme-dark .neo-inset,
+.dark .neo-card-inset, .dark .neo-inset {
+  background-color: #0B1729 !important;
+  box-shadow: inset 6px 6px 12px #040913, inset -6px -6px 12px #122543;
+}
+
+/* Tactile Neomorphic Button */
+.neo-btn {
+  background-color: #E6EEFA !important;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  border: none !important;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 4px 4px 10px #b8c8e0, -4px -4px 10px #ffffff;
+  color: #1e3a8a;
+  cursor: pointer;
+}
+.theme-dark .neo-btn, .dark .neo-btn {
+  background-color: #0B1729 !important;
+  box-shadow: 4px 4px 10px #040913, -4px -4px 10px #122543;
+  color: #93c5fd;
+}
+.neo-btn:hover {
+  color: #2563eb;
+  box-shadow: 5px 5px 12px #acbcd6, -5px -5px 12px #ffffff;
+}
+.theme-dark .neo-btn:hover, .dark .neo-btn:hover {
+  color: #3b82f6;
+  box-shadow: 5px 5px 12px #03070f, -5px -5px 12px #15294a;
+}
+.neo-btn:active {
+  box-shadow: inset 4px 4px 8px #b8c8e0, inset -4px -4px 8px #ffffff;
+  transform: scale(0.98);
+}
+.theme-dark .neo-btn:active, .dark .neo-btn:active {
+  box-shadow: inset 4px 4px 8px #040913, inset -4px -4px 8px #122543;
   transform: scale(0.98);
 }
 
-/* ─── Category Specific Color Themes ─── */
-/* Provisions & Grains */
-.cat-badge-grains {
-  background-color: #FEF3C7;
-  color: #92400E;
-  border-color: #FDE68A;
+/* Inset Input Field */
+.neo-input {
+  background-color: #E6EEFA !important;
+  border-radius: 0.85rem;
+  border: none !important;
+  color: #1e293b;
+  box-shadow: inset 4px 4px 8px #b8c8e0, inset -4px -4px 8px #ffffff;
+  outline: none;
+  transition: all 0.2s ease-in-out;
 }
-.cat-icon-grains {
-  background-color: #FFFBEB;
-  color: #D97706;
+.theme-dark .neo-input, .dark .neo-input {
+  background-color: #0B1729 !important;
+  color: #e2e8f0;
+  box-shadow: inset 4px 4px 8px #040913, inset -4px -4px 8px #122543;
 }
-
-/* Beverages & Breakfast */
-.cat-badge-beverages {
-  background-color: #E0F2FE;
-  color: #0369A1;
-  border-color: #BAE6FD;
+.neo-input:focus {
+  box-shadow: inset 5px 5px 10px #acbcd6, inset -5px -5px 10px #ffffff;
 }
-.cat-icon-beverages {
-  background-color: #F0F9FF;
-  color: #0284C7;
-}
-
-/* Cooking & Seasonings */
-.cat-badge-cooking {
-  background-color: #FFEDD5;
-  color: #C2410C;
-  border-color: #FED7AA;
-}
-.cat-icon-cooking {
-  background-color: #FFF7ED;
-  color: #EA580C;
+.theme-dark .neo-input:focus, .dark .neo-input:focus {
+  box-shadow: inset 5px 5px 10px #03070f, inset -5px -5px 10px #15294a;
 }
 
-/* Dairy & Frozen */
-.cat-badge-dairy {
-  background-color: #CCFBF1;
-  color: #115E59;
-  border-color: #99F6E4;
+/* Brand Gradient Card */
+.neo-card-brand {
+  background-image: linear-gradient(135deg, #059669, #047857);
+  border-radius: 1.25rem;
+  border: none !important;
+  color: #ffffff;
+  box-shadow: 8px 8px 18px rgba(5, 150, 105, 0.3), -8px -8px 18px #ffffff;
 }
-.cat-icon-dairy {
-  background-color: #F0FDFA;
-  color: #0D9488;
-}
-
-/* Snacks & Confectionery */
-.cat-badge-snacks {
-  background-color: #EDE9FE;
-  color: #5B21B6;
-  border-color: #DDD6FE;
-}
-.cat-icon-snacks {
-  background-color: #F5F3FF;
-  color: #7C3AED;
+.theme-dark .neo-card-brand, .dark .neo-card-brand {
+  background-image: linear-gradient(135deg, #059669, #064e3b);
+  box-shadow: 8px 8px 18px #040913, -8px -8px 18px rgba(16, 185, 129, 0.15);
 }
 
-/* Pharmaceuticals & OTC */
-.cat-badge-pharma {
-  background-color: #FFE4E6;
-  color: #9F1239;
-  border-color: #FECDD3;
+/* Accent Buttons */
+.neo-btn-accent {
+  background-image: linear-gradient(135deg, #059669, #10B981);
+  color: #ffffff !important;
+  font-weight: 800;
+  border-radius: 0.85rem;
+  border: none !important;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 5px 5px 14px rgba(5, 150, 105, 0.35), -5px -5px 12px #ffffff;
+  cursor: pointer;
 }
-.cat-icon-pharma {
-  background-color: #FFF1F2;
-  color: #E11D48;
+.theme-dark .neo-btn-accent, .dark .neo-btn-accent {
+  background-image: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 5px 5px 14px rgba(16, 185, 129, 0.25), -5px -5px 12px rgba(255, 255, 255, 0.05);
 }
-
-/* ─── Clean Animations ─── */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.neo-btn-accent:hover {
+  background-image: linear-gradient(135deg, #047857, #059669);
+  box-shadow: 6px 6px 18px rgba(5, 150, 105, 0.45), -6px -6px 14px #ffffff;
+  transform: translateY(-1px);
 }
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+.theme-dark .neo-btn-accent:hover, .dark .neo-btn-accent:hover {
+  box-shadow: 6px 6px 18px rgba(16, 185, 129, 0.35), -6px -6px 14px rgba(255, 255, 255, 0.08);
 }
-
-@keyframes scaleUp {
-  from { opacity: 0; transform: scale(0.96); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.2s ease-out both;
+.neo-btn-accent:active {
+  transform: scale(0.98);
 }
 
-.animate-slide-up {
-  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+/* Soft Hover for Items in List */
+.neo-list-item-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-.animate-scale-up {
-  animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+.neo-list-item-hover:hover {
+  box-shadow: inset 4px 4px 8px #b8c8e0, inset -4px -4px 8px #ffffff !important;
 }
-
-/* ─── Clean Number Highlighting ─── */
-.tabular-numbers {
-  font-variant-numeric: tabular-nums;
+.theme-dark .neo-list-item-hover:hover, .dark .neo-list-item-hover:hover {
+  box-shadow: inset 4px 4px 8px #040913, inset -4px -4px 8px #122543 !important;
 }

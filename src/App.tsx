@@ -77,11 +77,11 @@ export default function App() {
       localStorage.setItem('akwaaba_theme', isDark ? 'dark' : 'light');
     } catch {}
     if (isDark) {
-      document.documentElement.classList.add('theme-dark');
+      document.documentElement.classList.add('theme-dark', 'dark');
       document.documentElement.classList.remove('theme-light');
     } else {
       document.documentElement.classList.add('theme-light');
-      document.documentElement.classList.remove('theme-dark');
+      document.documentElement.classList.remove('theme-dark', 'dark');
     }
   }, [isDark]);
 
