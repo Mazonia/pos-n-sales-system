@@ -326,34 +326,34 @@ export default function App() {
     switch (role) {
       case 'CASHIER':
         return [
-          { id: 'POS', label: 'POS Register', icon: ShoppingBag },
-          { id: 'FINANCIALS', label: 'Daily Sales', icon: TrendingUp },
-          { id: 'BISA', label: 'Customer Credit', icon: BookOpen },
+          { id: 'POS', label: 'Register', icon: ShoppingBag },
+          { id: 'FINANCIALS', label: 'Sales', icon: TrendingUp },
+          { id: 'BISA', label: 'Customers', icon: BookOpen },
         ];
       case 'INVENTORY_OFFICER':
         return [
-          { id: 'INVENTORY', label: 'Stock & POs', icon: Boxes, badge: lowStockProducts.length > 0 ? lowStockProducts.length : null },
-          { id: 'POS', label: 'POS Register', icon: ShoppingBag },
+          { id: 'INVENTORY', label: 'Inventory', icon: Boxes, badge: lowStockProducts.length > 0 ? lowStockProducts.length : null },
+          { id: 'POS', label: 'Register', icon: ShoppingBag },
           { id: 'FINANCIALS', label: 'Valuation', icon: TrendingUp },
         ];
       case 'AUDITOR':
         return [
-          { id: 'FINANCIALS', label: 'Financials', icon: TrendingUp },
-          { id: 'GRA', label: 'GRA Tax', icon: Landmark },
-          { id: 'BISA', label: 'Credit Audit', icon: BookOpen },
-          { id: 'DOCS', label: 'Specs & APIs', icon: Database },
+          { id: 'FINANCIALS', label: 'Sales', icon: TrendingUp },
+          { id: 'GRA', label: 'Taxes', icon: Landmark },
+          { id: 'BISA', label: 'Customers', icon: BookOpen },
+          { id: 'DOCS', label: 'Docs', icon: Database },
         ];
       case 'BRANCH_MANAGER':
       case 'GENERAL_MANAGER':
       case 'SUPER_ADMIN':
       default:
         return [
-          { id: 'POS', label: 'POS Register', icon: ShoppingBag },
-          { id: 'INVENTORY', label: 'Stock & POs', icon: Boxes, badge: lowStockProducts.length > 0 ? lowStockProducts.length : null },
-          { id: 'FINANCIALS', label: 'Daily Sales & Reports', icon: TrendingUp },
-          { id: 'BISA', label: 'Credit Book', icon: BookOpen },
+          { id: 'POS', label: 'Register', icon: ShoppingBag },
+          { id: 'INVENTORY', label: 'Inventory', icon: Boxes, badge: lowStockProducts.length > 0 ? lowStockProducts.length : null },
+          { id: 'FINANCIALS', label: 'Sales', icon: TrendingUp },
+          { id: 'BISA', label: 'Customers', icon: BookOpen },
           { id: 'STAFF', label: 'Staff', icon: Users },
-          { id: 'GRA', label: 'GRA Tax', icon: Landmark },
+          { id: 'GRA', label: 'Taxes', icon: Landmark },
         ];
     }
   };
@@ -365,49 +365,42 @@ export default function App() {
       isDark ? 'bg-[#0A0F1D] text-slate-100' : 'bg-[#F4F6F8] text-slate-900'
     }`}>
       
-      {/* ═══ CLEAN MODERN TOP NAVIGATION BAR ═══ */}
-      <header className={`h-[56px] border-b flex items-center justify-between px-3 sm:px-6 shrink-0 z-40 transition-colors ${
+      {/* ═══ CLEAN UNCLUTTERED TOP NAVIGATION BAR ═══ */}
+      <header className={`h-14 border-b flex items-center justify-between px-3 sm:px-6 shrink-0 z-40 transition-colors ${
         isDark 
           ? 'border-slate-800 bg-[#131A2A]' 
           : 'border-slate-200/90 bg-white shadow-2xs'
       }`}>
         
-        {/* Left: Mobile Toggle & Brand Identity */}
+        {/* Left: Brand Identity */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`md:hidden p-2 rounded-xl border transition active:scale-95 ${
-              isDark ? 'border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800' : 'border-slate-200 text-slate-600 hover:text-black hover:bg-slate-100'
+            className={`lg:hidden p-2 rounded-xl border transition active:scale-95 ${
+              isDark ? 'border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800' : 'border-slate-200 text-slate-600 hover:text-black hover:bg-slate-100'
             }`}
+            title="Open Menu"
           >
             {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
 
           <div className="flex items-center gap-2.5">
-            {/* Clean Logo Mark */}
             <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-xs tracking-tight">
               AK
             </div>
             <div>
-              <div className="font-bold text-sm tracking-tight flex items-center gap-2">
-                <span className={isDark ? 'text-white' : 'text-slate-900'}>Akwaaba POS</span>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${
-                  isDark ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/40' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                }`}>
-                  v2.6
-                </span>
+              <div className="font-bold text-sm tracking-tight text-slate-900 dark:text-white">
+                Akwaaba POS
               </div>
-              <div className="text-[11px] text-slate-400 flex items-center gap-1.5 font-medium">
-                <Store className="w-3 h-3 text-amber-500" />
-                <span className="hidden sm:inline truncate max-w-[160px]">{branchName}</span>
-                <span className="hidden sm:inline text-amber-600 dark:text-amber-400 font-semibold">[{terminalBranch.code}]</span>
+              <div className="text-[11px] text-slate-400 font-medium truncate max-w-[140px] sm:max-w-[200px]">
+                {branchName}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Center: Clean Navigation Pills */}
-        <nav className={`hidden md:flex items-center gap-1 p-1 rounded-xl border ${
+        {/* Center: Clean Segmented Navigation (Desktop >= 1024px) */}
+        <nav className={`hidden lg:flex items-center gap-1 p-1 rounded-xl border ${
           isDark 
             ? 'bg-slate-900/80 border-slate-800' 
             : 'bg-slate-100 border-slate-200/80'
@@ -419,7 +412,7 @@ export default function App() {
               <button
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
-                className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition active:scale-95 cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition active:scale-95 cursor-pointer ${
                   isActive
                     ? 'bg-slate-900 text-white dark:bg-emerald-600 dark:text-white shadow-xs font-bold'
                     : isDark
@@ -441,87 +434,34 @@ export default function App() {
           })}
         </nav>
 
-        {/* Right Controls: Status Indicators & Actions */}
+        {/* Right Controls: Streamlined & Clutter-Free */}
         <div className="flex items-center gap-2">
           
-          {/* Online/Offline Status Dot */}
-          <div className={`hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-lg text-[10px] font-mono font-medium ${
-            isOnline 
-              ? isDark ? 'text-emerald-400' : 'text-emerald-600'
-              : 'text-amber-500'
-          }`}>
-            {isOnline ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
-            <span className="hidden lg:inline">{isOnline ? 'Online' : 'Offline'}</span>
-          </div>
-
-          {/* Safety Stock Bell */}
-          <div className="relative" ref={notifRef}>
-            <button
-              onClick={() => setNotificationsOpen(!notificationsOpen)}
-              className={`relative p-2 rounded-xl border transition-all duration-200 active:scale-90 ${
-                lowStockProducts.length > 0
-                  ? isDark
-                    ? 'border-amber-500/30 bg-amber-500/8 text-amber-400 hover:bg-amber-500/15'
-                    : 'border-amber-400/40 bg-amber-50 text-amber-600 hover:bg-amber-100'
-                  : isDark
-                  ? 'border-[rgba(48,62,80,0.5)] text-[#8B9DB5] hover:bg-[#1C2333] hover:text-white'
-                  : 'border-[rgba(209,215,224,0.5)] text-[#64748B] hover:bg-[#F0F2F5] hover:text-[#0F172A]'
-              }`}
-              title="Stock Safety Threshold Alerts"
-            >
-              <Bell className="w-4 h-4" strokeWidth={1.8} />
-              {lowStockProducts.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-[18px] h-[18px] rounded-full bg-amber-500 text-[#06080C] font-mono font-bold text-[9px] flex items-center justify-center shadow-[0_0_8px_rgba(245,158,11,0.3)] animate-pulse">
-                  {lowStockProducts.length}
-                </span>
-              )}
-            </button>
-
-            {/* Notification Dropdown */}
-            {notificationsOpen && (
-              <div className="absolute right-0 top-full mt-2 z-50 animate-expand-in">
-                <StockSafetyNotification
-                  lowStockProducts={lowStockProducts}
-                  onOpenPoDraft={handleOpenPoDraft}
-                  isDark={isDark}
-                  variant="dropdown"
-                />
-              </div>
-            )}
-          </div>
-
           {/* Active Shift Indicator */}
           {activeShift ? (
             <button
               onClick={() => setShowShiftModal(true)}
-              className={`px-2.5 py-[6px] rounded-xl border text-[11px] font-semibold flex items-center gap-2 transition-all duration-200 active:scale-95 ${
+              className={`px-2.5 py-1.5 rounded-xl border text-xs font-medium flex items-center gap-2 transition-all active:scale-95 cursor-pointer ${
                 isDark
-                  ? 'border-emerald-500/20 bg-emerald-500/8 text-emerald-400 hover:bg-emerald-500/15'
+                  ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15'
                   : 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
               }`}
-              title="Click to view till reconciliation and cash drops"
+              title="Till status and cash drops"
             >
-              <span className="relative flex h-2.5 w-2.5">
+              <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 status-dot-pulse"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              <span className="hidden sm:inline font-mono font-medium">Till Active</span>
+              <span className="hidden sm:inline font-semibold">Till Active</span>
             </button>
           ) : (
             <button
               onClick={() => setShowOpenShiftPrompt(true)}
-              className={`px-3 py-[6px] rounded-xl text-[11px] font-bold flex items-center gap-1.5 transition-all duration-200 active:scale-95 ${
-                isDark
-                  ? 'bg-emerald-500 hover:bg-emerald-400 text-[#06080C] shadow-[0_2px_8px_rgba(16,185,129,0.2)]'
-                  : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_2px_6px_rgba(5,150,105,0.15)]'
-              }`}
+              className="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition active:scale-95 shadow-xs"
             >
               Open Shift
             </button>
           )}
-
-          {/* PWA Direct Install Action Button */}
-          <PwaInstallNavbarButton isDark={isDark} />
 
           {/* Theme Switcher Toggle */}
           <button
@@ -531,68 +471,55 @@ export default function App() {
             }}
             className={`p-2 rounded-xl border transition-all duration-200 active:scale-90 cursor-pointer ${
               isDark
-                ? 'border-[rgba(48,62,80,0.5)] text-amber-400 hover:bg-[#1C2333] hover:text-amber-300'
-                : 'border-[rgba(209,215,224,0.5)] text-slate-500 hover:bg-[#F0F2F5] hover:text-slate-700'
+                ? 'border-slate-800 text-amber-400 hover:bg-slate-800'
+                : 'border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-slate-800'
             }`}
             title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
           >
             {isDark ? <Sun className="w-4 h-4" strokeWidth={1.8} /> : <Moon className="w-4 h-4" strokeWidth={1.8} />}
           </button>
 
-          {/* USER PROFILE & LOGOUT POPOVER */}
+          {/* User Profile Avatar & Menu */}
           <div className="relative" ref={userMenuRef}>
             <button
               onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className={`flex items-center gap-2 pl-[5px] pr-2.5 py-[5px] rounded-xl border text-[11px] transition-all duration-200 ${
+              className={`flex items-center gap-2 p-1 sm:pr-2.5 sm:pl-1 rounded-xl border transition-all active:scale-95 cursor-pointer ${
                 isDark
-                  ? 'border-[rgba(48,62,80,0.5)] bg-[#151B23] hover:bg-[#1C2333] text-[#F0F4F8]'
-                  : 'border-[rgba(209,215,224,0.5)] bg-white hover:bg-[#F0F2F5] text-[#0F172A]'
+                  ? 'border-slate-800 bg-[#162034] text-slate-200 hover:bg-[#1E2B45]'
+                  : 'border-slate-200 bg-white text-slate-800 hover:bg-slate-50 shadow-2xs'
               }`}
             >
               <div
-                className="w-7 h-7 rounded-[10px] flex items-center justify-center font-bold text-[11px] text-[#06080C] font-mono shadow-sm transition-transform duration-200"
+                className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs text-slate-950 font-mono shadow-xs"
                 style={{ backgroundColor: currentUser.avatarColor || '#10B981' }}
               >
                 {currentUser.fullName.split(' ').map(n => n[0]).join('')}
               </div>
-              <span className="font-semibold hidden lg:inline max-w-[90px] truncate">
+              <span className="font-semibold text-xs hidden sm:inline max-w-[85px] truncate">
                 {currentUser.fullName.split(' ')[0]}
               </span>
-              <span className="text-[10px] text-[#8B9DB5] font-mono hidden xl:inline">
-                ({currentUser.role.split('_')[0]})
-              </span>
-              <ChevronDown className={`w-3 h-3 text-[#8B9DB5] transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {/* User Details & Logout Dropdown */}
             {userMenuOpen && (
-              <div className={`absolute right-0 top-full mt-2.5 w-72 rounded-[18px] p-3 z-50 text-xs border animate-expand-in ${
+              <div className={`absolute right-0 top-full mt-2 w-72 rounded-2xl p-3 z-50 text-xs border shadow-xl animate-expand-in ${
                 isDark 
-                  ? 'bg-[#0D1117] border-[rgba(48,62,80,0.5)] shadow-[0_8px_32px_rgba(0,0,0,0.5)]' 
-                  : 'bg-white border-[rgba(209,215,224,0.5)] shadow-[0_8px_24px_rgba(0,0,0,0.08)]'
+                  ? 'bg-[#131A2A] border-slate-800 text-slate-200' 
+                  : 'bg-white border-slate-200 text-slate-800'
               }`}>
                 {/* User Identity Info */}
-                <div className={`p-3 rounded-[14px] mb-2.5 ${isDark ? 'bg-[#151B23]' : 'bg-[#F6F8FA]'}`}>
-                  <div className={`font-bold text-sm flex items-center gap-2 ${isDark ? 'text-white' : 'text-[#0F172A]'}`}>
+                <div className={`p-3 rounded-xl mb-2.5 ${isDark ? 'bg-[#0E1422]' : 'bg-slate-50'}`}>
+                  <div className="font-bold text-sm flex items-center gap-2">
                     <span>{currentUser.fullName}</span>
                     <ShieldCheck className="w-4 h-4 text-emerald-500" />
                   </div>
-                  <div className="text-[11px] text-emerald-500 font-mono font-medium mt-1">
-                    Role: {currentUser.role}
+                  <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">
+                    {currentUser.role}
                   </div>
-                  <div className="text-[10px] text-[#8B9DB5] font-mono mt-0.5">
-                    Operator ID: {currentUser.id}
-                  </div>
-                </div>
-
-                {/* Non-Repudiation Audit Seal */}
-                <div className={`p-2.5 rounded-[12px] text-[10px] mb-2.5 flex items-start gap-2 ${
-                  isDark ? 'bg-emerald-500/5 border border-emerald-500/15 text-[#8B9DB5]' : 'bg-emerald-50 border border-emerald-100 text-slate-600'
-                }`}>
-                  <Lock className="w-3.5 h-3.5 text-emerald-500 mt-[1px] shrink-0" />
-                  <div>
-                    <span className="font-bold text-emerald-500 block mb-0.5">Non-Repudiation Active</span>
-                    <span>All sales, voids, and cash movements signed under this session.</span>
+                  <div className="text-[10px] text-slate-400 mt-1 flex items-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${isOnline ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                    <span>{isOnline ? 'Connected (Cloud Synced)' : 'Offline (Local Dexie Mode)'}</span>
                   </div>
                 </div>
 
@@ -604,26 +531,26 @@ export default function App() {
                       handleTabChange('STAFF');
                       setUserMenuOpen(false);
                     }}
-                    className={`w-full text-left p-2.5 rounded-[12px] text-xs font-bold flex items-center justify-between mb-2.5 transition-all duration-200 border active:scale-[0.98] ${
+                    className={`w-full text-left p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between mb-2 transition-all border active:scale-[0.98] ${
                       isDark
-                        ? 'bg-purple-500/8 border-purple-500/20 text-purple-400 hover:bg-purple-500/15'
+                        ? 'bg-purple-950/40 border-purple-800/40 text-purple-300 hover:bg-purple-900/40'
                         : 'bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <UserPlus className="w-3.5 h-3.5" />
-                      <span>Enroll & Manage Staff</span>
+                      <span>Manage Employees</span>
                     </div>
-                    <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md ${
-                      isDark ? 'bg-purple-500/15 text-purple-300' : 'bg-purple-100 text-purple-600'
-                    }`}>Admin</span>
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 dark:text-purple-300">
+                      Admin
+                    </span>
                   </button>
                 )}
 
                 {/* Switch User Helper */}
                 <div className="space-y-1 mb-2.5">
-                  <div className={`text-[10px] uppercase tracking-wider font-bold px-2 py-1 ${isDark ? 'text-[#556575]' : 'text-[#94A3B8]'}`}>
-                    Switch Active Operator:
+                  <div className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 text-slate-400">
+                    Switch Active Cashier:
                   </div>
                   {systemUsersList.filter(u => u.id !== currentUser.id).slice(0, 5).map(u => (
                     <button
@@ -633,12 +560,12 @@ export default function App() {
                         handleLoginSuccess(u);
                         setUserMenuOpen(false);
                       }}
-                      className={`w-full text-left p-2 rounded-[10px] text-xs flex items-center justify-between transition-all duration-150 ${
-                        isDark ? 'hover:bg-[#1C2333] text-slate-300' : 'hover:bg-[#F0F2F5] text-slate-700'
+                      className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between transition-all ${
+                        isDark ? 'hover:bg-slate-800 text-slate-300' : 'hover:bg-slate-100 text-slate-700'
                       }`}
                     >
                       <span className="truncate">{u.fullName}</span>
-                      <span className="text-[10px] text-[#8B9DB5] font-mono">{u.role.split('_')[0]}</span>
+                      <span className="text-[10px] text-slate-400">{u.role.split('_')[0]}</span>
                     </button>
                   ))}
                 </div>
@@ -647,9 +574,9 @@ export default function App() {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className={`w-full py-2.5 px-3 rounded-[12px] font-bold text-xs flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.97] ${
+                  className={`w-full py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
                     isDark 
-                      ? 'bg-rose-500/10 hover:bg-rose-500/18 text-rose-400 border border-rose-500/20' 
+                      ? 'bg-rose-950/40 hover:bg-rose-900/40 text-rose-400 border border-rose-800/40' 
                       : 'bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200'
                   }`}
                 >
@@ -663,41 +590,38 @@ export default function App() {
         </div>
       </header>
 
-      {/* PWA INSTALL BANNER & OFFLINE RESILIENCE BANNER */}
-      <PwaInstallBanner isDark={isDark} />
-
-      {/* MOBILE NAVIGATION DRAWER */}
+      {/* MOBILE & TABLET NAVIGATION DRAWER */}
       {mobileMenuOpen && (
-        <div className={`md:hidden p-3 border-b space-y-1 animate-slide-in-top ${
+        <div className={`lg:hidden p-3 border-b space-y-1 animate-slide-in-top z-40 ${
           isDark 
-            ? 'bg-[rgba(13,17,23,0.95)] backdrop-blur-xl border-[rgba(48,62,80,0.4)]' 
-            : 'bg-[rgba(255,255,255,0.95)] backdrop-blur-xl border-[rgba(209,215,224,0.5)] shadow-lg'
+            ? 'bg-[#131A2A]/95 backdrop-blur-md border-slate-800' 
+            : 'bg-white/95 backdrop-blur-md border-slate-200 shadow-md'
         }`}>
-          {navTabs.map((item, idx) => {
+          {navTabs.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
-                onClick={() => handleTabChange(item.id)}
-                style={{ animationDelay: `${idx * 40}ms` }}
-                className={`w-full py-3 px-4 rounded-[14px] text-[13px] font-semibold flex items-center justify-between transition-all duration-200 animate-fade-slide-in ${
+                onClick={() => {
+                  handleTabChange(item.id);
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-between transition-all ${
                   isActive
-                    ? isDark
-                      ? 'bg-emerald-500 text-[#06080C] font-bold shadow-[0_2px_10px_rgba(16,185,129,0.2)]'
-                      : 'bg-emerald-600 text-white font-bold shadow-sm'
+                    ? 'bg-emerald-600 text-white font-bold shadow-xs'
                     : isDark
-                    ? 'text-[#8B9DB5] hover:text-white hover:bg-[#1C2333]'
-                    : 'text-[#64748B] hover:text-black hover:bg-[#F0F2F5]'
+                    ? 'text-slate-300 hover:text-white hover:bg-slate-800'
+                    : 'text-slate-700 hover:text-slate-950 hover:bg-slate-100'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <Icon className="w-[18px] h-[18px]" strokeWidth={1.8} />
+                  <Icon className="w-4 h-4" strokeWidth={isActive ? 2.2 : 1.8} />
                   <span>{item.label}</span>
                 </div>
                 {item.badge && (
-                  <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] font-mono ${
-                    isActive ? 'bg-[#06080C]/20 text-white' : 'bg-amber-500/15 text-amber-500'
+                  <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] tabular-nums ${
+                    isActive ? 'bg-white/20 text-white' : 'bg-amber-500 text-slate-950'
                   }`}>
                     {item.badge}
                   </span>

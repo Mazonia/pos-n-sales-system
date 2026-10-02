@@ -433,7 +433,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col lg:flex-row h-full overflow-hidden relative">
+    <div className="flex-1 flex flex-col md:flex-row h-full overflow-hidden relative">
       
       {/* LEFT 65%: PRODUCT CATALOG & ACTIONS */}
       <div className={`flex-1 flex flex-col h-full overflow-hidden border-r ${
