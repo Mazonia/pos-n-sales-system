@@ -1,0 +1,6 @@
+{
+  "name": "Akwaaba POS & Retail OS",
+  "description": "Ghanaian Enterprise Cloud & Offline-First POS, GRA Tax Compliance, Mobile Money & Inventory Management System.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

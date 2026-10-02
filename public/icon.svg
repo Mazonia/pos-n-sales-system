@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="akwaabaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="50%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="512" height="512" rx="112" fill="#090B0E" />
+  
+  <!-- Subtle Outer Border Accent -->
+  <rect x="8" y="8" width="496" height="496" rx="104" fill="none" stroke="#242D37" stroke-width="4" />
+
+  <!-- Shield Crest Background -->
+  <g filter="url(#shadow)">
+    <rect x="76" y="76" width="360" height="360" rx="80" fill="url(#akwaabaGrad)" />
+  </g>
+
+  <!-- Ghanaian Star Emblem & Retail Lines -->
+  <!-- Central POS Terminal / Till Symbol -->
+  <g transform="translate(146, 146)">
+    <!-- Till Screen -->
+    <rect x="20" y="10" width="180" height="120" rx="18" fill="#090B0E" stroke="#10B981" stroke-width="8" />
+    <!-- Screen Accent Bars -->
+    <rect x="40" y="32" width="70" height="10" rx="5" fill="#10B981" />
+    <rect x="40" y="52" width="120" height="8" rx="4" fill="#34D399" opacity="0.8" />
+    <rect x="40" y="70" width="90" height="8" rx="4" fill="#6EE7B7" opacity="0.6" />
+    <!-- Ghanaian Gold Star Badge on Screen -->
+    <polygon points="170,30 173,38 181,38 175,43 177,51 170,46 163,51 165,43 159,38 167,38" fill="url(#goldGrad)" />
+
+    <!-- Terminal Stand / Scanner Base -->
+    <path d="M 85 130 L 135 130 L 155 180 L 65 180 Z" fill="#090B0E" stroke="#047857" stroke-width="6" />
+    <!-- Card / MoMo Reader Slot -->
+    <rect x="45" y="180" width="130" height="28" rx="8" fill="#090B0E" stroke="#10B981" stroke-width="6" />
+    <!-- Currency Pesewas Symbol Dots -->
+    <circle cx="70" cy="194" r="4" fill="#FBBF24" />
+    <circle cx="90" cy="194" r="4" fill="#FBBF24" />
+    <circle cx="110" cy="194" r="4" fill="#FBBF24" />
+    <circle cx="130" cy="194" r="4" fill="#FBBF24" />
+    <circle cx="150" cy="194" r="4" fill="#FBBF24" />
+  </g>
+
+  <!-- Brand Typography "AK" in White/Gold -->
+  <text x="256" y="405" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="44" fill="#FFFFFF" text-anchor="middle" letter-spacing="4">
+    AKWAABA
+  </text>
+</svg>

@@ -1,0 +1,599 @@
+// Akwaaba POS & Retail OS - Enterprise Prisma Schema
+// Tailored for Ghana Commercial Ecosystem (Retail, Wholesale, Supermarkets, Pharmacies)
+// Supports Multi-branch, Offline-Sync, GRA Tax, Bisa Debt, MoMo payments & Auditing
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// 1. ORGANIZATION, BRANCHES & RBAC
+// ==========================================
+
+enum UserRole {
+  SUPER_ADMIN       // Business Owner / Multi-store controller
+  BRANCH_MANAGER    // Store manager with PIN override authorization
+  CASHIER           // POS operator, restricted void/discount
+  INVENTORY_OFFICER // Warehouse, Goods receipt, stock transfers
+  AUDITOR           // Read-only tax, accounts, and audit log access
+}
+
+model Branch {
+  id              String           @id @default(uuid())
+  code            String           @unique // e.g., "ACC-01", "KMS-02"
+  name            String           // e.g., "Accra Central Mall Store"
+  ghanaPostGps    String           // e.g., "GA-183-9022"
+  city            String           // Accra, Kumasi, Takoradi, Tamale
+  region          String           // Greater Accra, Ashanti, etc.
+  phone           String
+  email           String?
+  taxScheme       TaxScheme        @default(STANDARD_VAT)
+  graTinNumber    String?          // GRA Taxpayer Identification Number
+  graVatRegistered Boolean         @default(true)
+  cashDrawers     Int              @default(2)
+  receiptHeader   String?
+  receiptFooter   String?          @default("Medaase for shopping with us! Nyame Nhyira Wo.")
+  isActive        Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  users           User[]
+  inventories     Inventory[]
+  orders          Order[]
+  cashierShifts   CashierShift[]
+  stockTransfersSource StockTransfer[] @relation("SourceBranch")
+  stockTransfersDest   StockTransfer[] @relation("DestBranch")
+  purchaseOrders  PurchaseOrder[]
+  auditLogs       AuditLog[]
+
+  @@index([code])
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String?        @unique
+  username      String         @unique
+  passwordHash  String
+  fullName      String
+  phone         String
+  role          UserRole       @default(CASHIER)
+  managerPin    String?        // 4-digit secret PIN for branch managers to authorize overrides
+  maxDiscountPct Decimal       @default(5.0) @db.Decimal(5, 2)
+  branchId      String
+  branch        Branch         @relation(fields: [branchId], references: [id])
+  isActive      Boolean        @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  orders        Order[]
+  cashierShifts CashierShift[]
+  cashDrops     CashDrop[]
+  stockAudits   StockAdjustment[]
+  auditLogs     AuditLog[]
+
+  @@index([branchId, role])
+}
+
+// ==========================================
+// 2. PRODUCT CATALOG & UNITS OF MEASURE (UOM)
+// ==========================================
+
+model Category {
+  id          String     @id @default(uuid())
+  name        String     @unique // e.g., "Beverages", "Provisions", "Pharmaceuticals"
+  code        String     @unique
+  colorCode   String?    @default("#f59e0b")
+  iconName    String?    @default("Package")
+  description String?
+  products    Product[]
+}
+
+model UnitOfMeasure {
+  id            String    @id @default(uuid())
+  name          String    // e.g., "50kg Bag", "Carton of 24", "Single Piece", "1kg Cup"
+  code          String    @unique // "SACK_50KG", "CTN_24", "PCS", "CUP_1KG"
+  conversionFactor Decimal @default(1.0) @db.Decimal(10, 4) // Ratio relative to base unit (e.g., 24 for carton)
+  isBaseUnit    Boolean   @default(false)
+  products      Product[]
+}
+
+model Product {
+  id              String            @id @default(uuid())
+  sku             String            @unique // e.g., "GH-RICE-001"
+  barcode         String            @unique // EAN-13 or internal barcode
+  name            String            // e.g., "Royal Feast Jasmine Rice 50kg"
+  localName       String?           // e.g., "Omo Rice / Perfume Rice"
+  description     String?
+  imageUrl        String?
+  
+  categoryId      String
+  category        Category          @relation(fields: [categoryId], references: [id])
+  
+  baseUnitId      String
+  baseUnit        UnitOfMeasure     @relation(fields: [baseUnitId], references: [id])
+
+  costPrice       Decimal           @db.Decimal(12, 2) // In GHS (GH₵)
+  retailPrice     Decimal           @db.Decimal(12, 2) // Selling price (GHS)
+  wholesalePrice  Decimal?          @db.Decimal(12, 2) // Bulk purchase price
+  
+  // Taxability flags for GRA
+  isTaxExempt     Boolean           @default(false)
+  customVatRate   Decimal?          @db.Decimal(5, 2) // If item has special zero-rating
+  
+  reorderLevel    Int               @default(10)
+  targetStockLevel Int              @default(50)
+  requiresExpiry  Boolean           @default(false)
+  allowNegativeStock Boolean        @default(false)
+  isActive        Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  batches         Batch[]
+  inventoryLevels Inventory[]
+  orderItems      OrderItem[]
+  stockMovements  StockMovement[]
+
+  @@index([barcode])
+  @@index([sku])
+  @@index([categoryId])
+}
+
+model Batch {
+  id            String           @id @default(uuid())
+  batchNumber   String           // e.g., "BATCH-2026-09A"
+  productId     String
+  product       Product          @relation(fields: [productId], references: [id])
+  manufactureDate DateTime?
+  expiryDate    DateTime
+  quantity      Int              @default(0)
+  initialQuantity Int
+  costPrice     Decimal          @db.Decimal(12, 2)
+  supplierId    String?
+  supplier      Supplier?        @relation(fields: [supplierId], references: [id])
+  createdAt     DateTime         @default(now())
+
+  stockMovements StockMovement[]
+
+  @@index([productId, expiryDate])
+}
+
+// ==========================================
+// 3. MULTI-BRANCH INVENTORY & AUDIT
+// ==========================================
+
+model Inventory {
+  id              String      @id @default(uuid())
+  branchId        String
+  branch          Branch      @relation(fields: [branchId], references: [id])
+  productId       String
+  product         Product     @relation(fields: [productId], references: [id])
+  currentStock    Int         @default(0)
+  reservedStock   Int         @default(0) // Items held in unpaid/pending online orders
+  lastAuditDate   DateTime?
+  updatedAt       DateTime    @updatedAt
+
+  @@unique([branchId, productId])
+  @@index([branchId])
+  @@index([productId])
+}
+
+enum MovementType {
+  SALE_DISPATCH
+  PURCHASE_RECEIPT
+  TRANSFER_OUT
+  TRANSFER_IN
+  WASTAGE_DAMAGED
+  EXPIRED_DISCARD
+  INVENTORY_AUDIT_ADJUSTMENT
+  CUSTOMER_RETURN
+}
+
+model StockMovement {
+  id            String        @id @default(uuid())
+  productId     String
+  product       Product       @relation(fields: [productId], references: [id])
+  batchId       String?
+  batch         Batch?        @relation(fields: [batchId], references: [id])
+  type          MovementType
+  quantityDelta Int           // Negative for sales/transfers out, positive for receipts
+  balanceAfter  Int
+  unitCost      Decimal       @db.Decimal(12, 2)
+  referenceId   String?       // OrderId, TransferId, or AdjustmentId
+  notes         String?
+  createdAt     DateTime      @default(now())
+
+  @@index([productId, createdAt])
+}
+
+enum TransferStatus {
+  REQUESTED
+  IN_TRANSIT
+  COMPLETED
+  CANCELLED
+  DISCREPANCY_FLAGGED
+}
+
+model StockTransfer {
+  id              String          @id @default(uuid())
+  transferNumber  String          @unique // e.g., "TR-ACC-KMS-2026-001"
+  sourceBranchId  String
+  sourceBranch    Branch          @relation("SourceBranch", fields: [sourceBranchId], references: [id])
+  destBranchId    String
+  destBranch      Branch          @relation("DestBranch", fields: [destBranchId], references: [id])
+  status          TransferStatus  @default(REQUESTED)
+  sentByUserId    String
+  receivedByUserId String?
+  dispatchedAt    DateTime?
+  receivedAt      DateTime?
+  notes           String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  items           StockTransferItem[]
+
+  @@index([sourceBranchId, destBranchId])
+}
+
+model StockTransferItem {
+  id              String         @id @default(uuid())
+  transferId      String
+  transfer        StockTransfer  @relation(fields: [transferId], references: [id])
+  productId       String
+  quantitySent    Int
+  quantityReceived Int?
+  notes           String?
+}
+
+enum AdjustmentReason {
+  DAMAGED_GOODS
+  EXPIRED_STOCK
+  PILFERAGE_THEFT
+  COUNT_DISCREPANCY
+  SPOILAGE_DUMSOR_DEFROST // Dumsor power cut refrigerator loss
+  SAMPLE_PROMOTION
+}
+
+model StockAdjustment {
+  id              String           @id @default(uuid())
+  branchId        String
+  userId          String
+  user            User             @relation(fields: [userId], references: [id])
+  productId       String
+  systemQuantity  Int
+  physicalQuantity Int
+  discrepancy     Int              // physical - system
+  reason          AdjustmentReason
+  managerPinUsed  String?
+  approvedBy      String?
+  notes           String?
+  createdAt       DateTime         @default(now())
+}
+
+// ==========================================
+// 4. CUSTOMER (CRM) & DEBT LEDGER ("BISA")
+// ==========================================
+
+model Customer {
+  id              String           @id @default(uuid())
+  customerNumber  String           @unique // e.g., "CUST-0029"
+  fullName        String           // e.g., "Mama Adjoa Provision Store"
+  phone           String           @unique // Required for MoMo & Arkesel SMS reminders
+  ghanaPostGps    String?          // e.g., "AK-045-8911"
+  email           String?
+  creditLimit     Decimal          @default(500.0) @db.Decimal(12, 2) // Max allowed Bisa debt in GHS
+  currentDebt     Decimal          @default(0.0) @db.Decimal(12, 2)
+  loyaltyPoints   Int              @default(0)
+  isCreditBlocked Boolean          @default(false)
+  notes           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  orders          Order[]
+  debtLedger      CustomerLedger[]
+
+  @@index([phone])
+}
+
+enum LedgerTransactionType {
+  CREDIT_SALE        // Items taken on credit (increases debt)
+  DEBT_REPAYMENT     // Customer pays back (decreases debt)
+  DEBT_WRITEOFF      // Bad debt written off
+  INITIAL_BALANCE
+}
+
+model CustomerLedger {
+  id              String                 @id @default(uuid())
+  customerId      String
+  customer        Customer               @relation(fields: [customerId], references: [id])
+  orderId         String?
+  order           Order?                 @relation(fields: [orderId], references: [id])
+  type            LedgerTransactionType
+  amount          Decimal                @db.Decimal(12, 2) // Transaction amount in GHS
+  balanceBefore   Decimal                @db.Decimal(12, 2)
+  balanceAfter    Decimal                @db.Decimal(12, 2)
+  paymentMethod   PaymentType?
+  externalRef     String?                // MoMo transaction ID or receipt #
+  smsAlertSent    Boolean                @default(false)
+  smsGatewayMsgId String?                // Arkesel or Hubtel message ID
+  recordedBy      String
+  notes           String?
+  createdAt       DateTime               @default(now())
+
+  @@index([customerId, createdAt])
+}
+
+// ==========================================
+// 5. SUPPLIERS & PROCUREMENT
+// ==========================================
+
+model Supplier {
+  id              String           @id @default(uuid())
+  companyName     String           // e.g., "Nestle Ghana Ltd", "Fan Milk Plc"
+  contactPerson   String
+  phone           String
+  momoNumber      String?
+  bankName        String?
+  bankAccountNumber String?
+  paymentTerms    String           @default("NET_30") // COD, NET_15, NET_30, NET_60
+  leadTimeDays    Int              @default(3)
+  createdAt       DateTime         @default(now())
+
+  batches         Batch[]
+  purchaseOrders  PurchaseOrder[]
+}
+
+model PurchaseOrder {
+  id              String         @id @default(uuid())
+  orderNumber     String         @unique // e.g., "PO-2026-0045"
+  branchId        String
+  branch          Branch         @relation(fields: [branchId], references: [id])
+  supplierId      String
+  supplier        Supplier       @relation(fields: [supplierId], references: [id])
+  status          String         @default("DRAFT") // DRAFT, ISSUED, PARTIAL_RECEIVED, COMPLETED, CANCELLED
+  totalAmount     Decimal        @db.Decimal(12, 2)
+  expectedDate    DateTime?
+  receivedAt      DateTime?
+  notes           String?
+  createdAt       DateTime       @default(now())
+}
+
+// ==========================================
+// 6. POS TRANSACTIONS & GRA TAX ENGINE
+// ==========================================
+
+enum TaxScheme {
+  STANDARD_VAT       // NHIL 2.5% + GETFund 2.5% + COVID 1.0% + VAT 15% on compound base (~21.90%)
+  FLAT_RATE_VFRS     // 3% VAT + 1% COVID Levy = 4.0% Flat
+  EXEMPT_SME         // 0% Non-VAT / Presumptive scheme
+}
+
+enum OrderStatus {
+  COMPLETED
+  HOLD               // Parked cart
+  VOIDED             // Cancelled by manager
+  REFUNDED
+}
+
+enum PaymentType {
+  CASH
+  MOMO_MTN
+  MOMO_TELECEL
+  MOMO_AT
+  CARD
+  CUSTOMER_DEBT_BISA // Store credit / informal ledger
+  SPLIT
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REVERSED
+}
+
+model Order {
+  id                  String           @id @default(uuid())
+  orderNumber         String           @unique // e.g., "AKW-2026-00124"
+  receiptNumber       String           @unique // e.g., "RCP-ACC-2026-000459"
+  branchId            String
+  branch              Branch           @relation(fields: [branchId], references: [id])
+  cashierId           String
+  cashier             User             @relation(fields: [cashierId], references: [id])
+  customerId          String?
+  customer            Customer?        @relation(fields: [customerId], references: [id])
+  shiftId             String
+  shift               CashierShift     @relation(fields: [shiftId], references: [id])
+  
+  status              OrderStatus      @default(COMPLETED)
+  
+  // Tax calculations (GHS Pesewas exact math)
+  taxScheme           TaxScheme        @default(STANDARD_VAT)
+  taxableBaseAmount   Decimal          @db.Decimal(12, 2) // Base price P
+  nhilAmount          Decimal          @default(0.0) @db.Decimal(12, 2) // 2.5% of P
+  getfundAmount       Decimal          @default(0.0) @db.Decimal(12, 2) // 2.5% of P
+  covidAmount         Decimal          @default(0.0) @db.Decimal(12, 2) // 1.0% of P
+  vatAmount           Decimal          @default(0.0) @db.Decimal(12, 2) // 15% of (P + NHIL + GETFund + COVID)
+  totalTaxAmount      Decimal          @db.Decimal(12, 2) // Sum of all levies + VAT
+  
+  subtotalAmount      Decimal          @db.Decimal(12, 2)
+  discountAmount      Decimal          @default(0.0) @db.Decimal(12, 2)
+  discountManagerPin  String?          // If discount required manager PIN authorization
+  grandTotal          Decimal          @db.Decimal(12, 2)
+  
+  // GRA E-VAT Fiscal Compliance Signature
+  graFiscalCode       String?          // Unique E-VAT receipt signature
+  graQrCodePayload    String?          // Commissioner's verification QR payload
+  graFiscalizedAt     DateTime?
+  graSyncStatus       String           @default("PENDING") // PENDING, VERIFIED, FAILED
+  
+  // Offline-First Sync tracking
+  isOfflineCreated    Boolean          @default(false)
+  clientOfflineUuid   String?          @unique
+  syncedAt            DateTime?
+
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  orderItems          OrderItem[]
+  payments            Payment[]
+  customerLedgers     CustomerLedger[]
+
+  @@index([branchId, createdAt])
+  @@index([cashierId, createdAt])
+  @@index([receiptNumber])
+  @@index([clientOfflineUuid])
+}
+
+model OrderItem {
+  id              String      @id @default(uuid())
+  orderId         String
+  order           Order       @relation(fields: [orderId], references: [id])
+  productId       String
+  product         Product     @relation(fields: [productId], references: [id])
+  productName     String
+  unitName        String      @default("PCS") // e.g., "50kg Sack", "1kg Cup"
+  quantity        Int
+  unitCostPrice   Decimal     @db.Decimal(12, 2) // For real-time COGS calculation
+  unitRetailPrice Decimal     @db.Decimal(12, 2)
+  discountPct     Decimal     @default(0.0) @db.Decimal(5, 2)
+  discountAmount  Decimal     @default(0.0) @db.Decimal(12, 2)
+  lineTotal       Decimal     @db.Decimal(12, 2)
+  taxRatePct      Decimal     @default(0.0) @db.Decimal(5, 2)
+  taxAmount       Decimal     @default(0.0) @db.Decimal(12, 2)
+  isVoided        Boolean     @default(false)
+  voidedByPin     String?
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Payment {
+  id                String         @id @default(uuid())
+  orderId           String
+  order             Order          @relation(fields: [orderId], references: [id])
+  paymentType       PaymentType
+  amount            Decimal        @db.Decimal(12, 2)
+  currency          String         @default("GHS")
+  status            PaymentStatus  @default(SUCCESS)
+  
+  // Cash breakdown
+  tenderedCash      Decimal?       @db.Decimal(12, 2)
+  changeGiven       Decimal?       @db.Decimal(12, 2)
+  
+  // Mobile Money Details
+  momoNetwork       String?        // MTN, TELECEL, AT
+  momoPhoneNumber   String?        // e.g. "0244123456"
+  momoTransactionId String?        // Network or Hubtel/Paystack reference
+  momoUssdSessionId String?        // Direct USSD push session ID
+  
+  // External card auth
+  cardLastFour      String?
+  cardAuthCode      String?
+  
+  createdAt         DateTime       @default(now())
+
+  @@index([orderId])
+  @@index([momoTransactionId])
+}
+
+// ==========================================
+// 7. CASHIER SHIFTS & DRAWER RECONCILIATION
+// ==========================================
+
+enum ShiftStatus {
+  OPEN
+  CLOSED
+  FORCE_CLOSED
+}
+
+model CashierShift {
+  id                  String        @id @default(uuid())
+  shiftNumber         String        @unique // e.g., "SHF-2026-10-02-01"
+  branchId            String
+  branch              Branch        @relation(fields: [branchId], references: [id])
+  cashierId           String
+  cashier             User          @relation(fields: [cashierId], references: [id])
+  status              ShiftStatus   @default(OPEN)
+  
+  openedAt            DateTime      @default(now())
+  closedAt            DateTime?
+  
+  // Cash Drawer Tracking (in GHS)
+  openingFloat        Decimal       @db.Decimal(12, 2) // Starting float cash in drawer
+  cashDropsTotal      Decimal       @default(0.0) @db.Decimal(12, 2) // Mid-shift deposits/payouts
+  
+  // System calculated sales
+  cashSalesTotal      Decimal       @default(0.0) @db.Decimal(12, 2)
+  momoSalesTotal      Decimal       @default(0.0) @db.Decimal(12, 2)
+  cardSalesTotal      Decimal       @default(0.0) @db.Decimal(12, 2)
+  debtSalesTotal      Decimal       @default(0.0) @db.Decimal(12, 2)
+  totalSalesVolume    Int           @default(0)
+  totalRevenue        Decimal       @default(0.0) @db.Decimal(12, 2)
+  
+  // Physical Drawer Count at Closure
+  expectedCashInTill  Decimal       @default(0.0) @db.Decimal(12, 2) // Float + Cash Sales - Drops
+  countedCashPhysical Decimal?      @db.Decimal(12, 2)
+  cashVariance        Decimal?      @db.Decimal(12, 2) // Counted - Expected (Negative = Shortage)
+  
+  // Z-Report certification
+  zReportNumber       String?       @unique // e.g., "Z-REP-20261002-001"
+  closedByManagerId   String?       // Manager who signed off on variance
+  closingNotes        String?
+
+  orders              Order[]
+  cashDrops           CashDrop[]
+
+  @@index([branchId, status])
+  @@index([cashierId, openedAt])
+}
+
+enum CashDropType {
+  PAY_IN          // Extra float added
+  PAY_OUT         // Petty cash expense paid out
+  SAFE_DEPOSIT    // Large cash skim transferred to safe
+}
+
+model CashDrop {
+  id              String        @id @default(uuid())
+  shiftId         String
+  shift           CashierShift  @relation(fields: [shiftId], references: [id])
+  cashierId       String
+  cashier         User          @relation(fields: [cashierId], references: [id])
+  dropType        CashDropType
+  amount          Decimal       @db.Decimal(12, 2)
+  reason          String        // e.g., "Bank deposit skim", "Emergency fuel for generator (Dumsor)"
+  authorizedByPin String?
+  createdAt       DateTime      @default(now())
+
+  @@index([shiftId])
+}
+
+// ==========================================
+// 8. AUDIT LOG & COMPLIANCE TRACKING
+// ==========================================
+
+model AuditLog {
+  id              String      @id @default(uuid())
+  branchId        String
+  branch          Branch      @relation(fields: [branchId], references: [id])
+  userId          String
+  user            User        @relation(fields: [userId], references: [id])
+  action          String      // e.g., "LINE_VOID", "PRICE_OVERRIDE", "DISCOUNT_APPLIED", "SHIFT_FORCE_CLOSE"
+  resourceType    String      // "ORDER", "PRODUCT", "SHIFT", "CUSTOMER"
+  resourceId      String?
+  previousValue   Json?
+  newValue        Json?
+  ipAddress       String?
+  deviceInfo      String?
+  notes           String?
+  createdAt       DateTime    @default(now())
+
+  @@index([branchId, createdAt])
+  @@index([action])
+}

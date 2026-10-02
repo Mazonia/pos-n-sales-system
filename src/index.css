@@ -1,0 +1,394 @@
+@import "tailwindcss";
+
+:root {
+  /* Premium Dark Mode: Deep Space & Emerald Neon */
+  --bg-base: #06080C;
+  --bg-surface: #0D1117;
+  --bg-elevated: #151B23;
+  --bg-hover: #1C2333;
+  --bg-glass: rgba(13, 17, 23, 0.72);
+  --bg-glass-elevated: rgba(21, 27, 35, 0.85);
+  --border-subtle: rgba(48, 62, 80, 0.5);
+  --border-active: rgba(48, 62, 80, 0.85);
+  --border-glow: rgba(16, 185, 129, 0.25);
+  --text-primary: #F0F4F8;
+  --text-secondary: #8B9DB5;
+  --text-tertiary: #556575;
+  --accent-primary: #10B981;
+  --accent-primary-hover: #34D399;
+  --accent-primary-muted: rgba(16, 185, 129, 0.12);
+  --accent-primary-glow: rgba(16, 185, 129, 0.08);
+  --accent-badge-bg: rgba(16, 185, 129, 0.1);
+  --accent-badge-text: #34D399;
+  --warning-amber: #F59E0B;
+  --warning-amber-bg: rgba(245, 158, 11, 0.1);
+  --danger-crimson: #EF4444;
+  --danger-crimson-bg: rgba(239, 68, 68, 0.1);
+  --ring-color: rgba(16, 185, 129, 0.3);
+  --shadow-ambient: 0 0 0 1px rgba(48, 62, 80, 0.3), 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-elevated: 0 0 0 1px rgba(48, 62, 80, 0.3), 0 8px 32px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.08);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+}
+
+.theme-light {
+  /* Refined Light Mode: Pristine White & Forest Emerald */
+  --bg-base: #F6F8FA;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #FFFFFF;
+  --bg-hover: #F0F2F5;
+  --bg-glass: rgba(255, 255, 255, 0.82);
+  --bg-glass-elevated: rgba(255, 255, 255, 0.92);
+  --border-subtle: rgba(209, 215, 224, 0.65);
+  --border-active: rgba(175, 184, 196, 0.8);
+  --border-glow: rgba(5, 150, 105, 0.2);
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --text-tertiary: #94A3B8;
+  --accent-primary: #059669;
+  --accent-primary-hover: #047857;
+  --accent-primary-muted: rgba(5, 150, 105, 0.08);
+  --accent-primary-glow: rgba(5, 150, 105, 0.05);
+  --accent-badge-bg: rgba(5, 150, 105, 0.08);
+  --accent-badge-text: #047857;
+  --warning-amber: #D97706;
+  --warning-amber-bg: rgba(217, 119, 6, 0.06);
+  --danger-crimson: #DC2626;
+  --danger-crimson-bg: rgba(220, 38, 38, 0.06);
+  --ring-color: rgba(5, 150, 105, 0.25);
+  --shadow-ambient: 0 0 0 1px rgba(209, 215, 224, 0.4), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-elevated: 0 0 0 1px rgba(209, 215, 224, 0.4), 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-glow: none;
+}
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  button, input, select, a, textarea {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .font-mono {
+    font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    font-feature-settings: "tnum" 1, "zero" 1;
+  }
+
+  /* Selection highlighting */
+  ::selection {
+    background: rgba(16, 185, 129, 0.25);
+    color: inherit;
+  }
+}
+
+/* ─── Premium Glass Surface Cards ─── */
+.pos-surface {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-ambient);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pos-surface-glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-ambient);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pos-surface-hover:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-elevated);
+}
+
+/* ─── Tactile Button Micro-Compression ─── */
+.pos-btn-tactile {
+  transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.2s ease,
+              border-color 0.2s ease,
+              box-shadow 0.2s ease;
+}
+
+.pos-btn-tactile:hover {
+  transform: translateY(-1px);
+}
+
+.pos-btn-tactile:active {
+  transform: scale(0.97) translateY(0);
+}
+
+/* ─── Glow Accent Button ─── */
+.pos-btn-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.pos-btn-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.05));
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.pos-btn-glow:hover::before {
+  opacity: 1;
+}
+
+/* ─── Staggered List Entry Animations ─── */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(16, 185, 129, 0.15); }
+  50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+}
+
+@keyframes floatSoft {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+.animate-fade-slide-in {
+  animation: fadeSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-slide-right {
+  animation: fadeSlideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-slide-in-top {
+  animation: slideInFromTop 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-slide-in-bottom {
+  animation: slideInFromBottom 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-expand-in {
+  animation: expandIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 2.5s ease-in-out infinite;
+}
+
+.animate-float-soft {
+  animation: floatSoft 3s ease-in-out infinite;
+}
+
+/* Stagger children animation delays */
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 40ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 80ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 120ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 160ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 200ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 240ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 280ms; }
+.stagger-children > *:nth-child(9) { animation-delay: 320ms; }
+.stagger-children > *:nth-child(10) { animation-delay: 360ms; }
+.stagger-children > *:nth-child(n+11) { animation-delay: 400ms; }
+
+/* ─── Premium Gradient Backgrounds ─── */
+.bg-gradient-mesh {
+  background-image: 
+    radial-gradient(ellipse at 20% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(56, 189, 248, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(139, 92, 246, 0.02) 0%, transparent 60%);
+}
+
+/* ─── ESC/POS thermal printer and Barcode Label printing styles ─── */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #thermal-receipt-print-area,
+  #thermal-receipt-print-area * {
+    visibility: visible;
+  }
+  #thermal-receipt-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm;
+    margin: 0;
+    padding: 2mm;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  #printable-barcode-labels,
+  #printable-barcode-labels * {
+    visibility: visible;
+  }
+  #printable-barcode-labels {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: #fff !important;
+    color: #000 !important;
+  }
+}
+
+/* ─── Premium Scrollbar Design ─── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 100px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle) transparent;
+}
+
+/* ─── Focus Ring Styling ─── */
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ─── Smooth Page Transitions ─── */
+.page-transition-enter {
+  animation: fadeSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ─── Tooltip & Popover Entry ─── */
+.popover-enter {
+  animation: expandIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ─── Gradient Text Utility ─── */
+.text-gradient-emerald {
+  background: linear-gradient(135deg, #10B981, #34D399);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Interactive Card Lift Effect ─── */
+.card-lift {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-elevated), var(--shadow-glow);
+}
+
+.card-lift:active {
+  transform: translateY(0) scale(0.98);
+}
