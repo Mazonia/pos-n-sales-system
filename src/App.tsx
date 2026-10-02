@@ -362,14 +362,14 @@ export default function App() {
 
   return (
     <div className={`flex flex-col h-screen w-screen overflow-hidden select-none transition-colors duration-200 ${
-      isDark ? 'bg-[#0B0F17] text-slate-100' : 'bg-slate-50 text-slate-900'
+      isDark ? 'bg-[#0A0F1D] text-slate-100' : 'bg-[#F4F6F8] text-slate-900'
     }`}>
       
       {/* ═══ CLEAN MODERN TOP NAVIGATION BAR ═══ */}
-      <header className={`h-[58px] border-b flex items-center justify-between px-3 sm:px-6 shrink-0 z-40 transition-colors ${
+      <header className={`h-[56px] border-b flex items-center justify-between px-3 sm:px-6 shrink-0 z-40 transition-colors ${
         isDark 
-          ? 'border-slate-800 bg-[#131A26]' 
-          : 'border-slate-200 bg-white shadow-2xs'
+          ? 'border-slate-800 bg-[#131A2A]' 
+          : 'border-slate-200/90 bg-white shadow-2xs'
       }`}>
         
         {/* Left: Mobile Toggle & Brand Identity */}
@@ -385,22 +385,22 @@ export default function App() {
 
           <div className="flex items-center gap-2.5">
             {/* Clean Logo Mark */}
-            <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-xs tracking-tight">
               AK
             </div>
             <div>
-              <div className="font-extrabold text-sm tracking-tight flex items-center gap-2">
+              <div className="font-bold text-sm tracking-tight flex items-center gap-2">
                 <span className={isDark ? 'text-white' : 'text-slate-900'}>Akwaaba POS</span>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-bold ${
+                <span className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${
                   isDark ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/40' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                 }`}>
                   v2.6
                 </span>
               </div>
-              <div className="text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
-                <Store className="w-2.5 h-2.5 text-amber-500" />
+              <div className="text-[11px] text-slate-400 flex items-center gap-1.5 font-medium">
+                <Store className="w-3 h-3 text-amber-500" />
                 <span className="hidden sm:inline truncate max-w-[160px]">{branchName}</span>
-                <span className="hidden sm:inline text-amber-600 dark:text-amber-400 font-bold">[{terminalBranch.code}]</span>
+                <span className="hidden sm:inline text-amber-600 dark:text-amber-400 font-semibold">[{terminalBranch.code}]</span>
               </div>
             </div>
           </div>
@@ -410,7 +410,7 @@ export default function App() {
         <nav className={`hidden md:flex items-center gap-1 p-1 rounded-xl border ${
           isDark 
             ? 'bg-slate-900/80 border-slate-800' 
-            : 'bg-slate-100 border-slate-200'
+            : 'bg-slate-100 border-slate-200/80'
         }`}>
           {navTabs.map(tab => {
             const Icon = tab.icon;
@@ -419,18 +419,18 @@ export default function App() {
               <button
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
-                className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-bold transition active:scale-95 cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition active:scale-95 cursor-pointer ${
                   isActive
-                    ? 'bg-emerald-600 text-white shadow-sm'
+                    ? 'bg-slate-900 text-white dark:bg-emerald-600 dark:text-white shadow-xs font-bold'
                     : isDark
                     ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
+                    : 'text-slate-600 hover:text-slate-950 hover:bg-white/80'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" strokeWidth={isActive ? 2.5 : 2} />
+                <Icon className="w-3.5 h-3.5" strokeWidth={isActive ? 2.2 : 1.8} />
                 <span>{tab.label}</span>
                 {tab.badge && (
-                  <span className={`min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-mono font-bold flex items-center justify-center ${
+                  <span className={`min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center tabular-nums ${
                     isActive ? 'bg-white/20 text-white' : 'bg-amber-500 text-slate-950'
                   }`}>
                     {tab.badge}

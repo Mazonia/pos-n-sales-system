@@ -1,41 +1,50 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  /* GeekByte Neomorphism Design System - Light Canvas */
-  --neo-bg: #E6EEFA;
-  --neo-shadow-light: #ffffff;
-  --neo-shadow-dark: #b8c8e0;
-  --neo-shadow-dark-hover: #acbcd6;
-  --text-main: #1E293B;
-  --text-muted: #64748B;
-  
-  --accent-primary: #059669;
-  --accent-blue: #2563EB;
+  /* Modern Clean POS Color Tokens (Square / Shopify POS inspired) */
+  --pos-canvas: #F4F6F8;
+  --pos-card: #FFFFFF;
+  --pos-card-border: #E2E8F0;
+  --pos-card-hover: #F8FAFC;
+  --pos-text-main: #0F172A;
+  --pos-text-muted: #64748B;
+  --pos-text-subtle: #94A3B8;
+  --pos-accent: #059669;
+  --pos-accent-hover: #047857;
 }
 
 .theme-dark, .dark {
-  /* GeekByte Neomorphism Design System - Dark Canvas */
-  --neo-bg: #0B1729;
-  --neo-shadow-light: #122543;
-  --neo-shadow-dark: #040913;
-  --neo-shadow-dark-hover: #03070f;
-  --text-main: #F8FAFC;
-  --text-muted: #94A3B8;
-  
-  --accent-primary: #10B981;
-  --accent-blue: #3B82F6;
+  /* Modern Clean POS Dark Tokens */
+  --pos-canvas: #0A0F1D;
+  --pos-card: #131A2A;
+  --pos-card-border: #1E293B;
+  --pos-card-hover: #192238;
+  --pos-text-main: #F8FAFC;
+  --pos-text-muted: #94A3B8;
+  --pos-text-subtle: #64748B;
+  --pos-accent: #10B981;
+  --pos-accent-hover: #059669;
 }
 
 @layer base {
   body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    background-color: var(--neo-bg);
-    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--pos-canvas);
+    color: var(--pos-text-main);
+    letter-spacing: -0.011em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
-    transition: background-color 0.25s ease, color 0.25s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 700;
   }
 
   button, input, select, a, textarea {
@@ -43,13 +52,15 @@
     -webkit-tap-highlight-color: transparent;
   }
   
-  .font-mono {
-    font-family: 'JetBrains Mono', monospace;
-    font-feature-settings: "tnum" 1, "zero" 1;
+  /* Modern Banking/Retail Tabular Typography for Prices & Figures (No ugly coder monospace) */
+  .font-mono, .tabular-nums, [data-num] {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: "cv02" 1, "cv03" 1, "cv04" 1, "cv11" 1, "tnum" 1;
+    font-variant-numeric: tabular-nums;
   }
 
   ::selection {
-    background: rgba(16, 185, 129, 0.25);
+    background: rgba(5, 150, 105, 0.2);
     color: inherit;
   }
 
@@ -59,8 +70,8 @@
   }
 
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
 
   ::-webkit-scrollbar-thumb {
@@ -70,152 +81,168 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   GEEKBYTE NEOMORPHISM CORE UTILITIES
+   MODERN POS DESIGN SYSTEM UTILITIES (Square / Shopify POS standard)
    ══════════════════════════════════════════════════════════════════════ */
 
-/* Background */
-.neo-bg {
-  background-color: #E6EEFA !important;
-}
-.theme-dark .neo-bg, .dark .neo-bg {
-  background-color: #0B1729 !important;
+/* Clean Canvas */
+.pos-canvas, .neo-bg {
+  background-color: var(--pos-canvas) !important;
 }
 
-/* Extruded Neomorphic Card */
-.neo-card {
-  background-color: #E6EEFA !important;
-  border-radius: 1.25rem;
-  border: none !important;
-  box-shadow: 8px 8px 18px #b8c8e0, -8px -8px 18px #ffffff;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+/* Crisp Clean Product / Container Card */
+.pos-card, .neo-card {
+  background-color: var(--pos-card) !important;
+  border: 1px solid var(--pos-card-border) !important;
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04), 0 1px 1px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.theme-dark .neo-card, .dark .neo-card {
-  background-color: #0B1729 !important;
-  box-shadow: 8px 8px 18px #040913, -8px -8px 18px #122543;
+
+.pos-card:hover, .neo-card:hover {
+  border-color: #CBD5E1 !important;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
 }
-.neo-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 10px 10px 22px #acbcd6, -10px -10px 22px #ffffff;
-}
+
+.theme-dark .pos-card:hover, .dark .pos-card:hover,
 .theme-dark .neo-card:hover, .dark .neo-card:hover {
-  box-shadow: 10px 10px 22px #03070f, -10px -10px 22px #15294a;
+  border-color: #334155 !important;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
 }
 
-/* Inset Neomorphic Card / Well */
-.neo-card-inset, .neo-inset {
-  background-color: #E6EEFA !important;
-  border-radius: 1.25rem;
-  border: none !important;
-  box-shadow: inset 6px 6px 12px #b8c8e0, inset -6px -6px 12px #ffffff;
-}
-.theme-dark .neo-card-inset, .theme-dark .neo-inset,
-.dark .neo-card-inset, .dark .neo-inset {
-  background-color: #0B1729 !important;
-  box-shadow: inset 6px 6px 12px #040913, inset -6px -6px 12px #122543;
+/* Inset Container / Well (Search, customer bar, secondary areas) */
+.pos-inset, .neo-card-inset, .neo-inset {
+  background-color: #F1F4F8 !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 0.875rem;
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.03);
 }
 
-/* Tactile Neomorphic Button */
-.neo-btn {
-  background-color: #E6EEFA !important;
+.theme-dark .pos-inset, .theme-dark .neo-card-inset, .theme-dark .neo-inset,
+.dark .pos-inset, .dark .neo-card-inset, .dark .neo-inset {
+  background-color: #0E1422 !important;
+  border-color: #1E293B !important;
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Clean Touch-Optimized POS Button */
+.pos-btn, .neo-btn {
+  background-color: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
   border-radius: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  color: #1E293B;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+
+.theme-dark .pos-btn, .theme-dark .neo-btn,
+.dark .pos-btn, .dark .neo-btn {
+  background-color: #162034 !important;
+  border-color: #27354E !important;
+  color: #F1F5F9;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+}
+
+.pos-btn:hover, .neo-btn:hover {
+  background-color: #F8FAFC !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A;
+}
+
+.theme-dark .pos-btn:hover, .theme-dark .neo-btn:hover,
+.dark .pos-btn:hover, .dark .neo-btn:hover {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+  color: #FFFFFF;
+}
+
+.pos-btn:active, .neo-btn:active {
+  transform: scale(0.97);
+  background-color: #F1F5F9 !important;
+}
+
+.theme-dark .pos-btn:active, .theme-dark .neo-btn:active,
+.dark .pos-btn:active, .dark .neo-btn:active {
+  background-color: #111827 !important;
+}
+
+/* Primary POS Action Button (Large Checkout / Charge) */
+.pos-btn-primary, .neo-btn-accent {
+  background: linear-gradient(180deg, #059669 0%, #047857 100%) !important;
+  color: #FFFFFF !important;
   font-weight: 700;
-  border: none !important;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 4px 4px 10px #b8c8e0, -4px -4px 10px #ffffff;
-  color: #1e3a8a;
+  border-radius: 0.875rem;
+  border: 1px solid #047857 !important;
+  box-shadow: 0 2px 8px 0 rgba(5, 150, 105, 0.3), inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 }
-.theme-dark .neo-btn, .dark .neo-btn {
-  background-color: #0B1729 !important;
-  box-shadow: 4px 4px 10px #040913, -4px -4px 10px #122543;
-  color: #93c5fd;
-}
-.neo-btn:hover {
-  color: #2563eb;
-  box-shadow: 5px 5px 12px #acbcd6, -5px -5px 12px #ffffff;
-}
-.theme-dark .neo-btn:hover, .dark .neo-btn:hover {
-  color: #3b82f6;
-  box-shadow: 5px 5px 12px #03070f, -5px -5px 12px #15294a;
-}
-.neo-btn:active {
-  box-shadow: inset 4px 4px 8px #b8c8e0, inset -4px -4px 8px #ffffff;
-  transform: scale(0.98);
-}
-.theme-dark .neo-btn:active, .dark .neo-btn:active {
-  box-shadow: inset 4px 4px 8px #040913, inset -4px -4px 8px #122543;
-  transform: scale(0.98);
-}
 
-/* Inset Input Field */
-.neo-input {
-  background-color: #E6EEFA !important;
-  border-radius: 0.85rem;
-  border: none !important;
-  color: #1e293b;
-  box-shadow: inset 4px 4px 8px #b8c8e0, inset -4px -4px 8px #ffffff;
-  outline: none;
-  transition: all 0.2s ease-in-out;
-}
-.theme-dark .neo-input, .dark .neo-input {
-  background-color: #0B1729 !important;
-  color: #e2e8f0;
-  box-shadow: inset 4px 4px 8px #040913, inset -4px -4px 8px #122543;
-}
-.neo-input:focus {
-  box-shadow: inset 5px 5px 10px #acbcd6, inset -5px -5px 10px #ffffff;
-}
-.theme-dark .neo-input:focus, .dark .neo-input:focus {
-  box-shadow: inset 5px 5px 10px #03070f, inset -5px -5px 10px #15294a;
-}
-
-/* Brand Gradient Card */
-.neo-card-brand {
-  background-image: linear-gradient(135deg, #059669, #047857);
-  border-radius: 1.25rem;
-  border: none !important;
-  color: #ffffff;
-  box-shadow: 8px 8px 18px rgba(5, 150, 105, 0.3), -8px -8px 18px #ffffff;
-}
-.theme-dark .neo-card-brand, .dark .neo-card-brand {
-  background-image: linear-gradient(135deg, #059669, #064e3b);
-  box-shadow: 8px 8px 18px #040913, -8px -8px 18px rgba(16, 185, 129, 0.15);
-}
-
-/* Accent Buttons */
-.neo-btn-accent {
-  background-image: linear-gradient(135deg, #059669, #10B981);
-  color: #ffffff !important;
-  font-weight: 800;
-  border-radius: 0.85rem;
-  border: none !important;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 5px 5px 14px rgba(5, 150, 105, 0.35), -5px -5px 12px #ffffff;
-  cursor: pointer;
-}
-.theme-dark .neo-btn-accent, .dark .neo-btn-accent {
-  background-image: linear-gradient(135deg, #059669, #047857);
-  box-shadow: 5px 5px 14px rgba(16, 185, 129, 0.25), -5px -5px 12px rgba(255, 255, 255, 0.05);
-}
-.neo-btn-accent:hover {
-  background-image: linear-gradient(135deg, #047857, #059669);
-  box-shadow: 6px 6px 18px rgba(5, 150, 105, 0.45), -6px -6px 14px #ffffff;
+.pos-btn-primary:hover, .neo-btn-accent:hover {
+  background: linear-gradient(180deg, #047857 0%, #065F46 100%) !important;
+  box-shadow: 0 4px 12px 0 rgba(5, 150, 105, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
   transform: translateY(-1px);
 }
-.theme-dark .neo-btn-accent:hover, .dark .neo-btn-accent:hover {
-  box-shadow: 6px 6px 18px rgba(16, 185, 129, 0.35), -6px -6px 14px rgba(255, 255, 255, 0.08);
+
+.pos-btn-primary:active, .neo-btn-accent:active {
+  transform: scale(0.99);
+  box-shadow: 0 1px 4px 0 rgba(5, 150, 105, 0.25);
 }
-.neo-btn-accent:active {
-  transform: scale(0.98);
+
+/* Clean Input Field */
+.pos-input, .neo-input {
+  background-color: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 0.75rem;
+  color: #0F172A;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  outline: none;
+  transition: all 0.15s ease-in-out;
+}
+
+.theme-dark .pos-input, .theme-dark .neo-input,
+.dark .pos-input, .dark .neo-input {
+  background-color: #0E1422 !important;
+  border-color: #1E293B !important;
+  color: #F8FAFC;
+}
+
+.pos-input:focus, .neo-input:focus {
+  border-color: #059669 !important;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12) !important;
+}
+
+.theme-dark .pos-input:focus, .theme-dark .neo-input:focus,
+.dark .pos-input:focus, .dark .neo-input:focus {
+  border-color: #10B981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
 }
 
 /* Soft Hover for Items in List */
 .neo-list-item-hover {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.12s ease-in-out;
 }
 .neo-list-item-hover:hover {
-  box-shadow: inset 4px 4px 8px #b8c8e0, inset -4px -4px 8px #ffffff !important;
+  background-color: #F1F5F9 !important;
 }
 .theme-dark .neo-list-item-hover:hover, .dark .neo-list-item-hover:hover {
-  box-shadow: inset 4px 4px 8px #040913, inset -4px -4px 8px #122543 !important;
+  background-color: #1E293B !important;
+}
+
+/* Category Filter Pill Active / Inactive */
+.pos-filter-pill {
+  transition: all 0.15s ease;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.375rem 0.875rem;
+}
+.pos-filter-pill-active {
+  background-color: #0F172A;
+  color: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.theme-dark .pos-filter-pill-active {
+  background-color: #10B981;
+  color: #042416;
 }

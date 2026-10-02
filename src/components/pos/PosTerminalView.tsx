@@ -500,21 +500,21 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                   key={cat}
                   type="button"
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1.5 rounded-xl whitespace-nowrap text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
+                  className={`px-3.5 py-1.5 rounded-full whitespace-nowrap text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95 cursor-pointer ${
                     isActive
-                      ? 'bg-emerald-600 text-white shadow-sm'
+                      ? 'bg-slate-900 text-white dark:bg-emerald-500 dark:text-slate-950 shadow-xs font-bold'
                       : isDark
-                      ? 'bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700'
-                      : 'bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200/80'
+                      ? 'bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700/60'
+                      : 'bg-white text-slate-600 hover:text-slate-950 hover:bg-slate-100 border border-slate-200/80'
                   }`}
                 >
                   <span>{cat}</span>
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                  <span className={`text-[10.5px] px-1.5 py-0.2 rounded-full tabular-nums font-medium ${
                     isActive
-                      ? 'bg-emerald-700 text-emerald-100'
+                      ? isDark ? 'bg-slate-950/20 text-slate-950 font-bold' : 'bg-white/20 text-white'
                       : isDark
-                      ? 'bg-slate-900 text-slate-400'
-                      : 'bg-slate-200 text-slate-600'
+                      ? 'bg-slate-900/60 text-slate-400'
+                      : 'bg-slate-100 text-slate-500'
                   }`}>
                     {count}
                   </span>
