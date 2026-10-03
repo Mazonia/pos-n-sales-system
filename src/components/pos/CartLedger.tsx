@@ -68,7 +68,7 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
       {/* Top Header Card */}
       <div className="pos-card p-3 flex items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center font-bold">
+          <div className="w-8 h-8 rounded-xl bg-[#FF4500]/10 text-[#FF4500] dark:text-[#FF5722] border border-[#FF4500]/20 flex items-center justify-center font-bold">
             <Receipt className="w-4 h-4" />
           </div>
           <div>
@@ -88,10 +88,10 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
           className="pos-btn px-2.5 py-1.5 text-xs flex items-center gap-1.5"
           title="View Held Orders"
         >
-          <PauseCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+          <PauseCircle className="w-3.5 h-3.5 text-[#FF4500] dark:text-[#FF5722]" />
           <span className="font-semibold text-stone-700 dark:text-stone-300">Held</span>
           {parkedCartCount > 0 && (
-            <span className="w-4 h-4 rounded-full bg-amber-500 text-stone-950 text-[10px] font-bold flex items-center justify-center tabular-nums">
+            <span className="w-4 h-4 rounded-full bg-[#FF4500] text-white text-[10px] font-bold flex items-center justify-center tabular-nums">
               {parkedCartCount}
             </span>
           )}
@@ -201,7 +201,7 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
                   <button
                     type="button"
                     onClick={() => onOpenPriceOverride(item)}
-                    className="p-1.5 rounded-lg text-stone-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition"
+                    className="p-1.5 rounded-lg text-stone-400 hover:text-[#FF4500] hover:bg-[#FF4500]/10 dark:hover:bg-[#FF4500]/20 transition"
                     title="Price Override"
                   >
                     <Tag className="w-3.5 h-3.5" />
@@ -247,10 +247,10 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
               className="w-full p-2.5 flex items-center justify-between text-xs font-semibold text-stone-700 dark:text-stone-300"
             >
               <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                <span className="w-2 h-2 rounded-full bg-[#FF4500]" />
                 <span>GRA Statutory Taxes:</span>
               </div>
-              <div className="flex items-center gap-1 text-amber-700 dark:text-amber-400 font-bold tabular-nums">
+              <div className="flex items-center gap-1 text-[#FF4500] dark:text-[#FF5722] font-bold tabular-nums">
                 <span>{formatGhs(taxDetail.totalTax)}</span>
                 {taxAccordionOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
               </div>
@@ -283,7 +283,7 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
             <span className="text-xs uppercase font-bold tracking-wider text-stone-500 dark:text-stone-400">
               Total Due:
             </span>
-            <span className="text-2xl font-bold tracking-tight text-stone-900 dark:text-amber-400 tabular-nums">
+            <span className="text-2xl font-bold tracking-tight text-[#FF4500] dark:text-[#FF5722] tabular-nums">
               {formatGhs(grandTotal)}
             </span>
           </div>
@@ -295,7 +295,7 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
               onClick={onHoldCart}
               className="pos-btn py-2 px-3 text-xs font-semibold flex items-center justify-center gap-1.5"
             >
-              <PauseCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <PauseCircle className="w-3.5 h-3.5 text-[#FF4500] dark:text-[#FF5722]" />
               <span>Hold (F4)</span>
             </button>
 
@@ -304,7 +304,7 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
               onClick={onOpenDiscountModal}
               className="pos-btn py-2 px-3 text-xs font-semibold flex items-center justify-center gap-1.5"
             >
-              <Percent className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <Percent className="w-3.5 h-3.5 text-[#FF4500] dark:text-[#FF5722]" />
               <span>Discount</span>
             </button>
           </div>

@@ -235,7 +235,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         }`}>
           <div className="flex items-center gap-3">
             <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs ${
-              isDark ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-amber-50 text-amber-700'
+              isDark ? 'bg-[#FF4500]/15 text-[#FF5722] border border-[#FF4500]/30' : 'bg-[#FF4500]/10 text-[#FF4500]'
             }`}>
               ₵
             </div>
@@ -287,9 +287,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     onClick={() => setActiveTab(tab.id as any)}
                     className={`flex-1 py-2 px-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
                       isActive
-                        ? isDark
-                          ? 'bg-amber-500 text-stone-950 font-bold shadow-sm'
-                          : 'bg-stone-900 text-white font-bold shadow-sm'
+                        ? 'bg-[#FF4500] text-white font-bold shadow-sm'
                         : isDark
                         ? 'text-stone-400 hover:text-stone-200'
                         : 'text-stone-600 hover:text-stone-900'
@@ -309,13 +307,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               }`}>
                 <div className="flex items-center justify-between text-xs">
                   <label className="font-semibold text-stone-400">Physical Cash Received:</label>
-                  <span className="font-mono font-bold tabular-nums text-amber-500">
+                  <span className="font-mono font-bold tabular-nums text-[#FF4500] dark:text-[#FF5722]">
                     Due: {formatGhs(remainingDue)}
                   </span>
                 </div>
 
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 font-extrabold text-amber-500 font-mono text-lg">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 font-extrabold text-[#FF4500] font-mono text-lg">
                     GH₵
                   </span>
                   <input
@@ -323,10 +321,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     step="0.1"
                     value={cashTendered || ''}
                     onChange={e => setCashTendered(parseFloat(e.target.value) || 0)}
-                    className={`w-full pl-16 pr-4 py-3 rounded-xl text-xl font-mono tabular-nums font-bold border outline-none transition focus:ring-2 focus:ring-amber-500/30 ${
+                    className={`w-full pl-16 pr-4 py-3 rounded-xl text-xl font-mono tabular-nums font-bold border outline-none transition focus:ring-2 focus:ring-[#FF4500]/30 ${
                       isDark
-                        ? 'bg-[#1A1C22] border-[#282B34] text-white focus:border-amber-500'
-                        : 'bg-white border-stone-200 text-stone-900 focus:border-amber-500'
+                        ? 'bg-[#1A1C22] border-[#282B34] text-white focus:border-[#FF4500]'
+                        : 'bg-white border-stone-200 text-stone-900 focus:border-[#FF4500]'
                     }`}
                     placeholder="0.00"
                   />
@@ -343,8 +341,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         onClick={() => addCashPreset(d)}
                         className={`py-2 rounded-xl border text-xs font-mono font-bold tabular-nums transition active:scale-95 cursor-pointer ${
                           isDark
-                            ? 'bg-[#20232B] border-[#282B34] hover:border-amber-500 hover:text-amber-400 text-stone-100'
-                            : 'bg-white border-stone-200 hover:border-amber-600 hover:text-amber-700 text-stone-900'
+                            ? 'bg-[#20232B] border-[#282B34] hover:border-[#FF4500] hover:text-[#FF5722] text-stone-100'
+                            : 'bg-white border-stone-200 hover:border-[#FF4500] hover:text-[#FF4500] text-stone-900'
                         }`}
                       >
                         +₵{d}
@@ -355,8 +353,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       onClick={setExactCash}
                       className={`py-2 rounded-xl border text-xs font-semibold transition active:scale-95 cursor-pointer ${
                         isDark
-                          ? 'bg-[#20232B] border-[#282B34] text-amber-400 hover:border-amber-500'
-                          : 'bg-white border-stone-200 text-amber-600 hover:border-amber-600'
+                          ? 'bg-[#20232B] border-[#282B34] text-[#FF5722] hover:border-[#FF4500]'
+                          : 'bg-white border-stone-200 text-[#FF4500] hover:border-[#FF4500]'
                       }`}
                     >
                       Exact
@@ -366,46 +364,46 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
                 {/* Smart Real-Time Cash Calculation: Change to Give vs Customer Left to Pay */}
                 {isOverpaid && (
-                  <div className="p-3.5 rounded-2xl bg-amber-500/15 border-2 border-amber-500/40 text-amber-400 space-y-1 animate-in fade-in duration-150">
+                  <div className="p-3.5 rounded-2xl bg-[#FF4500]/10 border-2 border-[#FF4500]/40 text-[#FF4500] dark:text-[#FF5722] space-y-1 animate-in fade-in duration-150">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider">
-                        <CheckCircle2 className="w-4 h-4 text-amber-400" />
+                        <CheckCircle2 className="w-4 h-4 text-[#FF4500]" />
                         <span>Change to Give Customer:</span>
                       </div>
-                      <span className="font-mono font-black text-lg text-amber-300 tabular-nums">
+                      <span className="font-mono font-black text-lg text-[#FF4500] dark:text-[#FF5722] tabular-nums">
                         {formatGhs(changeToGive)}
                       </span>
                     </div>
-                    <p className="text-[11px] text-amber-300/90 leading-tight">
-                      Customer tendered <strong className="font-mono text-white">{formatGhs(cashTendered)}</strong> for <strong className="font-mono text-white">{formatGhs(remainingDue)}</strong> due. Hand customer <strong className="font-mono underline text-white">{formatGhs(changeToGive)}</strong> in change.
+                    <p className="text-[11px] text-stone-600 dark:text-stone-300 leading-tight">
+                      Customer tendered <strong className="font-mono text-stone-900 dark:text-white">{formatGhs(cashTendered)}</strong> for <strong className="font-mono text-stone-900 dark:text-white">{formatGhs(remainingDue)}</strong> due. Hand customer <strong className="font-mono underline text-[#FF4500] dark:text-[#FF5722]">{formatGhs(changeToGive)}</strong> in change.
                     </p>
                   </div>
                 )}
 
                 {isUnderpaid && (
-                  <div className="p-3.5 rounded-2xl bg-amber-500/15 border-2 border-amber-500/40 text-amber-400 space-y-1 animate-in fade-in duration-150">
+                  <div className="p-3.5 rounded-2xl bg-[#FF4500]/10 border-2 border-[#FF4500]/40 text-[#FF4500] dark:text-[#FF5722] space-y-1 animate-in fade-in duration-150">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider">
-                        <AlertCircle className="w-4 h-4 text-amber-400" />
+                        <AlertCircle className="w-4 h-4 text-[#FF4500]" />
                         <span>Customer Left to Pay:</span>
                       </div>
-                      <span className="font-mono font-black text-lg text-amber-300 tabular-nums">
+                      <span className="font-mono font-black text-lg text-[#FF4500] dark:text-[#FF5722] tabular-nums">
                         {formatGhs(remainingToPay)}
                       </span>
                     </div>
-                    <p className="text-[11px] text-amber-400/90 leading-tight">
-                      Customer tendered <strong className="font-mono text-white">{formatGhs(cashTendered)}</strong> of <strong className="font-mono text-white">{formatGhs(remainingDue)}</strong>. Outstanding balance remaining to collect: <strong className="font-mono underline text-white">{formatGhs(remainingToPay)}</strong> (settle via MoMo, Card, or additional cash).
+                    <p className="text-[11px] text-stone-600 dark:text-stone-300 leading-tight">
+                      Customer tendered <strong className="font-mono text-stone-900 dark:text-white">{formatGhs(cashTendered)}</strong> of <strong className="font-mono text-stone-900 dark:text-white">{formatGhs(remainingDue)}</strong>. Outstanding balance remaining to collect: <strong className="font-mono underline text-[#FF4500] dark:text-[#FF5722]">{formatGhs(remainingToPay)}</strong> (settle via MoMo, Card, or additional cash).
                     </p>
                   </div>
                 )}
 
                 {isExact && (
-                  <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-between text-xs animate-in fade-in duration-150">
+                  <div className="p-3 rounded-2xl bg-[#FF4500]/10 border border-[#FF4500]/30 text-[#FF4500] dark:text-[#FF5722] flex items-center justify-between text-xs animate-in fade-in duration-150">
                     <div className="flex items-center gap-1.5 font-bold">
-                      <CheckCircle2 className="w-4 h-4 text-amber-400" />
+                      <CheckCircle2 className="w-4 h-4 text-[#FF4500]" />
                       <span>Exact Cash Tender Received:</span>
                     </div>
-                    <span className="font-mono font-bold text-sm text-amber-300">
+                    <span className="font-mono font-bold text-sm text-[#FF4500] dark:text-[#FF5722]">
                       GH₵ 0.00 Change Due
                     </span>
                   </div>
@@ -416,7 +414,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     isDark ? 'bg-[#1A1C22] border-[#282B34]' : 'bg-white border-stone-200'
                   }`}>
                     <span className="text-stone-400">Enter tendered cash to calculate change or remaining balance:</span>
-                    <span className="font-mono font-bold text-amber-400 tabular-nums">
+                    <span className="font-mono font-bold text-[#FF4500] dark:text-[#FF5722] tabular-nums">
                       Due: {formatGhs(remainingDue)}
                     </span>
                   </div>
@@ -426,7 +424,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   type="button"
                   onClick={handleAddCashPayment}
                   disabled={remainingDue <= 0 || cashTendered <= 0}
-                  className="w-full py-3.5 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition active:scale-[0.98] shadow-md cursor-pointer bg-amber-500 hover:bg-amber-400 text-stone-950 font-black disabled:opacity-40"
+                  className="w-full py-3.5 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition active:scale-[0.98] shadow-md cursor-pointer bg-[#FF4500] hover:bg-[#E03E00] text-white font-black disabled:opacity-40"
                 >
                   <Plus className="w-4 h-4" />
                   <span>
@@ -508,7 +506,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     onClick={() => setMomoMode('USSD_PUSH')}
                     className={`flex-1 py-1.5 rounded-lg font-medium transition cursor-pointer ${
                       momoMode === 'USSD_PUSH'
-                        ? 'bg-amber-500 text-stone-950 font-bold'
+                        ? 'bg-[#FF4500] text-white font-bold'
                         : 'text-stone-400 hover:text-stone-200'
                     }`}
                   >
@@ -519,7 +517,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     onClick={() => setMomoMode('MANUAL_REF')}
                     className={`flex-1 py-1.5 rounded-lg font-medium transition cursor-pointer ${
                       momoMode === 'MANUAL_REF'
-                        ? 'bg-amber-500 text-stone-950 font-bold'
+                        ? 'bg-[#FF4500] text-white font-bold'
                         : 'text-stone-400 hover:text-stone-200'
                     }`}
                   >
@@ -537,7 +535,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       value={momoPhone}
                       onChange={e => setMomoPhone(e.target.value)}
                       placeholder="024 412 3456"
-                      className={`w-full pl-14 pr-3 py-2 rounded-xl text-sm font-mono border outline-none focus:border-amber-500 ${
+                      className={`w-full pl-14 pr-3 py-2 rounded-xl text-sm font-mono border outline-none focus:border-[#FF4500] ${
                         isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-white border-stone-200 text-stone-900'
                       }`}
                     />
@@ -553,7 +551,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         value={momoManualRef}
                         onChange={e => setMomoManualRef(e.target.value)}
                         placeholder="e.g. 26091823901"
-                        className={`w-full px-3 py-2 rounded-xl text-sm font-mono uppercase border outline-none focus:border-amber-500 ${
+                        className={`w-full px-3 py-2 rounded-xl text-sm font-mono uppercase border outline-none focus:border-[#FF4500] ${
                           isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-white border-stone-200 text-stone-900'
                         }`}
                       />
@@ -562,7 +560,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       type="button"
                       onClick={handleConfirmMoMoSuccess}
                       disabled={remainingDue <= 0 || !momoManualRef}
-                      className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-stone-950 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                      className="w-full py-2.5 bg-[#FF4500] hover:bg-[#E03E00] disabled:opacity-40 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       <Plus className="w-4 h-4" />
                       <span>Record MoMo Payment ({formatGhs(remainingDue)})</span>
@@ -584,27 +582,27 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
                     {momoPushStatus === 'PUSHING' && (
                       <div className={`p-3 rounded-xl border text-center flex flex-col items-center justify-center space-y-1 ${
-                        isDark ? 'bg-[#1A1C22] border-amber-500/40' : 'bg-white border-amber-600/40'
+                        isDark ? 'bg-[#1A1C22] border-[#FF4500]/40' : 'bg-white border-[#FF4500]/40'
                       }`}>
-                        <Loader2 className="w-5 h-5 text-amber-500 animate-spin" />
-                        <span className="text-xs text-amber-500 font-semibold">Initiating Telco USSD Push...</span>
+                        <Loader2 className="w-5 h-5 text-[#FF4500] animate-spin" />
+                        <span className="text-xs text-[#FF4500] font-semibold">Initiating Telco USSD Push...</span>
                       </div>
                     )}
 
                     {momoPushStatus === 'WAITING_APPROVAL' && (
-                      <div className="p-3.5 rounded-2xl border border-amber-500/40 bg-amber-500/10 space-y-2">
-                        <div className="flex items-center justify-between text-xs text-amber-400 font-semibold">
+                      <div className="p-3.5 rounded-2xl border border-[#FF4500]/40 bg-[#FF4500]/10 space-y-2">
+                        <div className="flex items-center justify-between text-xs text-[#FF4500] dark:text-[#FF5722] font-semibold">
                           <span className="flex items-center gap-1.5">
-                            <Clock className="w-4 h-4 text-amber-500 animate-pulse" />
+                            <Clock className="w-4 h-4 text-[#FF4500] animate-pulse" />
                             Awaiting Customer PIN on Handset...
                           </span>
-                          <span className="font-mono bg-amber-950/80 text-amber-400 px-2 py-0.5 rounded tabular-nums">
+                          <span className="font-mono bg-black/40 text-[#FF4500] dark:text-[#FF5722] px-2 py-0.5 rounded tabular-nums font-bold">
                             {momoPushCountdown}s
                           </span>
                         </div>
                         <div className="text-[11px] text-stone-400">
                           Prompt sent to <span className="font-mono text-white">{momoPhone}</span> to authorize{' '}
-                          <span className="text-amber-400 font-bold tabular-nums">{formatGhs(remainingDue)}</span>.
+                          <span className="text-[#FF4500] dark:text-[#FF5722] font-bold tabular-nums">{formatGhs(remainingDue)}</span>.
                         </div>
                         <button
                           type="button"
@@ -617,15 +615,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     )}
 
                     {momoPushStatus === 'SUCCESS' && (
-                      <div className="p-3.5 rounded-2xl border border-amber-500/40 bg-amber-500/10 space-y-2 text-center">
-                        <div className="flex items-center justify-center gap-1.5 text-amber-400 font-bold text-xs">
+                      <div className="p-3.5 rounded-2xl border border-emerald-500/40 bg-emerald-500/10 space-y-2 text-center">
+                        <div className="flex items-center justify-center gap-1.5 text-emerald-400 font-bold text-xs">
                           <CheckCircle2 className="w-4 h-4" />
                           <span>USSD Payment Authorized!</span>
                         </div>
                         <button
                           type="button"
                           onClick={handleConfirmMoMoSuccess}
-                          className="w-full py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold rounded-xl text-xs cursor-pointer"
+                          className="w-full py-2 bg-[#FF4500] hover:bg-[#E03E00] text-white font-bold rounded-xl text-xs cursor-pointer"
                         >
                           Add MoMo Tender ({formatGhs(remainingDue)})
                         </button>
@@ -648,7 +646,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     maxLength={4}
                     value={cardLastFour}
                     onChange={e => setCardLastFour(e.target.value)}
-                    className={`w-full px-3 py-2 rounded-xl text-sm font-mono text-center border outline-none focus:border-amber-500 ${
+                    className={`w-full px-3 py-2 rounded-xl text-sm font-mono text-center border outline-none focus:border-[#FF4500] ${
                       isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-white border-stone-200 text-stone-900'
                     }`}
                   />
@@ -657,7 +655,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   type="button"
                   onClick={handleAddCardPayment}
                   disabled={remainingDue <= 0}
-                  className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-stone-950 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full py-2.5 bg-[#FF4500] hover:bg-[#E03E00] disabled:opacity-40 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Apply Card Payment ({formatGhs(remainingDue)})</span>
@@ -699,11 +697,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     </div>
                     <div className="flex justify-between text-stone-400">
                       <span>Current Debt:</span>
-                      <span className="text-amber-500 font-bold">{formatGhs(currentCustomer.currentDebt)}</span>
+                      <span className="text-[#FF4500] dark:text-[#FF5722] font-bold">{formatGhs(currentCustomer.currentDebt)}</span>
                     </div>
                     <div className="flex justify-between border-t border-stone-700/50 pt-1">
                       <span>Available Credit:</span>
-                      <span className={`font-bold ${availableCredit > 0 ? 'text-amber-400' : 'text-rose-500'}`}>
+                      <span className={`font-bold ${availableCredit > 0 ? 'text-[#FF4500] dark:text-[#FF5722]' : 'text-rose-500'}`}>
                         {formatGhs(availableCredit)}
                       </span>
                     </div>
@@ -714,7 +712,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   type="button"
                   onClick={handleAddBisaPayment}
                   disabled={remainingDue <= 0 || availableCredit <= 0}
-                  className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-stone-950 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full py-2.5 bg-[#FF4500] hover:bg-[#E03E00] disabled:opacity-40 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Charge to Bisa Debt ({formatGhs(Math.min(remainingDue, Math.max(0, availableCredit)))})</span>
@@ -748,14 +746,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   <div className="space-y-3">
                     {/* Points Dossier Card */}
                     <div className={`p-3.5 rounded-2xl border space-y-2 text-xs font-mono ${
-                      isDark ? 'bg-[#1A1C22] border-amber-500/30' : 'bg-white border-amber-500/30 shadow-xs'
+                      isDark ? 'bg-[#1A1C22] border-[#FF4500]/30' : 'bg-white border-[#FF4500]/30 shadow-xs'
                     }`}>
                       <div className="flex items-center justify-between">
                         <span className="text-stone-400 flex items-center gap-1.5 font-sans font-medium">
-                          <Award className="w-4 h-4 text-amber-400" />
+                          <Award className="w-4 h-4 text-[#FF4500] dark:text-[#FF5722]" />
                           <span>Loyalty Points Balance:</span>
                         </span>
-                        <span className="font-bold text-base text-amber-400 font-mono">
+                        <span className="font-bold text-base text-[#FF4500] dark:text-[#FF5722] font-mono">
                           {customerLoyaltyPoints} pts
                         </span>
                       </div>
@@ -769,14 +767,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
                       <div className="flex justify-between text-[11px] text-stone-400 border-t border-[#282B34] pt-1">
                         <span>Max Redeemable for this Bill:</span>
-                        <span className="font-bold text-amber-400">
+                        <span className="font-bold text-[#FF4500] dark:text-[#FF5722]">
                           {maxRedeemablePointsForBill} pts ({formatGhs(maxRedeemableGhsValue)})
                         </span>
                       </div>
                     </div>
 
                     {customerLoyaltyPoints <= 0 ? (
-                      <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs text-center">
+                      <div className="p-3 rounded-xl bg-[#FF4500]/10 border border-[#FF4500]/30 text-[#FF4500] dark:text-[#FF5722] text-xs text-center">
                         This customer currently has 0 loyalty points. Points accrue automatically on every sale (1 pt per GH₵ 1.00 spent).
                       </div>
                     ) : (
@@ -790,7 +788,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                               onClick={() => setLoyaltyPointsToRedeem(Math.min(50, maxRedeemablePointsForBill))}
                               disabled={customerLoyaltyPoints < 50}
                               className={`py-2 px-1 rounded-xl border text-center transition disabled:opacity-30 cursor-pointer ${
-                                isDark ? 'bg-[#20232B] border-[#282B34] text-white hover:border-amber-500' : 'bg-white border-stone-200 text-stone-900 hover:border-amber-500'
+                                isDark ? 'bg-[#20232B] border-[#282B34] text-white hover:border-[#FF4500]' : 'bg-white border-stone-200 text-stone-900 hover:border-[#FF4500]'
                               }`}
                             >
                               50 pts (₵5)
@@ -800,7 +798,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                               onClick={() => setLoyaltyPointsToRedeem(Math.min(100, maxRedeemablePointsForBill))}
                               disabled={customerLoyaltyPoints < 100}
                               className={`py-2 px-1 rounded-xl border text-center transition disabled:opacity-30 cursor-pointer ${
-                                isDark ? 'bg-[#20232B] border-[#282B34] text-white hover:border-amber-500' : 'bg-white border-stone-200 text-stone-900 hover:border-amber-500'
+                                isDark ? 'bg-[#20232B] border-[#282B34] text-white hover:border-[#FF4500]' : 'bg-white border-stone-200 text-stone-900 hover:border-[#FF4500]'
                               }`}
                             >
                               100 pts (₵10)
@@ -810,7 +808,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                               onClick={() => setLoyaltyPointsToRedeem(Math.min(200, maxRedeemablePointsForBill))}
                               disabled={customerLoyaltyPoints < 200}
                               className={`py-2 px-1 rounded-xl border text-center transition disabled:opacity-30 cursor-pointer ${
-                                isDark ? 'bg-[#20232B] border-[#282B34] text-white hover:border-amber-500' : 'bg-white border-stone-200 text-stone-900 hover:border-amber-500'
+                                isDark ? 'bg-[#20232B] border-[#282B34] text-white hover:border-[#FF4500]' : 'bg-white border-stone-200 text-stone-900 hover:border-[#FF4500]'
                               }`}
                             >
                               200 pts (₵20)
@@ -818,7 +816,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                             <button
                               type="button"
                               onClick={() => setLoyaltyPointsToRedeem(maxRedeemablePointsForBill)}
-                              className="py-2 px-1 rounded-xl border border-amber-500/50 bg-amber-500/10 text-amber-400 text-center transition hover:bg-amber-500/20 cursor-pointer"
+                              className="py-2 px-1 rounded-xl border border-[#FF4500]/50 bg-[#FF4500]/10 text-[#FF4500] dark:text-[#FF5722] font-bold text-center transition hover:bg-[#FF4500]/20 cursor-pointer"
                             >
                               Max Due
                             </button>
@@ -829,7 +827,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         <div>
                           <div className="flex justify-between text-xs mb-1">
                             <label className="text-stone-400 font-medium">Points to Redeem:</label>
-                            <span className="font-mono font-bold text-amber-400">
+                            <span className="font-mono font-bold text-[#FF4500] dark:text-[#FF5722]">
                               Discount Value: {formatGhs(roundToPesewas((loyaltyPointsToRedeem || 0) / 10))}
                             </span>
                           </div>
@@ -843,7 +841,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                                 const val = parseInt(e.target.value) || 0;
                                 setLoyaltyPointsToRedeem(Math.min(val, maxRedeemablePointsForBill));
                               }}
-                              className={`w-full px-3 py-2 rounded-xl text-base font-mono font-bold border outline-none focus:border-amber-500 ${
+                              className={`w-full px-3 py-2 rounded-xl text-base font-mono font-bold border outline-none focus:border-[#FF4500] ${
                                 isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-white border-stone-200 text-stone-900'
                               }`}
                               placeholder="Enter points..."
@@ -858,7 +856,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                           type="button"
                           onClick={handleAddLoyaltyPayment}
                           disabled={remainingDue <= 0 || loyaltyPointsToRedeem <= 0}
-                          className="w-full py-3 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-stone-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition active:scale-[0.98] cursor-pointer"
+                          className="w-full py-3 bg-[#FF4500] hover:bg-[#E03E00] disabled:opacity-40 text-white font-black rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition active:scale-[0.98] cursor-pointer"
                         >
                           <Gift className="w-4 h-4" />
                           <span>
@@ -897,13 +895,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 </div>
                 <div className="flex justify-between text-stone-400">
                   <span>Total Tendered:</span>
-                  <span className="text-amber-500 font-bold">{formatGhs(totalAllocated)}</span>
+                  <span className="text-[#FF4500] dark:text-[#FF5722] font-bold">{formatGhs(totalAllocated)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-sm border-t border-[#282B34] pt-2">
-                  <span className={remainingDue > 0 ? 'text-amber-500' : 'text-stone-300'}>
+                  <span className={remainingDue > 0 ? 'text-[#FF4500] dark:text-[#FF5722]' : 'text-stone-300'}>
                     {remainingDue > 0 ? 'Remaining Balance:' : 'Settled in Full'}
                   </span>
-                  <span className={remainingDue > 0 ? 'text-amber-500' : 'text-stone-300'}>
+                  <span className={remainingDue > 0 ? 'text-[#FF4500] dark:text-[#FF5722]' : 'text-stone-300'}>
                     {formatGhs(remainingDue)}
                   </span>
                 </div>
@@ -933,7 +931,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         </span>
                         {p.momoTxId && <span className="text-[10px] text-stone-400 block">{p.momoTxId}</span>}
                         {p.type === 'LOYALTY_POINTS' && (
-                          <span className="text-[10px] text-amber-400 block font-mono">
+                          <span className="text-[10px] text-[#FF4500] dark:text-[#FF5722] block font-mono">
                             Redeemed {p.loyaltyPointsRedeemed || Math.round(p.amount * 10)} pts
                           </span>
                         )}
@@ -959,7 +957,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 type="button"
                 onClick={handleCompleteSale}
                 disabled={remainingDue > 0.05}
-                className="w-full py-3.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-stone-950 font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/20 cursor-pointer transition active:scale-[0.98]"
+                className="w-full py-3.5 bg-[#FF4500] hover:bg-[#E03E00] disabled:opacity-40 text-white font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-[#FF4500]/25 cursor-pointer transition active:scale-[0.98]"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>COMPLETE SALE & PRINT RECEIPT</span>

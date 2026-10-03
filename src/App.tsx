@@ -365,45 +365,56 @@ export default function App() {
       isDark ? 'bg-[#121316] text-[#F4F4F6]' : 'bg-[#F5F5F7] text-stone-900'
     }`}>
       
-      {/* ═══ CLEAN UNCLUTTERED TOP NAVIGATION BAR ═══ */}
-      <header className={`h-14 border-b flex items-center justify-between px-3 sm:px-6 shrink-0 z-40 transition-colors ${
+      {/* ═══ REDESIGNED PREMIUM RETAIL OS TOP NAVIGATION BAR ═══ */}
+      <header className={`h-16 border-b flex items-center justify-between px-3 sm:px-6 shrink-0 z-40 transition-colors backdrop-blur-md ${
         isDark 
-          ? 'border-[#282B34] bg-[#1A1C22]' 
-          : 'border-stone-200/90 bg-white shadow-2xs'
+          ? 'border-[#282B34] bg-[#16181F]/95' 
+          : 'border-stone-200/90 bg-white/95 shadow-xs'
       }`}>
         
-        {/* Left: Brand Identity */}
+        {/* Left: Brand Identity & Location */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`lg:hidden p-2 rounded-xl border transition active:scale-95 ${
-              isDark ? 'border-[#282B34] text-stone-300 hover:text-white hover:bg-[#232630]' : 'border-stone-200 text-stone-600 hover:text-black hover:bg-stone-100'
+            className={`lg:hidden p-2 rounded-xl border transition-all active:scale-95 cursor-pointer ${
+              isDark 
+                ? 'border-[#282B34] text-stone-300 hover:text-white hover:bg-[#20232B]' 
+                : 'border-stone-200 text-stone-600 hover:text-stone-950 hover:bg-stone-100'
             }`}
             title="Open Menu"
           >
-            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            {mobileMenuOpen ? <X className="w-5 h-5 text-[#FF4500]" /> : <Menu className="w-5 h-5" />}
           </button>
 
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center font-black text-xs shadow-xs tracking-tight">
-              AK
+          <div className="flex items-center gap-3">
+            {/* Fiery Red-Orange Brand Icon */}
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FF5722] via-[#FF4500] to-[#E03E00] text-white flex items-center justify-center font-black text-sm shadow-[0_2px_12px_rgba(255,69,0,0.35)] shrink-0">
+              <Store className="w-4 h-4" />
             </div>
-            <div>
-              <div className="font-bold text-sm tracking-tight text-stone-900 dark:text-stone-100">
-                Akwaaba POS
-              </div>
-              <div className="text-[11px] text-stone-400 font-medium truncate max-w-[140px] sm:max-w-[200px]">
-                {branchName}
+
+            <div className="flex items-center gap-2">
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-black text-sm sm:text-[15px] tracking-tight text-stone-900 dark:text-stone-100">
+                    AKWAABA
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded text-[9.5px] font-black tracking-wider uppercase bg-[#FF4500]/10 text-[#FF4500] dark:bg-[#FF4500]/20 dark:text-[#FF5722] border border-[#FF4500]/25">
+                    POS
+                  </span>
+                </div>
+                <div className="text-[11px] text-stone-400 font-medium truncate max-w-[130px] sm:max-w-[200px]">
+                  {branchName}
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Center: Clean Segmented Navigation (Desktop >= 1024px) */}
-        <nav className={`hidden lg:flex items-center gap-1 p-1 rounded-xl border ${
+        {/* Center: Clean Segmented Navigation Dock (Desktop >= 1024px) */}
+        <nav className={`hidden lg:flex items-center gap-1 p-1 rounded-2xl border ${
           isDark 
-            ? 'bg-[#141519] border-[#282B34]' 
-            : 'bg-stone-100 border-stone-200/80'
+            ? 'bg-[#12141A] border-[#282B34]' 
+            : 'bg-stone-100/90 border-stone-200/80 shadow-2xs'
         }`}>
           {navTabs.map(tab => {
             const Icon = tab.icon;
@@ -412,19 +423,19 @@ export default function App() {
               <button
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
-                className={`px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition active:scale-95 cursor-pointer ${
+                className={`px-3.5 py-2 rounded-xl flex items-center gap-2 text-xs font-semibold transition-all active:scale-95 cursor-pointer ${
                   isActive
-                    ? 'bg-stone-900 text-white dark:bg-amber-500 dark:text-stone-950 shadow-xs font-bold'
+                    ? 'bg-[#FF4500] text-white font-bold shadow-[0_2px_10px_rgba(255,69,0,0.35)]'
                     : isDark
-                    ? 'text-stone-400 hover:text-stone-200 hover:bg-[#20232B]'
+                    ? 'text-stone-400 hover:text-stone-100 hover:bg-[#1C2028]'
                     : 'text-stone-600 hover:text-stone-950 hover:bg-white/80'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" strokeWidth={isActive ? 2.2 : 1.8} />
+                <Icon className="w-4 h-4" strokeWidth={isActive ? 2.2 : 1.8} />
                 <span>{tab.label}</span>
                 {tab.badge && (
                   <span className={`min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center tabular-nums ${
-                    isActive ? 'bg-white/20 text-white dark:bg-stone-950/20 dark:text-stone-950' : 'bg-amber-500 text-stone-950'
+                    isActive ? 'bg-black/25 text-white' : 'bg-[#FF4500] text-white'
                   }`}>
                     {tab.badge}
                   </span>
@@ -434,30 +445,30 @@ export default function App() {
           })}
         </nav>
 
-        {/* Right Controls: Streamlined & Clutter-Free */}
-        <div className="flex items-center gap-2">
+        {/* Right Controls: Streamlined, Clutter-Free Utility Cluster */}
+        <div className="flex items-center gap-2 sm:gap-2.5">
           
-          {/* Active Shift Indicator */}
+          {/* Active Shift Indicator / Cash Drawer Status */}
           {activeShift ? (
             <button
               onClick={() => setShowShiftModal(true)}
-              className={`px-2.5 py-1.5 rounded-xl border text-xs font-medium flex items-center gap-2 transition-all active:scale-95 cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all active:scale-95 cursor-pointer ${
                 isDark
-                  ? 'border-amber-500/20 bg-amber-500/10 text-amber-400 hover:bg-amber-500/15'
-                  : 'border-stone-200 bg-stone-100 text-stone-700 hover:bg-stone-200/80'
+                  ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15'
+                  : 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
               }`}
-              title="Till status and cash drops"
+              title="Till status, float balance & cash drops"
             >
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-60"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              <span className="hidden sm:inline font-semibold">Till Active</span>
+              <span className="hidden sm:inline">Till Active</span>
             </button>
           ) : (
             <button
               onClick={() => setShowOpenShiftPrompt(true)}
-              className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-stone-950 transition active:scale-95 shadow-xs"
+              className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#FF4500] hover:bg-[#E03E00] text-white transition-all active:scale-95 shadow-[0_2px_10px_rgba(255,69,0,0.3)] cursor-pointer"
             >
               Open Shift
             </button>
@@ -469,14 +480,14 @@ export default function App() {
               triggerHaptic('tap');
               setIsDark(!isDark);
             }}
-            className={`p-2 rounded-xl border transition-all duration-200 active:scale-90 cursor-pointer ${
+            className={`p-2.5 rounded-xl border transition-all duration-200 active:scale-90 cursor-pointer ${
               isDark
-                ? 'border-[#282B34] text-amber-400 hover:bg-[#20232B]'
-                : 'border-stone-200 text-stone-600 hover:bg-stone-100 hover:text-stone-900'
+                ? 'border-[#282B34] text-stone-300 hover:text-[#FF5722] hover:bg-[#20232B]'
+                : 'border-stone-200 text-stone-600 hover:bg-stone-100 hover:text-[#FF4500]'
             }`}
             title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
           >
-            {isDark ? <Sun className="w-4 h-4" strokeWidth={1.8} /> : <Moon className="w-4 h-4" strokeWidth={1.8} />}
+            {isDark ? <Sun className="w-4 h-4" strokeWidth={2} /> : <Moon className="w-4 h-4" strokeWidth={2} />}
           </button>
 
           {/* User Profile Avatar & Menu */}
@@ -485,40 +496,44 @@ export default function App() {
               onClick={() => setUserMenuOpen(!userMenuOpen)}
               className={`flex items-center gap-2 p-1 sm:pr-2.5 sm:pl-1 rounded-xl border transition-all active:scale-95 cursor-pointer ${
                 isDark
-                  ? 'border-[#282B34] bg-[#1A1C22] text-stone-200 hover:bg-[#232630]'
-                  : 'border-stone-200 bg-white text-stone-800 hover:bg-stone-50 shadow-2xs'
+                  ? 'border-[#282B34] bg-[#16181F] text-stone-200 hover:border-[#FF4500]/50'
+                  : 'border-stone-200 bg-white text-stone-800 hover:border-[#FF4500]/50 shadow-2xs'
               }`}
             >
               <div
-                className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs text-stone-950 font-mono shadow-xs"
-                style={{ backgroundColor: currentUser.avatarColor || '#F59E0B' }}
+                className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs text-white font-mono shadow-xs bg-[#FF4500]"
               >
                 {currentUser.fullName.split(' ').map(n => n[0]).join('')}
               </div>
-              <span className="font-semibold text-xs hidden sm:inline max-w-[85px] truncate">
-                {currentUser.fullName.split(' ')[0]}
-              </span>
+              <div className="hidden sm:block text-left leading-tight">
+                <span className="font-bold text-xs block max-w-[90px] truncate text-stone-900 dark:text-stone-100">
+                  {currentUser.fullName.split(' ')[0]}
+                </span>
+                <span className="text-[10px] text-stone-400 font-medium block">
+                  {currentUser.role.split('_')[0]}
+                </span>
+              </div>
               <ChevronDown className={`w-3.5 h-3.5 text-stone-400 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {/* User Details & Logout Dropdown */}
             {userMenuOpen && (
-              <div className={`absolute right-0 top-full mt-2 w-72 rounded-2xl p-3 z-50 text-xs border shadow-xl animate-expand-in ${
+              <div className={`absolute right-0 top-full mt-2 w-72 rounded-2xl p-3 z-50 text-xs border shadow-2xl animate-expand-in ${
                 isDark 
-                  ? 'bg-[#1A1C22] border-[#282B34] text-stone-200' 
+                  ? 'bg-[#16181F] border-[#282B34] text-stone-200' 
                   : 'bg-white border-stone-200 text-stone-800'
               }`}>
                 {/* User Identity Info */}
-                <div className={`p-3 rounded-xl mb-2.5 ${isDark ? 'bg-[#141519]' : 'bg-stone-50'}`}>
+                <div className={`p-3 rounded-xl mb-2.5 ${isDark ? 'bg-[#121316]' : 'bg-stone-50'}`}>
                   <div className="font-bold text-sm flex items-center gap-2">
                     <span>{currentUser.fullName}</span>
-                    <ShieldCheck className="w-4 h-4 text-amber-500" />
+                    <ShieldCheck className="w-4 h-4 text-[#FF4500]" />
                   </div>
-                  <div className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold mt-0.5">
+                  <div className="text-[11px] text-[#FF4500] dark:text-[#FF5722] font-semibold mt-0.5">
                     {currentUser.role}
                   </div>
                   <div className="text-[10px] text-stone-400 mt-1 flex items-center gap-1.5">
-                    <span className={`w-2 h-2 rounded-full ${isOnline ? 'bg-amber-500' : 'bg-stone-500'}`} />
+                    <span className={`w-2 h-2 rounded-full ${isOnline ? 'bg-emerald-500' : 'bg-stone-500'}`} />
                     <span>{isOnline ? 'Connected (Cloud Synced)' : 'Offline (Local Dexie Mode)'}</span>
                   </div>
                 </div>
@@ -533,15 +548,15 @@ export default function App() {
                     }}
                     className={`w-full text-left p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between mb-2 transition-all border active:scale-[0.98] ${
                       isDark
-                        ? 'bg-[#20232B] border-[#282B34] text-amber-300 hover:bg-[#282B34]'
-                        : 'bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100'
+                        ? 'bg-[#1E222B] border-[#282B34] text-[#FF5722] hover:bg-[#252A36]'
+                        : 'bg-orange-50 border-orange-200 text-[#C43400] hover:bg-orange-100'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <UserPlus className="w-3.5 h-3.5" />
                       <span>Manage Employees</span>
                     </div>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#FF4500]/15 text-[#FF4500] dark:text-[#FF5722]">
                       Admin
                     </span>
                   </button>
@@ -561,7 +576,7 @@ export default function App() {
                         setUserMenuOpen(false);
                       }}
                       className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between transition-all ${
-                        isDark ? 'hover:bg-[#232630] text-stone-300' : 'hover:bg-stone-100 text-stone-700'
+                        isDark ? 'hover:bg-[#20232B] text-stone-300' : 'hover:bg-stone-100 text-stone-700'
                       }`}
                     >
                       <span className="truncate">{u.fullName}</span>
@@ -594,7 +609,7 @@ export default function App() {
       {mobileMenuOpen && (
         <div className={`lg:hidden p-3 border-b space-y-1 animate-slide-in-top z-40 ${
           isDark 
-            ? 'bg-[#1A1C22]/95 backdrop-blur-md border-[#282B34]' 
+            ? 'bg-[#16181F]/95 backdrop-blur-md border-[#282B34]' 
             : 'bg-white/95 backdrop-blur-md border-stone-200 shadow-md'
         }`}>
           {navTabs.map((item) => {
@@ -609,9 +624,9 @@ export default function App() {
                 }}
                 className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-between transition-all ${
                   isActive
-                    ? 'bg-amber-500 text-stone-950 font-bold shadow-xs'
+                    ? 'bg-[#FF4500] text-white font-bold shadow-[0_2px_10px_rgba(255,69,0,0.3)]'
                     : isDark
-                    ? 'text-stone-300 hover:text-white hover:bg-[#232630]'
+                    ? 'text-stone-300 hover:text-white hover:bg-[#20232B]'
                     : 'text-stone-700 hover:text-stone-950 hover:bg-stone-100'
                 }`}
               >
@@ -621,7 +636,7 @@ export default function App() {
                 </div>
                 {item.badge && (
                   <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] tabular-nums ${
-                    isActive ? 'bg-stone-950/20 text-stone-950' : 'bg-amber-500 text-stone-950'
+                    isActive ? 'bg-black/25 text-white' : 'bg-[#FF4500] text-white'
                   }`}>
                     {item.badge}
                   </span>
@@ -634,11 +649,7 @@ export default function App() {
 
       {/* Auto-Sync Confirmation Toast */}
       {syncToast && (
-        <div className={`flex items-center justify-center gap-2 py-2 px-4 text-xs font-bold animate-slide-in-top ${
-          isDark 
-            ? 'bg-amber-500 text-stone-950' 
-            : 'bg-amber-600 text-white'
-        }`}>
+        <div className="flex items-center justify-center gap-2 py-2 px-4 text-xs font-bold animate-slide-in-top bg-[#FF4500] text-white">
           <CheckCircle2 className="w-4 h-4" />
           <span>{syncToast}</span>
         </div>

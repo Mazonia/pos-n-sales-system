@@ -3,7 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Modern Clean Light Theme: Warm Alabaster, Deep Charcoal & Rich Burnt Amber */
+  /* Modern Clean Light Theme: Warm Alabaster, Deep Charcoal & Fiery Red-Orange (#FF4500) */
   --pos-canvas: #F5F5F7;
   --pos-card: #FFFFFF;
   --pos-card-border: #E4E4E7;
@@ -11,12 +11,12 @@
   --pos-text-main: #18181B;
   --pos-text-muted: #71717A;
   --pos-text-subtle: #A1A1AA;
-  --pos-accent: #D97706;
-  --pos-accent-hover: #B45309;
+  --pos-accent: #FF4500;
+  --pos-accent-hover: #E03E00;
 }
 
 .theme-dark, .dark {
-  /* Dark Theme: Pure Ashy Charcoal & Glowing Amber */
+  /* Dark Theme: Pure Ashy Charcoal & Fiery Red-Orange (#FF4500) */
   --pos-canvas: #121316;
   --pos-card: #1A1C22;
   --pos-card-border: #282B34;
@@ -24,8 +24,8 @@
   --pos-text-main: #F4F4F6;
   --pos-text-muted: #9CA3AF;
   --pos-text-subtle: #6B7280;
-  --pos-accent: #F59E0B;
-  --pos-accent-hover: #D97706;
+  --pos-accent: #FF4500;
+  --pos-accent-hover: #FF5722;
 }
 
 @layer base {
@@ -60,7 +60,7 @@
   }
 
   ::selection {
-    background: rgba(217, 119, 6, 0.25);
+    background: rgba(255, 69, 0, 0.25);
     color: inherit;
   }
 
@@ -81,7 +81,7 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   RETAIL POS DESIGN SYSTEM (Ashy Charcoal & Amber Palette)
+   RETAIL POS DESIGN SYSTEM (Ashy Charcoal & Bright Red-Orange #FF4500)
    ══════════════════════════════════════════════════════════════════════ */
 
 /* Clean Canvas */
@@ -168,36 +168,36 @@
   background-color: #16181E !important;
 }
 
-/* Primary Amber POS Checkout Button */
+/* Primary Bright Red-Orange (#FF4500) POS Checkout Button */
 .pos-btn-primary, .neo-btn-accent {
-  background: linear-gradient(180deg, #D97706 0%, #B45309 100%) !important;
+  background: linear-gradient(180deg, #FF5722 0%, #FF4500 100%) !important;
   color: #FFFFFF !important;
   font-weight: 700;
   border-radius: 0.875rem;
-  border: 1px solid #B45309 !important;
-  box-shadow: 0 2px 8px 0 rgba(217, 119, 6, 0.28), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  border: 1px solid #E03E00 !important;
+  box-shadow: 0 2px 10px 0 rgba(255, 69, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 }
 
 .theme-dark .pos-btn-primary, .dark .pos-btn-primary,
 .theme-dark .neo-btn-accent, .dark .neo-btn-accent {
-  background: linear-gradient(180deg, #F59E0B 0%, #D97706 100%) !important;
-  color: #121316 !important;
-  border: 1px solid #D97706 !important;
-  box-shadow: 0 2px 10px 0 rgba(245, 158, 11, 0.3), inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+  background: linear-gradient(180deg, #FF5722 0%, #FF4500 100%) !important;
+  color: #FFFFFF !important;
+  border: 1px solid #FF5722 !important;
+  box-shadow: 0 2px 12px 0 rgba(255, 69, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
 }
 
 .pos-btn-primary:hover, .neo-btn-accent:hover {
-  background: linear-gradient(180deg, #B45309 0%, #92400E 100%) !important;
-  box-shadow: 0 4px 14px 0 rgba(217, 119, 6, 0.38);
+  background: linear-gradient(180deg, #E03E00 0%, #C43400 100%) !important;
+  box-shadow: 0 4px 16px 0 rgba(255, 69, 0, 0.45);
   transform: translateY(-1px);
 }
 
 .theme-dark .pos-btn-primary:hover, .dark .pos-btn-primary:hover,
 .theme-dark .neo-btn-accent:hover, .dark .neo-btn-accent:hover {
-  background: linear-gradient(180deg, #FBBF24 0%, #F59E0B 100%) !important;
-  box-shadow: 0 4px 16px 0 rgba(245, 158, 11, 0.45);
+  background: linear-gradient(180deg, #FF6E40 0%, #FF4500 100%) !important;
+  box-shadow: 0 4px 18px 0 rgba(255, 69, 0, 0.55);
   transform: translateY(-1px);
 }
 
@@ -224,14 +224,14 @@
 }
 
 .pos-input:focus, .neo-input:focus {
-  border-color: #D97706 !important;
-  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12) !important;
+  border-color: #FF4500 !important;
+  box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.2) !important;
 }
 
 .theme-dark .pos-input:focus, .theme-dark .neo-input:focus,
 .dark .pos-input:focus, .dark .neo-input:focus {
-  border-color: #F59E0B !important;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2) !important;
+  border-color: #FF4500 !important;
+  box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.25) !important;
 }
 
 /* Soft Hover for Items in List */
