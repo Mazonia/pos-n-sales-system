@@ -82,7 +82,9 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
       source: 'Accra Central Mall Store',
       dest: 'Kumasi Adum Branch',
       item: 'Royal Feast Jasmine Perfume Rice (50kg)',
+      sku: 'SKU-RICE-50KG',
       quantity: 15,
+      costValue: 6750,
       status: 'IN_TRANSIT',
       dispatchedAt: 'Today, 08:30 AM',
     },
@@ -91,21 +93,67 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
       source: 'Accra Central Mall Store',
       dest: 'Takoradi Harbour Supermarket',
       item: 'Nestlé Milo Activ-Go Tin 400g',
+      sku: 'SKU-MILO-400G',
       quantity: 48,
+      costValue: 1200,
       status: 'RECEIVED',
       dispatchedAt: 'Yesterday, 02:15 PM',
     },
   ]);
   const [showTransferModal, setShowTransferModal] = useState(false);
+  const [selectedTransferForPrint, setSelectedTransferForPrint] = useState<any | null>(null);
   const [transferDest, setTransferDest] = useState('Kumasi Adum Branch');
   const [transferProduct, setTransferProduct] = useState(products[0]?.id || '');
   const [transferQty, setTransferQty] = useState(5);
 
-  // Stock Adjustment State (Dumsor spoilage, damage, etc.)
+  // Stock Adjustment & Dumsor Spoilage Log State
   const [adjProduct, setAdjProduct] = useState(products[0]?.id || '');
   const [adjReason, setAdjReason] = useState<'DUMSOR_DEFROST' | 'DAMAGED_TRANSIT' | 'EXPIRED_BATCH' | 'THEFT'>('DUMSOR_DEFROST');
   const [adjQuantity, setAdjQuantity] = useState(2);
   const [adjSuccessMsg, setAdjSuccessMsg] = useState('');
+  const [showSpoilageCertificatePrint, setShowSpoilageCertificatePrint] = useState(false);
+  const [selectedSpoilageForPrint, setSelectedSpoilageForPrint] = useState<any | null>(null);
+
+  const [spoilageLogs, setSpoilageLogs] = useState<Array<{
+    id: string;
+    date: string;
+    productName: string;
+    quantity: number;
+    unit: string;
+    unitCost: number;
+    totalLoss: number;
+    reason: string;
+    authorizedBy: string;
+  }>>([
+    {
+      id: 'SPOIL-ACC-001',
+      date: 'Today, 06:45 AM',
+      productName: 'Fresh Farm Whole Milk (1L)',
+      quantity: 8,
+      unit: 'BOTTLE',
+      unitCost: 14.50,
+      totalLoss: 116.00,
+      reason: 'Dumsor (Cold-room power cut 14 hrs)',
+      authorizedBy: 'Yaw Frimpong',
+    },
+    {
+      id: 'SPOIL-ACC-002',
+      date: 'Yesterday, 04:30 PM',
+      productName: 'Ideal Evaporated Milk Tin 160g',
+      quantity: 4,
+      unit: 'TIN',
+      unitCost: 8.50,
+      totalLoss: 34.00,
+      reason: 'In-Transit Freight Dent/Leakage',
+      authorizedBy: 'Yaw Frimpong',
+    }
+  ]);
+
+  const [inventoryToast, setInventoryToast] = useState<string | null>(null);
+  const triggerInventoryToast = (msg: string) => {
+    setInventoryToast(msg);
+    setTimeout(() => setInventoryToast(null), 3500);
+  };
 
   // Low stock products below safety threshold
   const lowStockProducts = products.filter(p => {
@@ -133,20 +181,56 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
     return Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
   };
 
+  // FIFO Expiry Actions
+  const handleApplyFifoMarkdown = async (product: LocalProduct) => {
+    const discountedPrice = Math.round(product.retailPrice * 0.70 * 100) / 100;
+    await db.products.update(product.id, { retailPrice: discountedPrice });
+
+    await db.auditLogs.add({
+      id: `audit-fifo-${Date.now()}`,
+      action: 'FIFO_CLEARANCE_DISCOUNT',
+      userId: currentUser.id,
+      userName: currentUser.fullName,
+      details: `Applied 30% FIFO clearance mark-down to near-expiry item: "${product.name}" (SKU: ${product.sku}). Price reduced from GH₵${product.retailPrice.toFixed(2)} to GH₵${discountedPrice.toFixed(2)}. Batch: ${product.batchNumber || 'N/A'}, Expiry: ${product.expiryDate || 'N/A'}.`,
+      timestamp: new Date().toISOString(),
+    });
+
+    window.dispatchEvent(new CustomEvent('productsUpdated'));
+    triggerInventoryToast(`Applied 30% FIFO clearance price (GH₵ ${discountedPrice.toFixed(2)}) to ${product.name}!`);
+    onRefresh();
+  };
+
+  const handleRouteToSpoilage = (product: LocalProduct) => {
+    setAdjProduct(product.id);
+    setAdjReason('EXPIRED_BATCH');
+    setAdjQuantity(Math.min(product.currentStock, 5) || 1);
+    setActiveTab('ADJUSTMENTS');
+  };
+
   const handleExecuteUomBreakdown = async () => {
     if (!selectedProductForUom) return;
     if (selectedProductForUom.currentStock < sacksToBreak) {
-      alert(`Insufficient stock. Available: ${selectedProductForUom.currentStock}`);
+      alert(`Insufficient stock. Available: ${selectedProductForUom.currentStock} ${selectedProductForUom.baseUnit}`);
       return;
     }
 
     const newStock = selectedProductForUom.currentStock - sacksToBreak;
     await db.products.update(selectedProductForUom.id, { currentStock: newStock });
 
+    await db.auditLogs.add({
+      id: `audit-uom-${Date.now()}`,
+      action: 'UOM_FRACTIONAL_BREAKDOWN',
+      userId: currentUser.id,
+      userName: currentUser.fullName,
+      details: `Deconstructed ${sacksToBreak} bulk ${selectedProductForUom.baseUnit} of "${selectedProductForUom.name}" into loose shelf units. Previous stock: ${selectedProductForUom.currentStock}, Remaining bulk stock: ${newStock}. Performed by ${currentUser.fullName} (${currentUser.role}).`,
+      timestamp: new Date().toISOString(),
+    });
+
+    window.dispatchEvent(new CustomEvent('productsUpdated'));
     setBreakdownSuccessMsg(
-      `Fractional breakdown completed: ${sacksToBreak} ${selectedProductForUom.baseUnit} deconstructed into retail units.`
+      `Fractional breakdown completed: ${sacksToBreak} ${selectedProductForUom.baseUnit} of ${selectedProductForUom.name} deconstructed into loose shelf units.`
     );
-    setTimeout(() => setBreakdownSuccessMsg(''), 4000);
+    setTimeout(() => setBreakdownSuccessMsg(''), 4500);
     onRefresh();
   };
 
@@ -154,45 +238,113 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
     const prod = products.find(p => p.id === adjProduct);
     if (!prod) return;
 
+    if (prod.currentStock < adjQuantity) {
+      alert(`Cannot write off ${adjQuantity}. Current stock is only ${prod.currentStock} ${prod.baseUnit}.`);
+      return;
+    }
+
+    const lossValue = Math.round(adjQuantity * prod.costPrice * 100) / 100;
     const newStock = Math.max(0, prod.currentStock - adjQuantity);
     await db.products.update(prod.id, { currentStock: newStock });
+
+    const reasonLabelMap: Record<string, string> = {
+      DUMSOR_DEFROST: 'Dumsor (Cold-Store Power Outage / Defrost Spoilage)',
+      DAMAGED_TRANSIT: 'In-Transit Freight Damage / Broken Packaging',
+      EXPIRED_BATCH: 'Expired Batch Date (FIFO Sentinel)',
+      THEFT: 'Inventory Discrepancy / Unaccounted Shrinkage',
+    };
+
+    const reasonLabel = reasonLabelMap[adjReason] || adjReason;
+
+    const newLog = {
+      id: `SPOIL-${Date.now().toString(36).toUpperCase()}`,
+      date: new Date().toLocaleTimeString('en-GH', { hour: '2-digit', minute: '2-digit' }),
+      productName: prod.name,
+      quantity: adjQuantity,
+      unit: prod.baseUnit,
+      unitCost: prod.costPrice,
+      totalLoss: lossValue,
+      reason: reasonLabel,
+      authorizedBy: currentUser.fullName,
+    };
+
+    setSpoilageLogs(prev => [newLog, ...prev]);
 
     await db.auditLogs.add({
       id: `audit-${Date.now()}`,
       action: 'STOCK_ADJUSTMENT_WRITE_OFF',
       userId: currentUser.id,
       userName: currentUser.fullName,
-      details: `Stock write-off of ${adjQuantity} ${prod.baseUnit} for ${prod.name}. Reason: ${adjReason}`,
+      details: `STOCK LOSS WRITE-OFF: ${adjQuantity} ${prod.baseUnit} of "${prod.name}" (SKU: ${prod.sku}). Reason: "${reasonLabel}". Total Financial Loss: GH₵ ${lossValue.toFixed(2)}. Authorized by ${currentUser.fullName} (${currentUser.role}).`,
       timestamp: new Date().toISOString(),
     });
 
-    setAdjSuccessMsg(`Successfully written off ${adjQuantity} ${prod.baseUnit} from inventory.`);
-    setTimeout(() => setAdjSuccessMsg(''), 3000);
+    window.dispatchEvent(new CustomEvent('productsUpdated'));
+    setAdjSuccessMsg(`Successfully written off ${adjQuantity} ${prod.baseUnit} (Loss: ${formatGhs(lossValue)}). Inventory updated to ${newStock}.`);
+    setTimeout(() => setAdjSuccessMsg(''), 4500);
     onRefresh();
   };
 
-  const handleCreateTransfer = () => {
+  const handleCreateTransfer = async () => {
     const prod = products.find(p => p.id === transferProduct);
     if (!prod) return;
 
+    if (prod.currentStock < transferQty) {
+      alert(`Cannot transfer ${transferQty} units. Only ${prod.currentStock} ${prod.baseUnit} available in stock!`);
+      return;
+    }
+
+    // Deduct stock from origin branch
+    const updatedStock = prod.currentStock - transferQty;
+    await db.products.update(prod.id, { currentStock: updatedStock });
+
     const newTr = {
-      id: `TR-ACC-${Math.floor(100 + Math.random() * 900)}`,
+      id: `TR-${branchName.slice(0, 3).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`,
       source: branchName,
       dest: transferDest,
       item: prod.name,
+      sku: prod.sku,
+      unit: prod.baseUnit,
       quantity: transferQty,
+      costValue: Math.round(transferQty * prod.costPrice * 100) / 100,
       status: 'IN_TRANSIT',
       dispatchedAt: 'Just now',
     };
 
     setTransfers(prev => [newTr, ...prev]);
+
+    await db.auditLogs.add({
+      id: `audit-tr-${Date.now()}`,
+      action: 'BRANCH_STOCK_DISPATCH',
+      userId: currentUser.id,
+      userName: currentUser.fullName,
+      details: `Dispatched ${transferQty} ${prod.baseUnit} of "${prod.name}" from ${branchName} to ${transferDest}. Manifest: ${newTr.id}. Stock adjusted from ${prod.currentStock} to ${updatedStock}.`,
+      timestamp: new Date().toISOString(),
+    });
+
+    window.dispatchEvent(new CustomEvent('productsUpdated'));
+    triggerInventoryToast(`Transfer ${newTr.id} dispatched! Stock updated: ${updatedStock} ${prod.baseUnit} remaining.`);
     setShowTransferModal(false);
+    onRefresh();
   };
 
-  const handleConfirmTransferReceived = (transferId: string) => {
+  const handleConfirmTransferReceived = async (transferId: string) => {
+    const target = transfers.find(t => t.id === transferId);
     setTransfers(prev =>
       prev.map(t => (t.id === transferId ? { ...t, status: 'RECEIVED' } : t))
     );
+
+    if (target) {
+      await db.auditLogs.add({
+        id: `audit-tr-rec-${Date.now()}`,
+        action: 'BRANCH_TRANSFER_RECEIVED',
+        userId: currentUser.id,
+        userName: currentUser.fullName,
+        details: `Confirmed delivery of Transfer Manifest ${transferId} (${target.quantity} ${target.item}) at destination ${target.dest}. Verified by ${currentUser.fullName}.`,
+        timestamp: new Date().toISOString(),
+      });
+      triggerInventoryToast(`Transfer ${transferId} verified as received at ${target.dest}!`);
+    }
   };
 
   const handleOpenDraftForItems = (items?: LocalProduct[]) => {
@@ -704,9 +856,36 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                           </td>
                           <td className="p-3.5 text-center font-serif">
                             {days < 30 ? (
-                              <span className="text-rose-600 dark:text-rose-500 font-bold text-xs">Immediate Mark-down 30%</span>
+                              <div className="flex flex-wrap items-center justify-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleApplyFifoMarkdown(prod)}
+                                  className="px-2 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-[10px] transition active:scale-95 cursor-pointer shadow-xs"
+                                  title={`Apply 30% FIFO clearance markdown from GH₵ ${prod.retailPrice.toFixed(2)} to GH₵ ${(prod.retailPrice * 0.7).toFixed(2)}`}
+                                >
+                                  -30% Clearance
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRouteToSpoilage(prod)}
+                                  className="px-2 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-[10px] transition active:scale-95 cursor-pointer shadow-xs"
+                                  title="Route to Dumsor & Spoilage loss write-off"
+                                >
+                                  Write-Off
+                                </button>
+                              </div>
                             ) : days < 90 ? (
-                              <span className="text-[#FF4500] font-bold text-xs">Front-Row FIFO Placement</span>
+                              <div className="flex flex-wrap items-center justify-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleApplyFifoMarkdown(prod)}
+                                  className="px-2 py-1 rounded-lg border border-amber-400 dark:border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 font-bold text-[10px] transition cursor-pointer"
+                                  title="Apply 30% markdown to accelerate sales before critical expiry"
+                                >
+                                  Clearance -30%
+                                </button>
+                                <span className="text-[10px] text-amber-600 dark:text-[#FF5722] font-semibold font-mono">Front-Row</span>
+                              </div>
                             ) : (
                               <span className="text-[#008285] dark:text-emerald-500 text-xs font-semibold">Normal Rotation</span>
                             )}
@@ -845,20 +1024,33 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                         </span>
                       </td>
                       <td className="p-3.5 text-right font-serif">
-                        {tr.status === 'IN_TRANSIT' ? (
+                        <div className="flex items-center justify-end gap-1.5">
                           <button
                             type="button"
-                            onClick={() => handleConfirmTransferReceived(tr.id)}
-                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold font-serif rounded-lg text-[10px] transition cursor-pointer"
+                            onClick={() => setSelectedTransferForPrint(tr)}
+                            className={`px-2 py-1 rounded-lg border text-[10px] font-bold font-serif transition flex items-center gap-1 cursor-pointer ${
+                              isDark ? 'border-[#282B34] text-stone-300 hover:text-[#00CED1] hover:border-[#00CED1]' : 'border-slate-300 text-slate-700 hover:border-[#008285] hover:text-[#008285]'
+                            }`}
+                            title="Print official dispatch waybill voucher"
                           >
-                            Confirm Delivery
+                            <Printer className="w-3 h-3" />
+                            <span>Waybill</span>
                           </button>
-                        ) : (
-                          <span className="text-[#008285] dark:text-emerald-500 text-[10px] font-bold flex items-center justify-end gap-1 font-serif">
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            <span>Verified</span>
-                          </span>
-                        )}
+                          {tr.status === 'IN_TRANSIT' ? (
+                            <button
+                              type="button"
+                              onClick={() => handleConfirmTransferReceived(tr.id)}
+                              className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold font-serif rounded-lg text-[10px] transition cursor-pointer active:scale-95"
+                            >
+                              Confirm Delivery
+                            </button>
+                          ) : (
+                            <span className="text-[#008285] dark:text-emerald-500 text-[10px] font-bold flex items-center gap-1 font-serif">
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>Verified</span>
+                            </span>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -945,6 +1137,119 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                 </div>
               </div>
             </div>
+
+            {/* SPOILAGE & DUMSOR LOSS ANALYTICS */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className={`p-4 rounded-2xl border ${isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-slate-300 shadow-xs'}`}>
+                <span className="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-stone-400 font-serif block mb-1">
+                  Cumulative Financial Loss
+                </span>
+                <div className="text-xl font-black font-mono tabular-nums text-rose-600 dark:text-rose-400">
+                  {formatGhs(spoilageLogs.reduce((acc, log) => acc + log.totalLoss, 0))}
+                </div>
+                <span className="text-[10px] text-slate-500 font-serif">Logged loss value at cost price</span>
+              </div>
+
+              <div className={`p-4 rounded-2xl border ${isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-slate-300 shadow-xs'}`}>
+                <span className="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-stone-400 font-serif block mb-1">
+                  Dumsor & Power Cut Losses
+                </span>
+                <div className="text-xl font-black font-mono tabular-nums text-[#FF4500]">
+                  {spoilageLogs.filter(l => l.reason.toLowerCase().includes('dumsor')).length} Incidents
+                </div>
+                <span className="text-[10px] text-slate-500 font-serif">Cold-room defrost & freezer failure</span>
+              </div>
+
+              <div className={`p-4 rounded-2xl border ${isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-slate-300 shadow-xs'}`}>
+                <span className="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-stone-400 font-serif block mb-1">
+                  Total Write-Off Records
+                </span>
+                <div className="text-xl font-black font-mono tabular-nums text-[#008285] dark:text-[#00CED1]">
+                  {spoilageLogs.length} Certified
+                </div>
+                <span className="text-[10px] text-slate-500 font-serif">GRA-audit compliant write-offs</span>
+              </div>
+            </div>
+
+            {/* SPOILAGE WRITE-OFF AUDIT TABLE */}
+            <div className={`rounded-2xl border overflow-hidden ${
+              isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-slate-300 shadow-xs'
+            }`}>
+              <div className={`p-3.5 border-b flex items-center justify-between ${
+                isDark ? 'border-[#282B34] bg-white/[0.02]' : 'border-slate-300 bg-slate-50'
+              }`}>
+                <h4 className={`font-serif font-bold text-xs ${isDark ? 'text-stone-100' : 'text-slate-900'}`}>
+                  Official Spoilage & Damaged Goods Register
+                </h4>
+                <span className="text-[10px] text-slate-500 font-serif">Official audit documentation for insurance & GRA tax deductions</span>
+              </div>
+
+              <table className="w-full text-left text-xs min-w-[640px]">
+                <thead className={`uppercase tracking-wider text-[11px] font-serif font-bold border-b ${
+                  isDark ? 'bg-white/[0.02] text-stone-400 border-[#282B34]' : 'bg-slate-100 text-slate-700 border-slate-300'
+                }`}>
+                  <tr>
+                    <th className="p-3.5">Voucher ID & Date</th>
+                    <th className="p-3.5">Product & Quantity</th>
+                    <th className="p-3.5 text-right">Unit Cost</th>
+                    <th className="p-3.5 text-right">Loss Amount (GHS)</th>
+                    <th className="p-3.5">Incident Cause</th>
+                    <th className="p-3.5">Authorized By</th>
+                    <th className="p-3.5 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 dark:divide-[#282B34]">
+                  {spoilageLogs.map(log => (
+                    <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.03] transition">
+                      <td className="p-3.5">
+                        <span className="font-mono font-bold text-rose-600 dark:text-rose-400 block">{log.id}</span>
+                        <span className="text-[10px] text-slate-500 font-serif">{log.date}</span>
+                      </td>
+                      <td className="p-3.5 font-serif">
+                        <span className="font-semibold text-slate-900 dark:text-stone-100 block">{log.productName}</span>
+                        <span className="text-[10px] text-slate-500 font-mono tabular-nums">
+                          Written off: {log.quantity} {log.unit}
+                        </span>
+                      </td>
+                      <td className="p-3.5 text-right font-mono tabular-nums text-slate-700 dark:text-stone-300">
+                        {formatGhs(log.unitCost)}
+                      </td>
+                      <td className="p-3.5 text-right font-mono tabular-nums font-bold text-rose-600 dark:text-rose-400">
+                        {formatGhs(log.totalLoss)}
+                      </td>
+                      <td className="p-3.5 font-serif">
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold inline-block ${
+                          log.reason.toLowerCase().includes('dumsor')
+                            ? 'bg-[#FF4500]/15 text-[#FF5722] border border-[#FF4500]/30 font-bold'
+                            : 'bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-stone-300'
+                        }`}>
+                          {log.reason}
+                        </span>
+                      </td>
+                      <td className="p-3.5 text-xs font-serif text-slate-600 dark:text-stone-400">
+                        {log.authorizedBy}
+                      </td>
+                      <td className="p-3.5 text-right font-serif">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedSpoilageForPrint(log)}
+                          className={`px-2.5 py-1 rounded-xl border text-[11px] font-serif transition inline-flex items-center gap-1 cursor-pointer ${
+                            isDark
+                              ? 'border-[#282B34] text-stone-300 hover:text-[#00CED1] hover:border-[#00CED1]'
+                              : 'border-slate-300 text-slate-700 hover:border-[#008285] hover:text-[#008285]'
+                          }`}
+                          title="Print official GRA write-off certificate"
+                        >
+                          <Printer className="w-3 h-3" />
+                          <span>Certificate</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
           </div>
         )}
 
@@ -1215,6 +1520,290 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
             </div>
           </div>
         </OfficialPrintPortal>
+      )}
+
+      {/* VIEW & PRINT WAYBILL MODAL */}
+      {selectedTransferForPrint && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 no-print">
+          <div className={`w-full max-w-2xl rounded-3xl border shadow-2xl p-5 space-y-4 ${
+            isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-slate-300 text-slate-900'
+          }`}>
+            <div className="flex items-center justify-between border-b pb-3 border-slate-300 dark:border-[#282B34]">
+              <div>
+                <h3 className="font-serif font-extrabold text-base flex items-center gap-2">
+                  <span>Inter-Branch Dispatch Waybill</span>
+                  <span className="font-mono text-[#008285] dark:text-[#00CED1]">{selectedTransferForPrint.id}</span>
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-stone-400 font-serif">
+                  Origin: {selectedTransferForPrint.source} ➔ Destination: {selectedTransferForPrint.dest}
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedTransferForPrint(null)}
+                className="p-1.5 rounded-lg border border-slate-300 dark:border-[#282B34] hover:border-[#FF4500] hover:text-[#FF4500] transition cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-[#282B34] space-y-2 text-xs">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-slate-500 dark:text-stone-400 block font-serif">Dispatched Item:</span>
+                  <strong className="font-serif text-slate-900 dark:text-stone-100">{selectedTransferForPrint.item}</strong>
+                </div>
+                <div>
+                  <span className="text-slate-500 dark:text-stone-400 block font-serif">SKU Code:</span>
+                  <code className="font-mono">{selectedTransferForPrint.sku}</code>
+                </div>
+                <div>
+                  <span className="text-slate-500 dark:text-stone-400 block font-serif">Quantity Dispatched:</span>
+                  <strong className="font-mono text-sm">{selectedTransferForPrint.quantity} units</strong>
+                </div>
+                <div>
+                  <span className="text-slate-500 dark:text-stone-400 block font-serif">Transfer Cost Valuation:</span>
+                  <strong className="font-mono text-sm text-[#008285] dark:text-[#00CED1]">{formatGhs(selectedTransferForPrint.costValue)}</strong>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t flex items-center justify-between border-slate-300 dark:border-[#282B34]">
+              <span className="text-xs text-slate-500 font-serif">Status: {selectedTransferForPrint.status}</span>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="px-4 py-2 bg-[#008285] hover:bg-[#007073] dark:bg-[#00CED1] dark:hover:bg-[#00B4B7] text-white dark:text-slate-950 font-bold font-serif rounded-xl text-xs flex items-center gap-1.5 transition active:scale-95 shadow-sm cursor-pointer"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>Print Official Waybill</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PRINTABLE DISPATCH WAYBILL SHEET */}
+      {selectedTransferForPrint && (
+        <OfficialPrintPortal active={true}>
+          <div className="official-printable-doc text-black bg-white p-8 font-sans max-w-4xl mx-auto">
+            <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-6">
+              <div>
+                <h1 className="text-xl font-black uppercase tracking-tight text-black">
+                  AKWAABA RETAIL SYSTEMS & LOGISTICS
+                </h1>
+                <p className="text-xs text-gray-700 font-medium">Inter-Branch Cargo & Warehouse Distribution</p>
+                <p className="text-xs text-gray-700 font-mono font-bold">GRA TIN: C0029482190 | WAYBILL CLEARANCE</p>
+              </div>
+              <div className="text-right">
+                <div className="inline-block border-2 border-black px-4 py-1.5 text-center bg-gray-50">
+                  <span className="block text-[9px] uppercase font-bold tracking-wider text-gray-600">OFFICIAL WAYBILL</span>
+                  <span className="text-sm font-black text-black">DISPATCH MANIFEST</span>
+                </div>
+                <div className="mt-2 text-xs font-mono">
+                  <p><strong>Manifest No:</strong> {selectedTransferForPrint.id}</p>
+                  <p><strong>Dispatch Time:</strong> {selectedTransferForPrint.dispatchedAt}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-6 mb-6 text-xs border border-gray-300 p-4 rounded bg-gray-50/50">
+              <div>
+                <h3 className="font-bold uppercase tracking-wider text-gray-600 text-[10px] mb-1">ORIGIN WAREHOUSE / DEPOT:</h3>
+                <p className="text-sm font-bold text-black">{selectedTransferForPrint.source}</p>
+                <p className="text-gray-700">Dispatch Officer: {currentUser?.fullName} ({currentUser?.role})</p>
+              </div>
+              <div>
+                <h3 className="font-bold uppercase tracking-wider text-gray-600 text-[10px] mb-1">DESTINATION BRANCH:</h3>
+                <p className="text-sm font-bold text-black">{selectedTransferForPrint.dest}</p>
+                <p className="text-gray-700">Receiving Bay: Inward Goods Inspection Bay</p>
+              </div>
+            </div>
+
+            <table className="w-full text-left text-xs border-collapse border border-gray-300 mb-6">
+              <thead>
+                <tr className="bg-gray-100 border-b border-gray-300 text-[11px] font-bold uppercase">
+                  <th className="p-2 border border-gray-300 text-center w-10">#</th>
+                  <th className="p-2 border border-gray-300">Item Description</th>
+                  <th className="p-2 border border-gray-300">SKU / Code</th>
+                  <th className="p-2 border border-gray-300 text-center">Dispatched Qty</th>
+                  <th className="p-2 border border-gray-300 text-right">Valuation (GHS)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 font-mono">
+                <tr>
+                  <td className="p-2 border border-gray-300 text-center">1</td>
+                  <td className="p-2 border border-gray-300 font-sans font-semibold">{selectedTransferForPrint.item}</td>
+                  <td className="p-2 border border-gray-300">{selectedTransferForPrint.sku}</td>
+                  <td className="p-2 border border-gray-300 text-center font-bold text-sm">{selectedTransferForPrint.quantity}</td>
+                  <td className="p-2 border border-gray-300 text-right font-bold">{formatGhs(selectedTransferForPrint.costValue)}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div className="grid grid-cols-3 gap-6 pt-6 border-t-2 border-black text-xs">
+              <div className="border-t border-dashed border-gray-400 pt-2">
+                <p className="font-bold uppercase text-[11px]">1. DISPATCHED BY:</p>
+                <p className="mt-1 font-semibold">{currentUser?.fullName || 'Storekeeper'}</p>
+                <p className="text-[10px] text-gray-500 mt-4">Signature: ______________________</p>
+              </div>
+              <div className="border-t border-dashed border-gray-400 pt-2">
+                <p className="font-bold uppercase text-[11px]">2. TRANSPORTER / DRIVER:</p>
+                <p className="mt-1 font-semibold">Logistics Courier Hauler</p>
+                <p className="text-[10px] text-gray-500 mt-4">Driver Sig & Reg: _______________</p>
+              </div>
+              <div className="border-t border-dashed border-gray-400 pt-2">
+                <p className="font-bold uppercase text-[11px]">3. RECEIVED AT DESTINATION:</p>
+                <p className="mt-1 font-semibold">{selectedTransferForPrint.dest}</p>
+                <p className="text-[10px] text-gray-500 mt-4">Received Stamp: _________________</p>
+              </div>
+            </div>
+          </div>
+        </OfficialPrintPortal>
+      )}
+
+      {/* VIEW & PRINT SPOILAGE CERTIFICATE MODAL */}
+      {selectedSpoilageForPrint && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 no-print">
+          <div className={`w-full max-w-2xl rounded-3xl border shadow-2xl p-5 space-y-4 ${
+            isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-slate-300 text-slate-900'
+          }`}>
+            <div className="flex items-center justify-between border-b pb-3 border-slate-300 dark:border-[#282B34]">
+              <div>
+                <h3 className="font-serif font-extrabold text-base flex items-center gap-2">
+                  <span>Stock Loss & Spoilage Certificate</span>
+                  <span className="font-mono text-rose-600 dark:text-rose-400">{selectedSpoilageForPrint.id}</span>
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-stone-400 font-serif">
+                  Cause: {selectedSpoilageForPrint.reason}
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedSpoilageForPrint(null)}
+                className="p-1.5 rounded-lg border border-slate-300 dark:border-[#282B34] hover:border-[#FF4500] hover:text-[#FF4500] transition cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-[#282B34] space-y-2 text-xs">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-slate-500 dark:text-stone-400 block font-serif">Damaged / Spoiled Item:</span>
+                  <strong className="font-serif text-slate-900 dark:text-stone-100">{selectedSpoilageForPrint.productName}</strong>
+                </div>
+                <div>
+                  <span className="text-slate-500 dark:text-stone-400 block font-serif">Authorized Officer:</span>
+                  <strong className="font-serif">{selectedSpoilageForPrint.authorizedBy}</strong>
+                </div>
+                <div>
+                  <span className="text-slate-500 dark:text-stone-400 block font-serif">Written-Off Quantity:</span>
+                  <strong className="font-mono text-sm">{selectedSpoilageForPrint.quantity} {selectedSpoilageForPrint.unit}</strong>
+                </div>
+                <div>
+                  <span className="text-slate-500 dark:text-stone-400 block font-serif">Financial Cost Loss:</span>
+                  <strong className="font-mono text-sm text-rose-600 dark:text-rose-400">{formatGhs(selectedSpoilageForPrint.totalLoss)}</strong>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t flex items-center justify-between border-slate-300 dark:border-[#282B34]">
+              <span className="text-xs text-slate-500 font-serif">Date: {selectedSpoilageForPrint.date}</span>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold font-serif rounded-xl text-xs flex items-center gap-1.5 transition active:scale-95 shadow-sm cursor-pointer"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>Print Spoilage Certificate</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PRINTABLE OFFICIAL SPOILAGE CERTIFICATE */}
+      {selectedSpoilageForPrint && (
+        <OfficialPrintPortal active={true}>
+          <div className="official-printable-doc text-black bg-white p-8 font-sans max-w-4xl mx-auto">
+            <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-6">
+              <div>
+                <h1 className="text-xl font-black uppercase tracking-tight text-black">
+                  AKWAABA RETAIL SYSTEMS & WHOLESALE LTD.
+                </h1>
+                <p className="text-xs text-gray-700 font-medium">Quality Assurance, Defrost & Loss Prevention Division</p>
+                <p className="text-xs text-gray-700 font-mono font-bold">GRA AUDIT COMPLIANCE: PERISHABLE WRITE-OFF</p>
+              </div>
+              <div className="text-right">
+                <div className="inline-block border-2 border-black px-4 py-1.5 text-center bg-gray-50">
+                  <span className="block text-[9px] uppercase font-bold tracking-wider text-gray-600">GRA TAX AUDIT PROOF</span>
+                  <span className="text-sm font-black text-rose-600">SPOILAGE CERTIFICATE</span>
+                </div>
+                <div className="mt-2 text-xs font-mono">
+                  <p><strong>Voucher No:</strong> {selectedSpoilageForPrint.id}</p>
+                  <p><strong>Incident Date:</strong> {selectedSpoilageForPrint.date}</p>
+                  <p><strong>Branch Node:</strong> {branchName}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-6 p-4 border border-rose-300 bg-rose-50/40 rounded text-xs">
+              <h3 className="font-bold uppercase tracking-wider text-rose-800 text-[10px] mb-1">INCIDENT CLASSIFICATION & ROOT CAUSE:</h3>
+              <p className="text-sm font-bold text-black">{selectedSpoilageForPrint.reason}</p>
+              <p className="text-gray-700 mt-1">
+                Notice: This stock has been certified as commercially unviable and destroyed/disposed in accordance with public health and Ghana Food & Drugs Authority (FDA) regulations.
+              </p>
+            </div>
+
+            <table className="w-full text-left text-xs border-collapse border border-gray-300 mb-6">
+              <thead>
+                <tr className="bg-gray-100 border-b border-gray-300 text-[11px] font-bold uppercase">
+                  <th className="p-2 border border-gray-300 text-center w-10">#</th>
+                  <th className="p-2 border border-gray-300">Spoiled / Damaged Product</th>
+                  <th className="p-2 border border-gray-300 text-center">Unit</th>
+                  <th className="p-2 border border-gray-300 text-center">Loss Qty</th>
+                  <th className="p-2 border border-gray-300 text-right">Cost Price (GHS)</th>
+                  <th className="p-2 border border-gray-300 text-right">Total Financial Loss (GHS)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 font-mono">
+                <tr>
+                  <td className="p-2 border border-gray-300 text-center">1</td>
+                  <td className="p-2 border border-gray-300 font-sans font-semibold">{selectedSpoilageForPrint.productName}</td>
+                  <td className="p-2 border border-gray-300 text-center">{selectedSpoilageForPrint.unit}</td>
+                  <td className="p-2 border border-gray-300 text-center font-bold">{selectedSpoilageForPrint.quantity}</td>
+                  <td className="p-2 border border-gray-300 text-right">{formatGhs(selectedSpoilageForPrint.unitCost)}</td>
+                  <td className="p-2 border border-gray-300 text-right font-black text-rose-600">{formatGhs(selectedSpoilageForPrint.totalLoss)}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div className="grid grid-cols-3 gap-6 pt-6 border-t-2 border-black text-xs">
+              <div className="border-t border-dashed border-gray-400 pt-2">
+                <p className="font-bold uppercase text-[11px]">1. INSPECTED BY:</p>
+                <p className="mt-1 font-semibold">{selectedSpoilageForPrint.authorizedBy}</p>
+                <p className="text-[10px] text-gray-500 mt-4">Signature: ______________________</p>
+              </div>
+              <div className="border-t border-dashed border-gray-400 pt-2">
+                <p className="font-bold uppercase text-[11px]">2. STORE MANAGER:</p>
+                <p className="mt-1 font-semibold">Store Manager / Keyholder</p>
+                <p className="text-[10px] text-gray-500 mt-4">Signature: ______________________</p>
+              </div>
+              <div className="border-t border-dashed border-gray-400 pt-2">
+                <p className="font-bold uppercase text-[11px]">3. AUDIT & GRA COMPLIANCE:</p>
+                <p className="mt-1 font-semibold">Internal Audit Department</p>
+                <p className="text-[10px] text-gray-500 mt-4">Official Stamp: _________________</p>
+              </div>
+            </div>
+          </div>
+        </OfficialPrintPortal>
+      )}
+
+      {/* FLOATING INVENTORY TOAST */}
+      {inventoryToast && (
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl bg-[#008285] text-white font-serif font-bold text-xs shadow-2xl flex items-center gap-2 animate-bounce">
+          <CheckCircle2 className="w-4 h-4 text-white shrink-0" />
+          <span>{inventoryToast}</span>
+        </div>
       )}
 
     </div>

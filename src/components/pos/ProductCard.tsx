@@ -324,7 +324,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                           onClick={() => {
                             onAddToCart(
                               { ...product, retailPrice: effectiveBasePrice },
-                              { name: uom.name, price: uomPrice }
+                              { name: uom.name, price: uomPrice, factor: uom.factor }
                             );
                             setShowUomMenu(false);
                           }}

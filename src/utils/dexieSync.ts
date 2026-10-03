@@ -180,6 +180,7 @@ export interface LocalCartItem {
   costPrice: number;
   quantity: number;
   unitName: string;
+  uomFactor?: number;
   orderType?: 'RETAIL' | 'WHOLESALE';
   discountPct: number;
   discountAmount: number;
@@ -770,11 +771,12 @@ export async function saveLocalOrder(order: LocalOrder, isOnline: boolean): Prom
     await db.offlineQueue.put(finalOrder);
   }
 
-  // Decrement local inventory stock
+  // Decrement local inventory stock according to sold packaging factor
   for (const item of order.items) {
     const prod = await db.products.get(item.productId);
     if (prod) {
-      const newStock = Math.max(0, prod.currentStock - item.quantity);
+      const unitsToDeduct = item.quantity * (item.uomFactor || 1);
+      const newStock = Math.max(0, prod.currentStock - unitsToDeduct);
       await db.products.update(item.productId, { currentStock: newStock });
     }
   }

@@ -17,7 +17,14 @@ import {
   X,
   CheckCircle2,
   Lock,
-  Flame
+  Flame,
+  Info,
+  HelpCircle,
+  AlertTriangle,
+  ShieldCheck,
+  Banknote,
+  Smartphone,
+  BookOpen
 } from 'lucide-react';
 import { OfficialPrintPortal } from '../common/OfficialPrintPortal';
 
@@ -35,6 +42,7 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
   onShiftClosed,
 }) => {
   const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'CASH_DROP' | 'X_REPORT' | 'Z_CLOSE'>('OVERVIEW');
+  const [showHelpBanner, setShowHelpBanner] = useState<boolean>(true);
 
   // Cash Drop Form State
   const [dropType, setDropType] = useState<'PAY_IN' | 'PAY_OUT' | 'SAFE_DEPOSIT'>('PAY_OUT');
@@ -114,18 +122,42 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
               {new Date(shift.openedAt).toLocaleTimeString('en-GH')}
             </p>
           </div>
-          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-white/5 transition">
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowHelpBanner(!showHelpBanner)}
+              className="text-xs font-semibold px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-amber-400 border border-amber-500/20 flex items-center gap-1.5 transition cursor-pointer"
+              title="Toggle beginner explanations"
+            >
+              <HelpCircle className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{showHelpBanner ? 'Hide Guide' : 'Explain This Screen'}</span>
+            </button>
+            <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-white/5 transition cursor-pointer">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
+
+        {/* Friendly Beginner Guide Explainer Banner */}
+        {showHelpBanner && (
+          <div className="p-3.5 bg-amber-500/10 border-b border-amber-500/20 text-xs text-amber-200 flex items-start gap-2.5">
+            <Info className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <strong className="block font-bold text-amber-300">How Till & Shift Management Works:</strong>
+              <p className="text-[11px] leading-relaxed text-amber-100/90">
+                A <strong>Shift</strong> is your official work session on this cash register till. The system tracks all the paper money, coins, and mobile money you collect from sales. When you finish work, you count the physical money in your drawer to make sure it matches what was sold. This protects you and the store from cash discrepancies.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Tab Controls */}
         <div className="flex bg-black/40 border-b border-white/[0.08] text-xs font-semibold overflow-x-auto">
           {[
-            { id: 'OVERVIEW', label: 'Till Overview' },
-            { id: 'CASH_DROP', label: 'Cash Drop / Pay-Out' },
-            { id: 'X_REPORT', label: 'Mid-Day X-Report' },
-            { id: 'Z_CLOSE', label: 'Close Shift (Z-Report)' },
+            { id: 'OVERVIEW', label: '1. Till Overview & Balance' },
+            { id: 'CASH_DROP', label: '2. Cash Movements (Pay-Out)' },
+            { id: 'X_REPORT', label: '3. Mid-Day X-Report' },
+            { id: 'Z_CLOSE', label: '4. Shift Close (Z-Report)' },
           ].map(tab => (
             <button
               key={tab.id}
@@ -133,7 +165,7 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
                 setActiveTab(tab.id as any);
                 if (tab.id === 'X_REPORT') handleLoadXReport();
               }}
-              className={`flex-1 py-3 px-3 border-b-2 whitespace-nowrap transition ${
+              className={`flex-1 py-3 px-3 border-b-2 whitespace-nowrap transition cursor-pointer ${
                 activeTab === tab.id
                   ? 'border-amber-500 text-amber-400 bg-white/[0.02]'
                   : 'border-transparent text-slate-400 hover:text-white'
@@ -147,42 +179,87 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
         {/* TAB 1: OVERVIEW */}
         {activeTab === 'OVERVIEW' && (
           <div className="p-5 space-y-4">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-                <span className="text-[10px] text-slate-400 block">Opening Float</span>
-                <span className="text-base font-bold font-mono text-white">{formatGhs(shift.openingFloat)}</span>
+            {/* Explanatory Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] relative group">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10.5px] font-bold text-slate-300">Starting Float</span>
+                  <Banknote className="w-3.5 h-3.5 text-slate-400" />
+                </div>
+                <span className="text-base font-bold font-mono text-white block">{formatGhs(shift.openingFloat)}</span>
+                <p className="text-[10px] text-slate-400 mt-1 leading-snug">
+                  Small change put in the drawer in the morning to give customers change.
+                </p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-                <span className="text-[10px] text-slate-400 block">Cash Sales</span>
-                <span className="text-base font-bold font-mono text-emerald-400">{formatGhs(shift.cashSales)}</span>
+              <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] relative group">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10.5px] font-bold text-emerald-400">Cash Sales</span>
+                  <Banknote className="w-3.5 h-3.5 text-emerald-400" />
+                </div>
+                <span className="text-base font-bold font-mono text-emerald-400 block">{formatGhs(shift.cashSales)}</span>
+                <p className="text-[10px] text-slate-400 mt-1 leading-snug">
+                  Total physical paper notes & coins collected into your drawer from sales.
+                </p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-                <span className="text-[10px] text-slate-400 block">MoMo Sales</span>
-                <span className="text-base font-bold font-mono text-amber-400">{formatGhs(shift.momoSales)}</span>
+              <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] relative group">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10.5px] font-bold text-amber-400">MoMo Sales</span>
+                  <Smartphone className="w-3.5 h-3.5 text-amber-400" />
+                </div>
+                <span className="text-base font-bold font-mono text-amber-400 block">{formatGhs(shift.momoSales)}</span>
+                <p className="text-[10px] text-slate-400 mt-1 leading-snug">
+                  Paid via Mobile Money (MTN/Telecel/AT). This is in the merchant wallet, not in the till.
+                </p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-                <span className="text-[10px] text-slate-400 block">Bisa Debt</span>
-                <span className="text-base font-bold font-mono text-slate-300">{formatGhs(shift.debtSales)}</span>
+              <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] relative group">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10.5px] font-bold text-sky-400">Bisa Debt</span>
+                  <BookOpen className="w-3.5 h-3.5 text-sky-400" />
+                </div>
+                <span className="text-base font-bold font-mono text-slate-300 block">{formatGhs(shift.debtSales)}</span>
+                <p className="text-[10px] text-slate-400 mt-1 leading-snug">
+                  Customer store credit. No money entered the till today; settled later.
+                </p>
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
-              <div>
-                <span className="text-xs text-amber-300 font-semibold block">Expected Physical Cash in Till:</span>
-                <span className="text-[11px] text-slate-400">(Opening Float + Cash Sales - PayOuts)</span>
+            {/* Expected Physical Cash Card with Formula Explanation */}
+            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs text-amber-300 font-bold block flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-amber-400" />
+                    <span>Expected Physical Cash in Drawer Right Now:</span>
+                  </span>
+                  <span className="text-[10.5px] text-slate-400 block mt-0.5">
+                    Formula: (Starting Float + Cash Sales − Pay-Out Expenses = What must be in drawer)
+                  </span>
+                </div>
+                <span className="text-2xl font-black font-mono text-amber-400">
+                  {formatGhs(shift.expectedCashInTill)}
+                </span>
               </div>
-              <span className="text-2xl font-extrabold font-mono text-amber-400">
-                {formatGhs(shift.expectedCashInTill)}
-              </span>
+              <div className="pt-2 border-t border-amber-500/20 text-[11px] text-slate-300 flex items-center gap-1.5">
+                <Info className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span>
+                  When closing your shift in Tab 4, your counted physical cash must equal this amount.
+                </span>
+              </div>
             </div>
 
-            <div>
-              <span className="text-xs font-bold text-slate-300 block mb-2">Mid-Shift Movements:</span>
+            {/* Mid-Shift Movements */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-300">Mid-Shift Cash Movements (Petty Cash & Safe Drops):</span>
+                <span className="text-[10.5px] text-slate-500">Expenses or change added mid-day</span>
+              </div>
               {shift.cashDrops.length === 0 ? (
-                <p className="text-xs text-slate-500 italic">No cash drops recorded during this shift.</p>
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-xs text-slate-500 text-center italic">
+                  No cash movements recorded yet. (To record fuel or water expenses, use Tab 2 above).
+                </div>
               ) : (
                 <div className="space-y-1.5 max-h-40 overflow-y-auto">
                   {shift.cashDrops.map(drop => (
@@ -198,7 +275,7 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
                         )}
                         <div>
                           <span className="font-semibold text-white">
-                            {drop.type === 'PAY_IN' ? 'Pay-In' : drop.type === 'PAY_OUT' ? 'Pay-Out (Expense)' : 'Safe Deposit'}
+                            {drop.type === 'PAY_IN' ? 'Pay-In (Added Float)' : drop.type === 'PAY_OUT' ? 'Pay-Out (Shop Expense)' : 'Safe Deposit (Skim)'}
                           </span>
                           <span className="text-[10px] text-slate-400 block">{drop.reason}</span>
                         </div>
@@ -217,137 +294,196 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
         {/* TAB 2: CASH DROP */}
         {activeTab === 'CASH_DROP' && (
           <form onSubmit={handleSaveCashDrop} className="p-5 space-y-4">
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => setDropType('PAY_OUT')}
-                className={`p-2.5 rounded-xl border text-xs font-semibold transition ${
-                  dropType === 'PAY_OUT' ? 'bg-rose-500/20 text-rose-300 border-rose-500' : 'bg-white/5 text-slate-400 border-white/10'
-                }`}
-              >
-                Pay-Out (Expense)
-              </button>
-              <button
-                type="button"
-                onClick={() => setDropType('SAFE_DEPOSIT')}
-                className={`p-2.5 rounded-xl border text-xs font-semibold transition ${
-                  dropType === 'SAFE_DEPOSIT' ? 'bg-amber-500/20 text-amber-300 border-amber-500' : 'bg-white/5 text-slate-400 border-white/10'
-                }`}
-              >
-                Safe Skim
-              </button>
-              <button
-                type="button"
-                onClick={() => setDropType('PAY_IN')}
-                className={`p-2.5 rounded-xl border text-xs font-semibold transition ${
-                  dropType === 'PAY_IN' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500' : 'bg-white/5 text-slate-400 border-white/10'
-                }`}
-              >
-                Pay-In (Float)
-              </button>
+            {/* Educational Banner */}
+            <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs space-y-1">
+              <div className="flex items-center gap-1.5 font-bold text-amber-400">
+                <HelpCircle className="w-4 h-4" />
+                <span>Why Record Cash Movements Mid-Shift?</span>
+              </div>
+              <p className="text-[11px] text-amber-100/90 leading-relaxed">
+                If you take cash from the drawer to buy generator fuel during a Dumsor power cut or pure water for staff, recording it here tells the system where the money went so it is <strong>NOT</strong> counted as a cash shortage when you close your shift!
+              </p>
+            </div>
+
+            {/* Movement Type Buttons */}
+            <div className="space-y-1.5">
+              <label className="text-xs text-slate-300 font-bold block">Select Movement Type:</label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setDropType('PAY_OUT')}
+                  className={`p-3 rounded-2xl border text-left transition cursor-pointer ${
+                    dropType === 'PAY_OUT' ? 'bg-rose-500/20 text-rose-300 border-rose-500 shadow-xs' : 'bg-white/5 text-slate-400 border-white/10 hover:bg-white/10'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 font-bold text-xs mb-1">
+                    <ArrowUpCircle className="w-4 h-4 text-rose-400" />
+                    <span>Pay-Out (Expense)</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 block leading-tight">
+                    Taking till cash to pay for Dumsor fuel, water, bags, or emergency supplies.
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setDropType('SAFE_DEPOSIT')}
+                  className={`p-3 rounded-2xl border text-left transition cursor-pointer ${
+                    dropType === 'SAFE_DEPOSIT' ? 'bg-amber-500/20 text-amber-300 border-amber-500 shadow-xs' : 'bg-white/5 text-slate-400 border-white/10 hover:bg-white/10'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 font-bold text-xs mb-1">
+                    <ShieldCheck className="w-4 h-4 text-amber-400" />
+                    <span>Safe Deposit (Skim)</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 block leading-tight">
+                    Transferring large bills (₵200/₵100) to the store safe for anti-theft security.
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setDropType('PAY_IN')}
+                  className={`p-3 rounded-2xl border text-left transition cursor-pointer ${
+                    dropType === 'PAY_IN' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500 shadow-xs' : 'bg-white/5 text-slate-400 border-white/10 hover:bg-white/10'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 font-bold text-xs mb-1">
+                    <ArrowDownCircle className="w-4 h-4 text-emerald-400" />
+                    <span>Pay-In (Add Float)</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 block leading-tight">
+                    Adding fresh small change from the manager when you run low on ₵5 or ₵2 notes.
+                  </span>
+                </button>
+              </div>
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 block mb-1">Amount (GH₵):</label>
-              <input
-                type="number"
-                step="0.1"
-                value={dropAmount || ''}
-                onChange={e => setDropAmount(parseFloat(e.target.value) || 0)}
-                className="w-full px-3 py-2 bg-black/30 border border-white/10 rounded-xl font-mono text-sm text-white outline-none focus:border-amber-400"
-              />
+              <label className="text-xs text-slate-300 font-bold block mb-1">Amount to Move (GH₵):</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono font-bold text-slate-400">GH₵</span>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0.1"
+                  required
+                  value={dropAmount || ''}
+                  onChange={e => setDropAmount(parseFloat(e.target.value) || 0)}
+                  className="w-full pl-12 pr-3 py-2 bg-black/40 border border-white/10 rounded-xl font-mono text-base font-bold text-white outline-none focus:border-amber-400"
+                />
+              </div>
             </div>
 
             <div>
-              <label className="text-xs text-slate-400 block mb-1">Reason / Expense Memo:</label>
+              <label className="text-xs text-slate-300 font-bold block mb-1">Reason / Expense Memo (Required for Audit):</label>
               <input
                 type="text"
+                required
                 value={dropReason}
                 onChange={e => setDropReason(e.target.value)}
-                placeholder="e.g. Generator fuel during Dumsor, water delivery"
-                className="w-full px-3 py-2 bg-black/30 border border-white/10 rounded-xl text-xs text-white outline-none focus:border-amber-400"
+                placeholder="e.g. 50 Litres Diesel for Generator during Dumsor / Pure Water bags"
+                className="w-full px-3 py-2.5 bg-black/40 border border-white/10 rounded-xl text-xs text-white outline-none focus:border-amber-400"
               />
-              <div className="flex items-center gap-1 text-[11px] text-amber-400 mt-1">
-                <Flame className="w-3.5 h-3.5" />
-                <span>Dumsor resilience: Generator fuel logged in audited petty cash.</span>
+              <div className="flex items-center gap-1 text-[11px] text-amber-400 mt-1.5">
+                <Flame className="w-3.5 h-3.5 text-[#FF4500]" />
+                <span>Dumsor resilience: Generator fuel and ice block expenses are logged into audited petty cash.</span>
               </div>
             </div>
 
             {isDropSuccess && (
               <div className="p-3 bg-emerald-950/60 border border-emerald-500/40 rounded-xl text-xs text-emerald-300 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>Cash movement recorded and till reconciled!</span>
+                <span>Cash movement successfully recorded! Till expected balance has been updated.</span>
               </div>
             )}
 
             <button
               type="submit"
               disabled={dropAmount <= 0}
-              className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-slate-950 font-extrabold rounded-xl text-xs transition"
+              className="w-full py-3 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-slate-950 font-extrabold rounded-xl text-xs transition cursor-pointer shadow-md"
             >
-              Record Cash Movement
+              Record Cash Movement & Update Till
             </button>
           </form>
         )}
 
         {/* TAB 3: X-REPORT */}
-        {activeTab === 'X_REPORT' && xReport && (
+        {activeTab === 'X_REPORT' && (
           <div className="p-5 space-y-4">
-            <div className="p-4 bg-white text-black font-mono rounded-2xl border border-slate-300 text-xs space-y-2">
-              <div className="text-center pb-2 border-b border-dashed border-gray-400">
-                <div className="font-bold text-sm">AKWAABA RETAIL OS</div>
-                <div className="text-[10px] text-gray-700">*** X-REPORT (MID-DAY READING) ***</div>
+            {/* Educational Banner */}
+            <div className="p-3.5 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-xs space-y-1">
+              <div className="flex items-center gap-1.5 font-bold text-sky-400">
+                <BookOpen className="w-4 h-4" />
+                <span>What is a Mid-Day X-Report?</span>
               </div>
-
-              <div className="text-[10px] space-y-0.5">
-                <div className="flex justify-between">
-                  <span>Shift #:</span>
-                  <span className="font-bold">{xReport.shiftNumber}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Cashier:</span>
-                  <span>{xReport.cashierName}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Orders Completed:</span>
-                  <span className="font-bold">{xReport.totalOrders}</span>
-                </div>
-              </div>
-
-              <div className="border-t border-dashed border-gray-400 pt-1 space-y-0.5 text-[10px]">
-                <div className="flex justify-between">
-                  <span>Opening Float:</span>
-                  <span>{xReport.openingFloat.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Cash Sales:</span>
-                  <span>{xReport.cashSales.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>MoMo Sales:</span>
-                  <span>{xReport.momoSales.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Card Sales:</span>
-                  <span>{xReport.cardSales.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Bisa Debt Sales:</span>
-                  <span>{xReport.debtSales.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between font-bold text-xs pt-1 border-t border-gray-400">
-                  <span>EXPECTED IN TILL:</span>
-                  <span>GH₵ {xReport.expectedCashInTill.toFixed(2)}</span>
-                </div>
-              </div>
+              <p className="text-[11px] text-sky-100/90 leading-relaxed">
+                An <strong>X-Report</strong> is an interim snapshot of your sales so far. It shows orders completed, cash vs MoMo breakdown, and expected drawer money <strong>WITHOUT</strong> locking or closing your till. You can check and print an X-Report at any time (e.g. at lunch break or change of shifts).
+              </p>
             </div>
+
+            {xReport ? (
+              <div className="p-4 bg-white text-black font-mono rounded-2xl border border-slate-300 text-xs space-y-2 shadow-inner">
+                <div className="text-center pb-2 border-b border-dashed border-gray-400">
+                  <div className="font-bold text-sm">AKWAABA RETAIL OS</div>
+                  <div className="text-[10px] text-gray-700">*** X-REPORT (INTERIM MID-DAY READING) ***</div>
+                  <div className="text-[9px] text-gray-500">Till remains ACTIVE and OPEN for sales</div>
+                </div>
+
+                <div className="text-[10px] space-y-0.5">
+                  <div className="flex justify-between">
+                    <span>Shift #:</span>
+                    <span className="font-bold">{xReport.shiftNumber}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Cashier:</span>
+                    <span>{xReport.cashierName}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Orders Completed:</span>
+                    <span className="font-bold">{xReport.totalOrders}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Report Time:</span>
+                    <span>{new Date().toLocaleTimeString('en-GH')}</span>
+                  </div>
+                </div>
+
+                <div className="border-t border-dashed border-gray-400 pt-1 space-y-0.5 text-[10px]">
+                  <div className="flex justify-between">
+                    <span>Opening Starting Float:</span>
+                    <span>{xReport.openingFloat.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-emerald-700 font-bold">
+                    <span>Cash Sales (In Drawer):</span>
+                    <span>+{xReport.cashSales.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-amber-700 font-bold">
+                    <span>MoMo Sales (In Phone):</span>
+                    <span>{xReport.momoSales.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-slate-600">
+                    <span>Bisa Debt Credit Sales:</span>
+                    <span>{xReport.debtSales.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between font-extrabold text-xs pt-1.5 border-t border-gray-400 text-black">
+                    <span>EXPECTED IN CASH DRAWER:</span>
+                    <span>GH₵ {xReport.expectedCashInTill.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-6 text-xs text-slate-400">
+                Loading X-Report calculations...
+              </div>
+            )}
 
             <button
               onClick={() => window.print()}
-              className="w-full py-2 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-1.5 transition"
+              className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
             >
               <Printer className="w-4 h-4" />
-              <span>Print X-Report (ESC/POS)</span>
+              <span>Print X-Report (ESC/POS Thermal Format)</span>
             </button>
           </div>
         )}
@@ -357,80 +493,151 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
           <div className="p-5 space-y-4">
             {!zReportResult ? (
               <>
-                <div className="p-3 rounded-2xl border border-rose-500/40 bg-rose-500/10 text-xs text-rose-200">
+                {/* Educational Banner */}
+                <div className="p-3.5 rounded-2xl border border-rose-500/40 bg-rose-500/10 text-xs text-rose-200 space-y-1">
                   <div className="font-bold flex items-center gap-1.5 text-rose-400">
                     <Lock className="w-4 h-4" />
-                    <span>Daily Shift Closure & Z-Report</span>
+                    <span>What is a Z-Report & End-of-Day Shift Close?</span>
                   </div>
-                  <p className="text-[11px] text-rose-300/80 mt-1">
-                    Count all physical currency in till. Shortages or overages will be audited and flagged.
+                  <p className="text-[11px] text-rose-200/90 leading-relaxed">
+                    A <strong>Z-Report</strong> is the permanent, official end-of-day closure of your register. Once generated, this shift is locked and cannot be reopened. You must count every cedi note and coin in your drawer. The system compares your count against the expected money to verify if there is any <strong>Shortage</strong> or <strong>Overage</strong>.
                   </p>
                 </div>
 
-                {/* Denomination Counter */}
+                {/* Denomination Counter Guide */}
                 <div className="space-y-2">
-                  <span className="text-xs font-semibold text-slate-300 block">Denomination Count:</span>
-                  <div className="grid grid-cols-4 gap-2 text-xs">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-bold text-slate-200 block">Step 1: Count Currency Notes in Till</span>
+                      <span className="text-[10px] text-slate-400">Enter quantity of notes you have in hand:</span>
+                    </div>
+                    <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+                      Total Counted: {formatGhs(countedPhysicalCash)}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                     {[
-                      { key: 'note200', label: '₵200 note' },
-                      { key: 'note100', label: '₵100 note' },
-                      { key: 'note50', label: '₵50 note' },
-                      { key: 'note20', label: '₵20 note' },
-                      { key: 'note10', label: '₵10 note' },
-                      { key: 'note5', label: '₵5 note' },
-                      { key: 'note2', label: '₵2 note' },
-                      { key: 'note1', label: '₵1 note/coin' },
-                    ].map(d => (
-                      <div key={d.key} className="p-2 rounded-xl bg-black/30 border border-white/10">
-                        <label className="text-[10px] text-slate-400 block">{d.label}</label>
-                        <input
-                          type="number"
-                          min="0"
-                          value={(denoms as any)[d.key] || ''}
-                          onChange={e =>
-                            setDenoms(prev => ({
-                              ...prev,
-                              [d.key]: parseInt(e.target.value) || 0,
-                            }))
-                          }
-                          className="w-full mt-1 bg-black/40 border border-white/10 rounded-lg px-2 py-1 text-center font-mono text-white text-xs outline-none"
-                          placeholder="0"
-                        />
-                      </div>
-                    ))}
+                      { key: 'note200', label: '₵200 note', val: 200 },
+                      { key: 'note100', label: '₵100 note', val: 100 },
+                      { key: 'note50', label: '₵50 note', val: 50 },
+                      { key: 'note20', label: '₵20 note', val: 20 },
+                      { key: 'note10', label: '₵10 note', val: 10 },
+                      { key: 'note5', label: '₵5 note', val: 5 },
+                      { key: 'note2', label: '₵2 note', val: 2 },
+                      { key: 'note1', label: '₵1 note/coin', val: 1 },
+                    ].map(d => {
+                      const qty = (denoms as any)[d.key] || 0;
+                      const sub = qty * d.val;
+                      return (
+                        <div key={d.key} className="p-2 rounded-xl bg-black/40 border border-white/10">
+                          <div className="flex justify-between items-center text-[10px]">
+                            <label className="text-slate-300 font-semibold">{d.label}</label>
+                            {sub > 0 && <span className="font-mono text-amber-400 text-[9px] font-bold">₵{sub}</span>}
+                          </div>
+                          <input
+                            type="number"
+                            min="0"
+                            value={(denoms as any)[d.key] || ''}
+                            onChange={e =>
+                              setDenoms(prev => ({
+                                ...prev,
+                                [d.key]: parseInt(e.target.value) || 0,
+                              }))
+                            }
+                            className="w-full mt-1 bg-black/50 border border-white/10 rounded-lg px-2 py-1 text-center font-mono text-white text-xs outline-none focus:border-amber-400"
+                            placeholder="0"
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-xs text-slate-400 block mb-1">Small Coins Pesewas (GH₵):</label>
+                  <label className="text-xs text-slate-300 font-bold block mb-1">Small Coins Pesewas Total (GH₵):</label>
                   <input
                     type="number"
                     step="0.01"
+                    min="0"
                     value={denoms.coinsPesewas || ''}
                     onChange={e => setDenoms(prev => ({ ...prev, coinsPesewas: parseFloat(e.target.value) || 0 }))}
-                    className="w-full px-3 py-1.5 bg-black/30 border border-white/10 rounded-xl text-xs font-mono text-white outline-none"
-                    placeholder="0.00"
+                    className="w-full px-3 py-2 bg-black/40 border border-white/10 rounded-xl text-xs font-mono text-white outline-none focus:border-amber-400"
+                    placeholder="e.g. 5.50 for pesewas"
                   />
                 </div>
 
-                <div className="p-3 rounded-2xl bg-black/30 border border-white/10 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="text-slate-400 block">Counted:</span>
-                    <span className="font-mono text-sm font-bold text-white">{formatGhs(countedPhysicalCash)}</span>
+                {/* Step 2: Live Comparison & Variance Indicator */}
+                <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <div>
+                      <span className="text-slate-400 block text-[10.5px]">Total Counted Physical Cash:</span>
+                      <span className="font-mono text-base font-bold text-white">{formatGhs(countedPhysicalCash)}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-slate-400 block text-[10.5px]">Expected Cash in Drawer:</span>
+                      <span className="font-mono text-base font-bold text-amber-400">{formatGhs(shift.expectedCashInTill)}</span>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <span className="text-slate-400 block">Expected:</span>
-                    <span className="font-mono text-sm font-bold text-amber-400">{formatGhs(shift.expectedCashInTill)}</span>
-                  </div>
+
+                  {/* Variance Calculation */}
+                  {(() => {
+                    const variance = countedPhysicalCash - shift.expectedCashInTill;
+                    const isPerfect = Math.abs(variance) < 0.05;
+                    const isShortage = variance < -0.05;
+                    const isOverage = variance > 0.05;
+
+                    return (
+                      <div className={`p-2.5 rounded-xl border text-xs flex items-center justify-between font-serif font-bold ${
+                        isPerfect
+                          ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                          : isShortage
+                          ? 'bg-rose-500/15 border-rose-500/40 text-rose-300'
+                          : 'bg-amber-500/15 border-amber-500/40 text-amber-300'
+                      }`}>
+                        <div className="flex items-center gap-1.5">
+                          {isPerfect ? (
+                            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                          ) : isShortage ? (
+                            <AlertTriangle className="w-4 h-4 text-rose-400" />
+                          ) : (
+                            <Info className="w-4 h-4 text-amber-400" />
+                          )}
+                          <span>
+                            {isPerfect
+                              ? 'Exact Match: Drawer is perfectly balanced!'
+                              : isShortage
+                              ? `Cash Shortage: Drawer is missing ${formatGhs(Math.abs(variance))}`
+                              : `Cash Overage: Drawer has extra ${formatGhs(variance)}`}
+                          </span>
+                        </div>
+                        <span className="font-mono text-xs">
+                          {variance >= 0 ? `+${formatGhs(variance)}` : `-${formatGhs(Math.abs(variance))}`}
+                        </span>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* Closing Notes */}
+                <div>
+                  <label className="text-xs text-slate-300 font-bold block mb-1">Shift Handover Notes / Variance Explanation (Optional):</label>
+                  <input
+                    type="text"
+                    value={closingNotes}
+                    onChange={e => setClosingNotes(e.target.value)}
+                    placeholder="e.g. Handed over till to Ama; 50 pesewas coin roundoff difference"
+                    className="w-full px-3 py-2 bg-black/40 border border-white/10 rounded-xl text-xs text-white outline-none focus:border-amber-400"
+                  />
                 </div>
 
                 <button
                   type="button"
                   onClick={handleExecuteShiftClose}
-                  className="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg transition"
+                  className="w-full py-3.5 bg-rose-600 hover:bg-rose-500 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg transition cursor-pointer active:scale-98"
                 >
                   <Lock className="w-4 h-4" />
-                  <span>Lock Till & Generate Final Z-Report</span>
+                  <span>Lock Till, Finalize Cashier Accounts & Generate Z-Report</span>
                 </button>
               </>
             ) : (

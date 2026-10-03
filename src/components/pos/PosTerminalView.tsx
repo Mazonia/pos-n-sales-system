@@ -269,7 +269,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
     }
   };
 
-  const addToCart = (product: LocalProduct, selectedUom?: { name: string; price: number }) => {
+  const addToCart = (product: LocalProduct, selectedUom?: { name: string; price: number; factor?: number }) => {
     triggerHaptic('add');
     const isWholesale = orderMode === 'WHOLESALE';
     const basePrice = isWholesale
@@ -278,6 +278,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
 
     const unitPrice = selectedUom ? selectedUom.price : basePrice;
     const unitName = selectedUom ? selectedUom.name : product.baseUnit;
+    const uomFactor = selectedUom?.factor || (selectedUom ? (product.uomOptions?.find(u => u.name === selectedUom.name)?.factor || 1) : 1);
 
     setCart(prev => {
       const existing = prev.find(item => item.productId === product.id && item.unitName === unitName);
@@ -306,6 +307,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
         costPrice: product.costPrice,
         quantity: 1,
         unitName,
+        uomFactor,
         orderType: orderMode,
         discountPct: 0,
         discountAmount: 0,
@@ -485,7 +487,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
     }
   };
 
-  // Robust Global Keyboard Shortcuts & Workstation Key Bindings
+  // Robust Global Keyboard Shortcuts (Protected with Alt/Ctrl/Fn modifiers to avoid interrupting product searches)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const activeEl = document.activeElement;
@@ -496,8 +498,8 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
         (activeEl as HTMLElement)?.isContentEditable
       );
 
-      // Fast Search shortcut: '/' (when not typing) or 'Ctrl+K' / 'Cmd+K' (always)
-      if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+      // Fast Search shortcut: 'Ctrl+K' / 'Cmd+K' or 'F9'
+      if (((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) || e.key === 'F9') {
         e.preventDefault();
         searchInputRef.current?.focus();
         searchInputRef.current?.select();
@@ -506,21 +508,12 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
         return;
       }
 
-      if (e.key === '/' && !isInput) {
-        e.preventDefault();
-        searchInputRef.current?.focus();
-        searchInputRef.current?.select();
-        setIsSearchFocused(true);
-        triggerShortcutFeedback('Search focused — type product or scan barcode');
-        return;
-      }
-
-      // If active modal is open or user is typing in an input, do not trigger single-key actions
+      // If active modal is open or user is typing in an input, do not trigger action shortcuts
       const hasModalOpen = showPaymentModal || showParkedModal || showDiscountModal || !!priceOverrideItem || !!pinModalConfig || !!completedOrder;
       if (isInput || hasModalOpen) return;
 
-      // Pricing Mode toggle (W key)
-      if (e.key === 'w' || e.key === 'W') {
+      // Pricing Mode toggle (Alt+W - modifier prevents interfering with words starting with 'W')
+      if (e.altKey && (e.key === 'w' || e.key === 'W')) {
         e.preventDefault();
         setOrderMode(prev => {
           const next = prev === 'RETAIL' ? 'WHOLESALE' : 'RETAIL';
@@ -530,8 +523,8 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
         return;
       }
 
-      // Hold or view parked tickets (H key or F4)
-      if (e.key === 'h' || e.key === 'H' || e.key === 'F4') {
+      // Hold or view parked tickets (F4 or Alt+H - modifier prevents interfering with words starting with 'H')
+      if (e.key === 'F4' || (e.altKey && (e.key === 'h' || e.key === 'H'))) {
         e.preventDefault();
         if (cart.length > 0) {
           handleHoldCart();
@@ -571,8 +564,8 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
         return;
       }
 
-      // Pay / Checkout (Spacebar or Enter)
-      if (e.code === 'Space' || e.key === 'Enter') {
+      // Pay / Checkout (Spacebar when not typing)
+      if (e.code === 'Space' && activeEl !== searchInputRef.current) {
         e.preventDefault();
         if (cart.length > 0) {
           setPaymentInitialMethod(undefined);
@@ -1138,7 +1131,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
               <span className="font-semibold text-[11px]">Search</span>
               <kbd className={`px-1.5 py-0.2 rounded font-mono font-bold text-[9.5px] ${
                 isDark ? 'bg-[#0D1017] text-teal-400 border border-slate-700' : 'bg-white text-teal-700 border border-slate-300 shadow-2xs'
-              }`}>/</kbd>
+              }`}>Ctrl+K</kbd>
             </button>
 
             {/* Wholesale / Retail Toggle Button */}
@@ -1151,7 +1144,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                   return next;
                 });
               }}
-              title="Toggle Wholesale / Retail Mode (Press W)"
+              title="Toggle Wholesale / Retail Mode (Press Alt+W)"
               className={`px-2.5 py-1 rounded-lg border flex items-center gap-1.5 transition-all duration-150 active:scale-95 cursor-pointer font-sans ${
                 orderMode === 'WHOLESALE'
                   ? 'border-amber-500/40 bg-amber-500/15 text-amber-500 font-bold'
@@ -1166,7 +1159,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                 orderMode === 'WHOLESALE'
                   ? 'bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/40'
                   : isDark ? 'bg-[#0D1017] text-amber-400 border border-slate-700' : 'bg-white text-amber-700 border border-slate-300 shadow-2xs'
-              }`}>W</kbd>
+              }`}>Alt+W</kbd>
             </button>
 
             {/* Hold / Recall Button */}
@@ -1181,7 +1174,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                   triggerShortcutFeedback('Opened held tickets');
                 }
               }}
-              title="Hold Active Ticket or Recall (Press H or F4)"
+              title="Hold Active Ticket or Recall (Press F4 or Alt+H)"
               className={`px-2.5 py-1 rounded-lg border flex items-center gap-1.5 transition-all duration-150 active:scale-95 cursor-pointer font-sans ${
                 parkedCarts.length > 0
                   ? 'border-teal-500/40 bg-teal-500/10 text-[#008285] dark:text-[#00CED1]'
@@ -1196,7 +1189,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
               </span>
               <kbd className={`px-1.5 py-0.2 rounded font-mono font-bold text-[9.5px] ${
                 isDark ? 'bg-[#0D1017] text-[#00CED1] border border-slate-700' : 'bg-white text-[#008285] border border-slate-300 shadow-2xs'
-              }`}>H</kbd>
+              }`}>F4</kbd>
             </button>
 
             {/* Quick Cash Button */}

@@ -35,7 +35,24 @@
   --pos-accent: #FF4500;
   --pos-accent-hover: #FF5722;
   --pos-cyan: #00CED1;
-  --pos-cyan-hover: #26E5E8;
+}
+
+/* Ink-Ripple Circular Theme View Transition */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none !important;
+  mix-blend-mode: normal !important;
+  display: block !important;
+  position: fixed !important;
+  inset: 0 !important;
+}
+
+::view-transition-old(root) {
+  z-index: 1 !important;
+}
+
+::view-transition-new(root) {
+  z-index: 99999 !important;
 }
 
 @layer base {

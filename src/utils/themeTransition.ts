@@ -64,16 +64,17 @@ export function executeThemeTransition(
     typeof (document as any).startViewTransition === 'function' &&
     !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (!supportsTransitions) {
-    toggleFn();
-    return;
-  }
-
-  // Calculate maximum distance from button to the furthest corner of viewport
+  // Calculate maximum radius from click origin to furthest corner of screen
   const maxRadius = Math.hypot(
     Math.max(clientX, window.innerWidth - clientX),
     Math.max(clientY, window.innerHeight - clientY)
   );
+
+  if (!supportsTransitions) {
+    // Elegant fallback ink-ripple for browsers without View Transitions
+    createInkRippleFallback(clientX, clientY, maxRadius, nextDark, toggleFn);
+    return;
+  }
 
   try {
     const transition = (document as any).startViewTransition(() => {
@@ -83,6 +84,7 @@ export function executeThemeTransition(
     if (transition && transition.ready && typeof transition.ready.then === 'function') {
       transition.ready
         .then(() => {
+          // Liquid ink spreading outward from the exact click coordinates to viewport corners
           const clipPath = [
             `circle(0px at ${clientX}px ${clientY}px)`,
             `circle(${maxRadius}px at ${clientX}px ${clientY}px)`
@@ -90,24 +92,68 @@ export function executeThemeTransition(
 
           document.documentElement.animate(
             {
-              clipPath: nextDark ? clipPath : [...clipPath].reverse(),
+              clipPath,
             },
             {
-              duration: 450,
-              easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
-              pseudoElement: nextDark
-                ? '::view-transition-new(root)'
-                : '::view-transition-old(root)',
+              duration: 750, // Slow, elegant ink spread
+              easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+              pseudoElement: '::view-transition-new(root)',
+              fill: 'forwards',
             }
           );
         })
         .catch(() => {
-          // Graceful fallback if animation is interrupted
+          // Graceful fallback
         });
     }
   } catch (err) {
-    // Fallback directly to toggle if startViewTransition throws
-    console.warn('View transition error, falling back to instant theme change:', err);
-    toggleFn();
+    console.warn('View transition error, using ink ripple fallback:', err);
+    createInkRippleFallback(clientX, clientY, maxRadius, nextDark, toggleFn);
   }
+}
+
+/**
+ * Visual ink-ripple fallback animation for browsers that don't support View Transitions API
+ */
+function createInkRippleFallback(
+  x: number,
+  y: number,
+  maxRadius: number,
+  nextDark: boolean,
+  toggleFn: () => void
+): void {
+  if (typeof document === 'undefined') {
+    toggleFn();
+    return;
+  }
+
+  const ripple = document.createElement('div');
+  ripple.className = 'theme-ink-ripple';
+  ripple.style.position = 'fixed';
+  ripple.style.left = `${x}px`;
+  ripple.style.top = `${y}px`;
+  ripple.style.width = '2px';
+  ripple.style.height = '2px';
+  ripple.style.borderRadius = '50%';
+  ripple.style.transform = 'translate(-50%, -50%) scale(0)';
+  ripple.style.pointerEvents = 'none';
+  ripple.style.zIndex = '999999';
+  ripple.style.backgroundColor = nextDark ? '#121316' : '#EBEEF2';
+  ripple.style.transition = 'transform 650ms cubic-bezier(0.22, 1, 0.36, 1), opacity 200ms ease';
+
+  document.body.appendChild(ripple);
+
+  // Force layout reflow then scale out
+  requestAnimationFrame(() => {
+    const scale = (maxRadius * 2) / 2;
+    ripple.style.transform = `translate(-50%, -50%) scale(${scale})`;
+
+    setTimeout(() => {
+      toggleFn();
+      ripple.style.opacity = '0';
+      setTimeout(() => {
+        ripple.remove();
+      }, 250);
+    }, 400);
+  });
 }
