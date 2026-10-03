@@ -480,9 +480,10 @@ export default function App() {
 
           {/* Theme Switcher Toggle */}
           <button
+            type="button"
             onClick={(e) => {
               triggerHaptic('tap');
-              executeThemeTransition(() => setIsDark(!isDark), e.clientX, e.clientY);
+              executeThemeTransition(e, isDark, (next) => setIsDark(next));
             }}
             className={`p-2.5 rounded-xl border transition-all duration-200 active:scale-90 cursor-pointer ${
               isDark

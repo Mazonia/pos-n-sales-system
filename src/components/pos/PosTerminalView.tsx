@@ -45,6 +45,8 @@ import {
   Check,
   Layers,
   Trash2,
+  Smartphone,
+  CreditCard,
 } from 'lucide-react';
 import { getReceiptConfig } from '../../utils/receiptConfig';
 
@@ -208,38 +210,18 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
   const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [discountPercentInput, setDiscountPercentInput] = useState<number>(5);
 
+  // Payment method selection & shortcut action feedback
+  const [paymentInitialMethod, setPaymentInitialMethod] = useState<'CASH' | 'MOMO' | undefined>(undefined);
+  const [shortcutFeedback, setShortcutFeedback] = useState<string | null>(null);
+  const feedbackTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const triggerShortcutFeedback = (msg: string) => {
+    if (feedbackTimeoutRef.current) clearTimeout(feedbackTimeoutRef.current);
+    setShortcutFeedback(msg);
+    feedbackTimeoutRef.current = setTimeout(() => setShortcutFeedback(null), 2500);
+  };
+
   const categories = ['ALL', ...Array.from(new Set(products.map(p => p.category)))];
-
-  // Global Keyboard Shortcuts (F1: Cash, F2: MoMo, F4: Hold, F9 / Cmd+K: Search, Space: Pay)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        searchInputRef.current?.focus();
-        setIsSearchFocused(true);
-      }
-      if (e.key === 'F9') {
-        e.preventDefault();
-        searchInputRef.current?.focus();
-        setIsSearchFocused(true);
-      }
-      if (e.key === 'F4') {
-        e.preventDefault();
-        if (cart.length > 0) handleHoldCart();
-      }
-      if (e.key === 'F1' || e.key === 'F2') {
-        e.preventDefault();
-        if (cart.length > 0) setShowPaymentModal(true);
-      }
-      if (e.code === 'Space' && document.activeElement !== searchInputRef.current && cart.length > 0 && !showPaymentModal) {
-        e.preventDefault();
-        setShowPaymentModal(true);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [cart, showPaymentModal]);
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') {
@@ -502,6 +484,110 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
       setActiveParkedCartId(null);
     }
   };
+
+  // Robust Global Keyboard Shortcuts & Workstation Key Bindings
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const activeEl = document.activeElement;
+      const isInput = (
+        activeEl instanceof HTMLInputElement ||
+        activeEl instanceof HTMLTextAreaElement ||
+        activeEl instanceof HTMLSelectElement ||
+        (activeEl as HTMLElement)?.isContentEditable
+      );
+
+      // Fast Search shortcut: '/' (when not typing) or 'Ctrl+K' / 'Cmd+K' (always)
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+        searchInputRef.current?.select();
+        setIsSearchFocused(true);
+        triggerShortcutFeedback('Search focused — type product or scan barcode');
+        return;
+      }
+
+      if (e.key === '/' && !isInput) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+        searchInputRef.current?.select();
+        setIsSearchFocused(true);
+        triggerShortcutFeedback('Search focused — type product or scan barcode');
+        return;
+      }
+
+      // If active modal is open or user is typing in an input, do not trigger single-key actions
+      const hasModalOpen = showPaymentModal || showParkedModal || showDiscountModal || !!priceOverrideItem || !!pinModalConfig || !!completedOrder;
+      if (isInput || hasModalOpen) return;
+
+      // Pricing Mode toggle (W key)
+      if (e.key === 'w' || e.key === 'W') {
+        e.preventDefault();
+        setOrderMode(prev => {
+          const next = prev === 'RETAIL' ? 'WHOLESALE' : 'RETAIL';
+          triggerShortcutFeedback(`Switched to ${next} pricing mode`);
+          return next;
+        });
+        return;
+      }
+
+      // Hold or view parked tickets (H key or F4)
+      if (e.key === 'h' || e.key === 'H' || e.key === 'F4') {
+        e.preventDefault();
+        if (cart.length > 0) {
+          handleHoldCart();
+          triggerShortcutFeedback('Ticket parked to held orders');
+        } else {
+          setShowParkedModal(true);
+          triggerShortcutFeedback('Viewing held tickets');
+        }
+        return;
+      }
+
+      // Direct Cash checkout (F1 key)
+      if (e.key === 'F1') {
+        e.preventDefault();
+        if (cart.length > 0) {
+          setPaymentInitialMethod('CASH');
+          setShowPaymentModal(true);
+          triggerShortcutFeedback('Direct Cash Checkout opened');
+        } else {
+          triggerShortcutFeedback('Cart is empty. Add products before checking out.');
+          searchInputRef.current?.focus();
+        }
+        return;
+      }
+
+      // Direct MoMo checkout (F2 key)
+      if (e.key === 'F2') {
+        e.preventDefault();
+        if (cart.length > 0) {
+          setPaymentInitialMethod('MOMO');
+          setShowPaymentModal(true);
+          triggerShortcutFeedback('Direct Mobile Money Checkout opened');
+        } else {
+          triggerShortcutFeedback('Cart is empty. Add products before checking out.');
+          searchInputRef.current?.focus();
+        }
+        return;
+      }
+
+      // Pay / Checkout (Spacebar or Enter)
+      if (e.code === 'Space' || e.key === 'Enter') {
+        e.preventDefault();
+        if (cart.length > 0) {
+          setPaymentInitialMethod(undefined);
+          setShowPaymentModal(true);
+        } else {
+          triggerShortcutFeedback('Cart is empty! Add products or scan barcode to pay.');
+          searchInputRef.current?.focus();
+        }
+        return;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [cart, showPaymentModal, showParkedModal, showDiscountModal, priceOverrideItem, pinModalConfig, completedOrder]);
 
   const totalItemCount = cart.reduce((s, i) => s + i.quantity, 0);
   const grossSubtotal = roundToPesewas(cart.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0));
@@ -1026,27 +1112,187 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
           )}
         </div>
 
-        {/* Keyboard Shortcut Bar */}
-        <div className={`hidden sm:flex items-center justify-between px-4 py-2 border-t text-[11.5px] tabular-nums shrink-0 select-none ${
-          isDark ? 'border-[#282B34] bg-[#16181F] text-stone-400' : 'border-slate-300 bg-white text-slate-600'
+        {/* Workstation Fast-Action & Shortcut Toolbar */}
+        <div className={`hidden sm:flex items-center justify-between px-3 py-2 border-t text-[11.5px] shrink-0 select-none overflow-x-auto ${
+          isDark ? 'border-[#282B34] bg-[#14161D] text-stone-400' : 'border-slate-300 bg-white text-slate-600 shadow-xs'
         }`}>
-          <div className="flex items-center gap-4">
-            {[
-              { key: 'F1', label: 'Cash' },
-              { key: 'F2', label: 'MoMo' },
-              { key: 'F4', label: 'Hold' },
-              { key: 'Space', label: 'Pay' },
-            ].map(s => (
-              <span key={s.key} className="flex items-center gap-1.5">
-                <kbd className={`px-1.5 py-0.5 rounded font-bold text-[10px] ${
-                  isDark ? 'bg-[#1F222B] text-[#FF5722] border border-[#2D313C]' : 'bg-slate-100 text-[#FF4500] border border-slate-300 shadow-2xs'
-                }`}>{s.key}</kbd>
-                <span className="font-medium text-slate-700 dark:text-stone-400">{s.label}</span>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2">
+            {/* Search Button */}
+            <button
+              type="button"
+              onClick={() => {
+                searchInputRef.current?.focus();
+                searchInputRef.current?.select();
+                setIsSearchFocused(true);
+                triggerShortcutFeedback('Search focused — type or scan barcode');
+              }}
+              title="Search Catalog (Press / or Ctrl+K)"
+              className={`px-2.5 py-1 rounded-lg border flex items-center gap-1.5 transition-all duration-150 active:scale-95 cursor-pointer font-sans ${
+                isDark
+                  ? 'border-[#282B34] bg-[#1B1E27] hover:border-slate-500 hover:text-white text-stone-300'
+                  : 'border-slate-200 bg-slate-50 hover:border-slate-400 hover:bg-slate-100 text-slate-700'
+              }`}
+            >
+              <Search className="w-3.5 h-3.5 text-slate-400" />
+              <span className="font-semibold text-[11px]">Search</span>
+              <kbd className={`px-1.5 py-0.2 rounded font-mono font-bold text-[9.5px] ${
+                isDark ? 'bg-[#0D1017] text-teal-400 border border-slate-700' : 'bg-white text-teal-700 border border-slate-300 shadow-2xs'
+              }`}>/</kbd>
+            </button>
+
+            {/* Wholesale / Retail Toggle Button */}
+            <button
+              type="button"
+              onClick={() => {
+                setOrderMode(prev => {
+                  const next = prev === 'RETAIL' ? 'WHOLESALE' : 'RETAIL';
+                  triggerShortcutFeedback(`Switched to ${next} pricing mode`);
+                  return next;
+                });
+              }}
+              title="Toggle Wholesale / Retail Mode (Press W)"
+              className={`px-2.5 py-1 rounded-lg border flex items-center gap-1.5 transition-all duration-150 active:scale-95 cursor-pointer font-sans ${
+                orderMode === 'WHOLESALE'
+                  ? 'border-amber-500/40 bg-amber-500/15 text-amber-500 font-bold'
+                  : isDark
+                  ? 'border-[#282B34] bg-[#1B1E27] hover:border-slate-500 text-stone-300'
+                  : 'border-slate-200 bg-slate-50 hover:border-slate-400 text-slate-700'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span className="font-semibold text-[11px]">{orderMode === 'WHOLESALE' ? 'Wholesale' : 'Retail'}</span>
+              <kbd className={`px-1.5 py-0.2 rounded font-mono font-bold text-[9.5px] ${
+                orderMode === 'WHOLESALE'
+                  ? 'bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/40'
+                  : isDark ? 'bg-[#0D1017] text-amber-400 border border-slate-700' : 'bg-white text-amber-700 border border-slate-300 shadow-2xs'
+              }`}>W</kbd>
+            </button>
+
+            {/* Hold / Recall Button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (cart.length > 0) {
+                  handleHoldCart();
+                  triggerShortcutFeedback('Ticket placed on hold');
+                } else {
+                  setShowParkedModal(true);
+                  triggerShortcutFeedback('Opened held tickets');
+                }
+              }}
+              title="Hold Active Ticket or Recall (Press H or F4)"
+              className={`px-2.5 py-1 rounded-lg border flex items-center gap-1.5 transition-all duration-150 active:scale-95 cursor-pointer font-sans ${
+                parkedCarts.length > 0
+                  ? 'border-teal-500/40 bg-teal-500/10 text-[#008285] dark:text-[#00CED1]'
+                  : isDark
+                  ? 'border-[#282B34] bg-[#1B1E27] hover:border-slate-500 text-stone-300'
+                  : 'border-slate-200 bg-slate-50 hover:border-slate-400 text-slate-700'
+              }`}
+            >
+              <PauseCircle className="w-3.5 h-3.5" />
+              <span className="font-semibold text-[11px]">
+                {cart.length > 0 ? 'Hold Ticket' : `Held (${parkedCarts.length})`}
               </span>
-            ))}
+              <kbd className={`px-1.5 py-0.2 rounded font-mono font-bold text-[9.5px] ${
+                isDark ? 'bg-[#0D1017] text-[#00CED1] border border-slate-700' : 'bg-white text-[#008285] border border-slate-300 shadow-2xs'
+              }`}>H</kbd>
+            </button>
+
+            {/* Quick Cash Button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (cart.length > 0) {
+                  setPaymentInitialMethod('CASH');
+                  setShowPaymentModal(true);
+                } else {
+                  triggerShortcutFeedback('Cart is empty. Add products to ticket first.');
+                  searchInputRef.current?.focus();
+                }
+              }}
+              title="Quick Cash Pay (Press F1)"
+              className={`hidden md:flex px-2.5 py-1 rounded-lg border items-center gap-1.5 transition-all duration-150 active:scale-95 cursor-pointer font-sans ${
+                isDark
+                  ? 'border-[#282B34] bg-[#1B1E27] hover:border-emerald-500/40 text-stone-300 hover:text-emerald-400'
+                  : 'border-slate-200 bg-slate-50 hover:border-emerald-400 text-slate-700 hover:text-emerald-700'
+              }`}
+            >
+              <Banknote className="w-3.5 h-3.5 text-emerald-500" />
+              <span className="font-semibold text-[11px]">Cash</span>
+              <kbd className={`px-1.5 py-0.2 rounded font-mono font-bold text-[9.5px] ${
+                isDark ? 'bg-[#0D1017] text-emerald-400 border border-slate-700' : 'bg-white text-emerald-700 border border-slate-300 shadow-2xs'
+              }`}>F1</kbd>
+            </button>
+
+            {/* Quick MoMo Button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (cart.length > 0) {
+                  setPaymentInitialMethod('MOMO');
+                  setShowPaymentModal(true);
+                } else {
+                  triggerShortcutFeedback('Cart is empty. Add products to ticket first.');
+                  searchInputRef.current?.focus();
+                }
+              }}
+              title="Quick MoMo Pay (Press F2)"
+              className={`hidden md:flex px-2.5 py-1 rounded-lg border items-center gap-1.5 transition-all duration-150 active:scale-95 cursor-pointer font-sans ${
+                isDark
+                  ? 'border-[#282B34] bg-[#1B1E27] hover:border-amber-500/40 text-stone-300 hover:text-amber-400'
+                  : 'border-slate-200 bg-slate-50 hover:border-amber-400 text-slate-700 hover:text-amber-700'
+              }`}
+            >
+              <Smartphone className="w-3.5 h-3.5 text-amber-500" />
+              <span className="font-semibold text-[11px]">MoMo</span>
+              <kbd className={`px-1.5 py-0.2 rounded font-mono font-bold text-[9.5px] ${
+                isDark ? 'bg-[#0D1017] text-amber-400 border border-slate-700' : 'bg-white text-amber-700 border border-slate-300 shadow-2xs'
+              }`}>F2</kbd>
+            </button>
+
+            {/* Checkout / Pay Button */}
+            <button
+              type="button"
+              onClick={() => {
+                if (cart.length > 0) {
+                  setPaymentInitialMethod(undefined);
+                  setShowPaymentModal(true);
+                } else {
+                  triggerShortcutFeedback('Cart is empty. Add products before paying.');
+                  searchInputRef.current?.focus();
+                }
+              }}
+              title="Checkout / Pay (Press Space or Enter)"
+              className={`px-3 py-1 rounded-lg font-bold flex items-center gap-1.5 transition-all duration-150 active:scale-95 cursor-pointer font-sans ${
+                cart.length > 0
+                  ? 'bg-[#FF4500] hover:bg-[#E03E00] text-white shadow-xs'
+                  : isDark
+                  ? 'bg-[#1B1E27] text-stone-500 border border-[#282B34]'
+                  : 'bg-slate-100 text-slate-400 border border-slate-200'
+              }`}
+            >
+              <CreditCard className="w-3.5 h-3.5" />
+              <span className="text-[11px]">
+                {cart.length > 0 ? `Pay ${formatGhs(grandTotal)}` : 'Pay'}
+              </span>
+              <kbd className={`px-1.5 py-0.2 rounded font-mono font-bold text-[9.5px] ${
+                cart.length > 0
+                  ? 'bg-white/20 text-white border border-white/30'
+                  : isDark ? 'bg-[#0D1017] text-stone-500' : 'bg-white text-slate-400 border border-slate-300'
+              }`}>Space</kbd>
+            </button>
           </div>
-          <div className="text-xs font-sans">
-            Cashier: <strong className="text-[#FF4500] dark:text-[#FF5722] font-bold">{cashierName.split(' ')[0]}</strong>
+
+          {/* Workstation & Cashier Status on Right */}
+          <div className="flex items-center gap-3 shrink-0 pl-2 text-xs">
+            <div className="hidden lg:flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-stone-400 font-mono">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Till #1 Active</span>
+            </div>
+            <div className="text-xs font-sans text-slate-600 dark:text-stone-300">
+              Cashier: <strong className="text-[#FF4500] dark:text-[#FF5722] font-bold">{cashierName.split(' ')[0]}</strong>
+            </div>
           </div>
         </div>
 
@@ -1171,8 +1417,12 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
           customers={customers}
           selectedCustomerId={selectedCustomerId}
           onConfirmPayments={handleConfirmPayments}
-          onClose={() => setShowPaymentModal(false)}
+          onClose={() => {
+            setShowPaymentModal(false);
+            setPaymentInitialMethod(undefined);
+          }}
           isDark={isDark}
+          initialPaymentMethod={paymentInitialMethod}
         />
       )}
 
@@ -1353,6 +1603,14 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Shortcut Action Feedback Banner */}
+      {shortcutFeedback && (
+        <div className="fixed bottom-14 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full shadow-2xl border text-xs font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 bg-slate-900/90 dark:bg-black/90 text-white border-slate-700 backdrop-blur-md">
+          <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+          <span>{shortcutFeedback}</span>
         </div>
       )}
 

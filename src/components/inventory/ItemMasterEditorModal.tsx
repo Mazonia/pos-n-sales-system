@@ -21,6 +21,8 @@ import {
   ImageIcon,
   Upload,
   Trash2,
+  Boxes,
+  Plus
 } from 'lucide-react';
 
 const GHANA_PRODUCT_IMAGE_PRESETS = [
@@ -87,6 +89,9 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Multi-tier Units of Measure (UOM) & Packaging Types State
+  const [uomOptions, setUomOptions] = useState<Array<{ name: string; factor: number; price: number }>>([]);
+
   useEffect(() => {
     if (product) {
       setFormData({
@@ -109,6 +114,13 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
         imageUrl: product.imageUrl || '',
       });
       setCustomCategory('');
+      if (product.uomOptions && product.uomOptions.length > 0) {
+        setUomOptions(product.uomOptions.map(u => ({ ...u })));
+      } else {
+        setUomOptions([
+          { name: `Single ${product.baseUnit || 'PCS'}`, factor: 1, price: product.retailPrice || 0 }
+        ]);
+      }
     } else {
       // New Item template
       const randCode = Math.floor(1000 + Math.random() * 9000);
@@ -131,6 +143,9 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
         isTaxExempt: false,
         imageUrl: '',
       });
+      setUomOptions([
+        { name: 'Single Piece', factor: 1, price: 15 }
+      ]);
     }
     setErrorMsg('');
   }, [product, isOpen]);
@@ -169,6 +184,44 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
     reader.readAsDataURL(file);
   };
 
+  const handleAddUomOption = (preset?: { name: string; factor: number; discountPct?: number }) => {
+    if (preset) {
+      const rawPrice = (formData.retailPrice || 0) * preset.factor;
+      const discounted = preset.discountPct
+        ? Math.round(rawPrice * (1 - preset.discountPct) * 100) / 100
+        : rawPrice;
+      setUomOptions(prev => [
+        ...prev,
+        {
+          name: preset.name,
+          factor: preset.factor,
+          price: discounted,
+        },
+      ]);
+    } else {
+      setUomOptions(prev => [
+        ...prev,
+        {
+          name: `Pack of ${prev.length === 0 ? 10 : 24} ${formData.baseUnit}`,
+          factor: prev.length === 0 ? 10 : 24,
+          price: Math.round((formData.retailPrice || 10) * (prev.length === 0 ? 10 : 24) * 0.95 * 100) / 100,
+        },
+      ]);
+    }
+  };
+
+  const handleUpdateUomOption = (index: number, field: 'name' | 'factor' | 'price', val: any) => {
+    setUomOptions(prev => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: val };
+      return copy;
+    });
+  };
+
+  const handleRemoveUomOption = (index: number) => {
+    setUomOptions(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
@@ -199,6 +252,14 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
     try {
       const productId = product?.id || `prod-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`;
 
+      const validUomOptions = uomOptions
+        .filter(u => u.name.trim() && Number(u.price) > 0)
+        .map(u => ({
+          name: stripEmojis(u.name.trim()),
+          factor: Math.max(1, Number(u.factor) || 1),
+          price: Math.max(0, Number(u.price) || 0),
+        }));
+
       const targetProduct: LocalProduct = {
         id: productId,
         name: formData.name.trim(),
@@ -211,6 +272,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
         retailPrice: Number(formData.retailPrice),
         wholesalePrice: Number(formData.wholesalePrice) || Math.round(Number(formData.retailPrice) * 0.85 * 100) / 100,
         baseUnit: formData.baseUnit.trim().toUpperCase(),
+        uomOptions: validUomOptions.length > 0 ? validUomOptions : undefined,
         currentStock: Number(formData.currentStock),
         safetyThreshold: Number(formData.safetyThreshold),
         reorderLevel: Number(formData.reorderLevel),
@@ -223,6 +285,9 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
 
       // Save to Dexie products table
       await db.products.put(targetProduct);
+
+      // Dispatch event for real-time app-wide catalog sync
+      window.dispatchEvent(new CustomEvent('productsUpdated'));
 
       // Audit log for non-repudiation
       await db.auditLogs.add({
@@ -709,6 +774,158 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                   }`}
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Section 4: Units of Measure (UOM) & Multi-Tier Packaging Options */}
+          <div className={`p-4 rounded-2xl border space-y-3.5 ${
+            isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-white border-slate-300 shadow-2xs'
+          }`}>
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <h4 className="font-serif font-bold text-[11px] uppercase tracking-wider text-slate-600 dark:text-stone-400 flex items-center gap-1.5">
+                  <Boxes className="w-3.5 h-3.5 text-[#008285] dark:text-[#00CED1]" />
+                  <span>Packaging Types & Units of Measure (POS Register UOMs)</span>
+                </h4>
+                <p className="text-[10.5px] text-slate-500 dark:text-stone-400 font-sans mt-0.5">
+                  Configure selling variations (e.g. Single Sachet vs Pack of 10 vs Carton of 100). These options appear directly in the POS cash register card dropdown.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => handleAddUomOption()}
+                className="px-2.5 py-1 rounded-xl bg-[#008285]/15 hover:bg-[#008285]/25 text-[#008285] dark:text-[#00CED1] border border-[#008285]/30 font-serif font-bold text-[11px] flex items-center gap-1 active:scale-95 transition cursor-pointer shrink-0"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Custom Tier</span>
+              </button>
+            </div>
+
+            {/* Quick Preset Buttons */}
+            <div className="flex items-center gap-1.5 flex-wrap pt-1">
+              <span className="text-[10px] text-slate-500 dark:text-stone-400 font-serif font-semibold">Quick Presets:</span>
+              {[
+                { name: `Roll of 10 ${formData.baseUnit}s`, factor: 10, discountPct: 0.05, label: '+ 10-Pack (Roll)' },
+                { name: `Dozen Pack (12 ${formData.baseUnit}s)`, factor: 12, discountPct: 0.06, label: '+ Dozen (12x)' },
+                { name: `Case of 24 ${formData.baseUnit}s`, factor: 24, discountPct: 0.08, label: '+ Case (24x)' },
+                { name: `Carton / Box of 50 ${formData.baseUnit}s`, factor: 50, discountPct: 0.10, label: '+ Box (50x)' },
+                { name: `Master Carton (100 ${formData.baseUnit}s)`, factor: 100, discountPct: 0.12, label: '+ Carton (100x)' },
+              ].map((p, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => handleAddUomOption(p)}
+                  className={`px-2 py-0.5 rounded-lg border text-[10px] font-sans font-semibold transition active:scale-95 cursor-pointer ${
+                    isDark
+                      ? 'border-[#282B34] bg-[#16181F] text-stone-300 hover:border-[#00CED1] hover:text-[#00CED1]'
+                      : 'border-slate-300 bg-slate-50 text-slate-700 hover:border-[#008285] hover:text-[#008285]'
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+
+            {/* UOM Options List */}
+            <div className="space-y-2 mt-2">
+              {uomOptions.length === 0 ? (
+                <div className="p-4 rounded-xl border border-dashed text-center text-slate-500 text-xs italic">
+                  No multi-tier packaging options added yet. Item will only sell in base unit ({formData.baseUnit}).
+                </div>
+              ) : (
+                uomOptions.map((uom, idx) => {
+                  const effectivePerPiece = uom.factor > 0 ? uom.price / uom.factor : 0;
+                  const standardSinglesTotal = (formData.retailPrice || 0) * uom.factor;
+                  const savings = standardSinglesTotal > uom.price ? standardSinglesTotal - uom.price : 0;
+
+                  return (
+                    <div
+                      key={idx}
+                      className={`p-3 rounded-xl border transition ${
+                        isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-slate-50 border-slate-200'
+                      }`}
+                    >
+                      <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
+                        <div className="sm:col-span-5">
+                          <label className="text-[10px] text-slate-500 dark:text-stone-400 block mb-0.5 font-serif font-semibold">
+                            Option #{idx + 1} Name *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={uom.name}
+                            onChange={e => handleUpdateUomOption(idx, 'name', e.target.value)}
+                            placeholder="e.g. Roll of 10 Sachets / Box of 50"
+                            className={`w-full px-2.5 py-1.5 rounded-lg border text-xs font-serif font-bold outline-none focus:border-[#008285] ${
+                              isDark ? 'bg-[#121316] border-[#282B34] text-stone-100' : 'bg-white border-slate-300 text-slate-900'
+                            }`}
+                          />
+                        </div>
+
+                        <div className="sm:col-span-3">
+                          <label className="text-[10px] text-slate-500 dark:text-stone-400 block mb-0.5 font-serif font-semibold">
+                            Units in Pack (Factor)
+                          </label>
+                          <input
+                            type="number"
+                            min="1"
+                            required
+                            value={uom.factor}
+                            onChange={e => handleUpdateUomOption(idx, 'factor', Math.max(1, parseInt(e.target.value) || 1))}
+                            className={`w-full px-2.5 py-1.5 rounded-lg border text-xs font-mono font-bold text-center outline-none focus:border-[#008285] ${
+                              isDark ? 'bg-[#121316] border-[#282B34] text-stone-100' : 'bg-white border-slate-300 text-slate-900'
+                            }`}
+                          />
+                        </div>
+
+                        <div className="sm:col-span-3">
+                          <label className="text-[10px] text-slate-500 dark:text-stone-400 block mb-0.5 font-serif font-semibold">
+                            Pack Price (GH₵) *
+                          </label>
+                          <div className="relative">
+                            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-mono font-bold text-[#FF4500]">GH₵</span>
+                            <input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              required
+                              value={uom.price}
+                              onChange={e => handleUpdateUomOption(idx, 'price', parseFloat(e.target.value) || 0)}
+                              className={`w-full pl-8 pr-2 py-1.5 rounded-lg border text-xs font-mono tabular-nums font-bold text-[#008285] dark:text-[#00CED1] outline-none focus:border-[#008285] ${
+                                isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-white border-slate-300'
+                              }`}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="sm:col-span-1 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveUomOption(idx)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 transition cursor-pointer"
+                            title="Delete this packaging tier"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Live Breakdown Details Chip */}
+                      <div className="mt-2 pt-1.5 border-t border-slate-200 dark:border-white/5 flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-stone-400 flex-wrap gap-2">
+                        <span>
+                          Rate: <strong>{formatGhs(effectivePerPiece)}</strong> / {formData.baseUnit || 'piece'}
+                        </span>
+                        {savings > 0 && (
+                          <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                            ★ Bulk Discount: Saves {formatGhs(savings)} vs single pieces
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
 

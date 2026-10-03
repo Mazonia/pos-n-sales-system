@@ -395,10 +395,18 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                                 }`}>
                                   {prod.name}
                                 </span>
-                                <span className="text-[10px] text-slate-500 dark:text-stone-400 font-mono">
+                                <span className="text-[10px] text-slate-500 dark:text-stone-400 font-mono block">
                                   {prod.sku} · Barcode: {prod.barcode}
                                   {prod.localName && <span className="ml-1 text-[#008285] dark:text-[#00CED1] font-serif font-medium">({prod.localName})</span>}
                                 </span>
+                                {prod.uomOptions && prod.uomOptions.length > 1 && (
+                                  <div className="flex items-center gap-1 mt-1">
+                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-sans font-bold bg-[#008285]/10 text-[#008285] dark:text-[#00CED1] border border-[#008285]/20 max-w-xs truncate" title={prod.uomOptions.map(u => `${u.name} (GH₵${u.price.toFixed(2)})`).join(', ')}>
+                                      <Boxes className="w-2.5 h-2.5 shrink-0" />
+                                      <span>{prod.uomOptions.length} Packaging Types ({prod.uomOptions.map(u => u.name).join(', ')})</span>
+                                    </span>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </td>

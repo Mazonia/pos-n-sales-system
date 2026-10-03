@@ -7,57 +7,107 @@
  */
 
 export function executeThemeTransition(
-  event: React.MouseEvent<HTMLElement> | MouseEvent | null,
-  isCurrentlyDark: boolean,
-  applyThemeChange: (nextDark: boolean) => void
+  arg1: React.MouseEvent<HTMLElement> | MouseEvent | (() => void) | null,
+  arg2?: boolean | number,
+  arg3?: ((nextDark: boolean) => void) | number
 ): void {
+  let toggleFn: () => void;
+  let clientX = typeof window !== 'undefined' ? window.innerWidth / 2 : 0;
+  let clientY = typeof window !== 'undefined' ? window.innerHeight / 2 : 0;
+  let isCurrentlyDark = false;
+
+  // Determine calling pattern
+  if (typeof arg1 === 'function') {
+    // Pattern B: executeThemeTransition(toggleFn, clientX, clientY)
+    toggleFn = arg1;
+    if (typeof arg2 === 'number') clientX = arg2;
+    if (typeof arg3 === 'number') clientY = arg3;
+    isCurrentlyDark =
+      typeof document !== 'undefined' &&
+      (document.documentElement.classList.contains('dark') ||
+        document.documentElement.classList.contains('theme-dark'));
+  } else if (arg1 && typeof arg1 === 'object' && 'clientX' in arg1) {
+    // Pattern A: executeThemeTransition(event, isCurrentlyDark, applyThemeChange)
+    clientX = arg1.clientX;
+    clientY = arg1.clientY;
+    if (typeof arg2 === 'boolean') {
+      isCurrentlyDark = arg2;
+    } else {
+      isCurrentlyDark =
+        typeof document !== 'undefined' &&
+        (document.documentElement.classList.contains('dark') ||
+          document.documentElement.classList.contains('theme-dark'));
+    }
+
+    if (typeof arg3 === 'function') {
+      const applyChange = arg3;
+      const nextDark = !isCurrentlyDark;
+      toggleFn = () => applyChange(nextDark);
+    } else {
+      toggleFn = () => {};
+    }
+  } else {
+    // Fallback if no valid event or callback
+    if (typeof arg3 === 'function') {
+      const nextDark = !arg2;
+      arg3(nextDark);
+    }
+    return;
+  }
+
   const nextDark = !isCurrentlyDark;
 
   // Check if browser supports modern View Transitions and user hasn't requested reduced motion
   const supportsTransitions =
     typeof document !== 'undefined' &&
     'startViewTransition' in document &&
+    typeof (document as any).startViewTransition === 'function' &&
     !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (!supportsTransitions || !event) {
-    applyThemeChange(nextDark);
+  if (!supportsTransitions) {
+    toggleFn();
     return;
   }
 
-  const x = event.clientX;
-  const y = event.clientY;
-
   // Calculate maximum distance from button to the furthest corner of viewport
   const maxRadius = Math.hypot(
-    Math.max(x, window.innerWidth - x),
-    Math.max(y, window.innerHeight - y)
+    Math.max(clientX, window.innerWidth - clientX),
+    Math.max(clientY, window.innerHeight - clientY)
   );
 
-  // Trigger View Transition
-  const transition = (document as any).startViewTransition(() => {
-    applyThemeChange(nextDark);
-  });
+  try {
+    const transition = (document as any).startViewTransition(() => {
+      toggleFn();
+    });
 
-  transition.ready.then(() => {
-    const clipPath = [
-      `circle(0px at ${x}px ${y}px)`,
-      `circle(${maxRadius}px at ${x}px ${y}px)`
-    ];
+    if (transition && transition.ready && typeof transition.ready.then === 'function') {
+      transition.ready
+        .then(() => {
+          const clipPath = [
+            `circle(0px at ${clientX}px ${clientY}px)`,
+            `circle(${maxRadius}px at ${clientX}px ${clientY}px)`
+          ];
 
-    document.documentElement.animate(
-      {
-        clipPath: nextDark ? clipPath : [...clipPath].reverse(),
-      },
-      {
-        duration: 480,
-        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
-        pseudoElement: nextDark
-          ? '::view-transition-new(root)'
-          : '::view-transition-old(root)',
-      }
-    );
-  }).catch(() => {
-    // Graceful fallback if animation is interrupted
-    applyThemeChange(nextDark);
-  });
+          document.documentElement.animate(
+            {
+              clipPath: nextDark ? clipPath : [...clipPath].reverse(),
+            },
+            {
+              duration: 450,
+              easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+              pseudoElement: nextDark
+                ? '::view-transition-new(root)'
+                : '::view-transition-old(root)',
+            }
+          );
+        })
+        .catch(() => {
+          // Graceful fallback if animation is interrupted
+        });
+    }
+  } catch (err) {
+    // Fallback directly to toggle if startViewTransition throws
+    console.warn('View transition error, falling back to instant theme change:', err);
+    toggleFn();
+  }
 }

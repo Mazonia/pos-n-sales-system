@@ -365,9 +365,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           </button>
 
           <button
+            type="button"
             onClick={(e) => {
               triggerHaptic('tap');
-              executeThemeTransition(onToggleTheme, e.clientX, e.clientY);
+              executeThemeTransition(e, isDark, () => onToggleTheme());
             }}
             className={`p-2 rounded-[12px] border transition-all duration-200 active:scale-90 ${
               isDark

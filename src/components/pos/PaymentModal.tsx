@@ -31,6 +31,7 @@ interface PaymentModalProps {
   onConfirmPayments: (payments: LocalOrderPayment[], selectedCustomer?: LocalCustomer) => void;
   onClose: () => void;
   isDark: boolean;
+  initialPaymentMethod?: 'CASH' | 'MOMO' | 'CARD' | 'BISA' | 'LOYALTY';
 }
 
 export const PaymentModal: React.FC<PaymentModalProps> = ({
@@ -40,9 +41,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   onConfirmPayments,
   onClose,
   isDark,
+  initialPaymentMethod,
 }) => {
   const [payments, setPayments] = useState<LocalOrderPayment[]>([]);
-  const [activeTab, setActiveTab] = useState<'CASH' | 'MOMO' | 'CARD' | 'BISA' | 'LOYALTY'>('CASH');
+  const [activeTab, setActiveTab] = useState<'CASH' | 'MOMO' | 'CARD' | 'BISA' | 'LOYALTY'>(initialPaymentMethod || 'CASH');
 
   // Customer Selection for Bisa or General
   const [currentCustomer, setCurrentCustomer] = useState<LocalCustomer | undefined>(
