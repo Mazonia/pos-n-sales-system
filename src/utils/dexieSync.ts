@@ -34,6 +34,7 @@ export interface LocalProduct {
   supplierName?: string;
   batchNumber?: string;
   expiryDate?: string;
+  imageUrl?: string;
 }
 
 export interface LocalPurchaseOrderItem {
@@ -348,6 +349,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     supplierName: 'Finatrade Ghana Ltd',
     batchNumber: 'RF-2026-B12',
     expiryDate: '2027-08-30',
+    imageUrl: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'prod-002',
@@ -371,6 +373,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     supplierName: 'Nestlé Ghana Ltd (Tema)',
     batchNumber: 'NST-ML-09',
     expiryDate: '2027-03-15',
+    imageUrl: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'prod-003',
@@ -395,6 +398,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     supplierName: 'FrieslandCampina Ghana',
     batchNumber: 'PK-2026-X4',
     expiryDate: '2026-12-10',
+    imageUrl: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'prod-004',
@@ -419,6 +423,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     supplierName: 'GBfoods Ghana (Tema)',
     batchNumber: 'GN-2026-T1',
     expiryDate: '2027-01-20',
+    imageUrl: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'prod-005',
@@ -438,6 +443,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     supplierName: 'Wilmar Africa Ltd (Tema Harbour)',
     batchNumber: 'FRY-2026-L5',
     expiryDate: '2027-11-05',
+    imageUrl: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'prod-006',
@@ -461,6 +467,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     supplierName: 'Fan Milk PLC (Accra)',
     batchNumber: 'FM-FYG-26',
     expiryDate: '2026-11-20',
+    imageUrl: 'https://images.unsplash.com/photo-1563227812-0ea4c22e6cc8?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'prod-007',
@@ -480,6 +487,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     supplierName: 'Cocoa Processing Co. Ltd (Tema)',
     batchNumber: 'GT-KB-02',
     expiryDate: '2027-06-18',
+    imageUrl: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'prod-008',
@@ -503,6 +511,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     supplierName: 'Blow Chem Industries Ltd',
     batchNumber: 'BEL-2026-W',
     expiryDate: '2027-10-10',
+    imageUrl: 'https://images.unsplash.com/photo-1548839140-29a749e1bc4e?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'prod-009',
@@ -527,6 +536,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     supplierName: 'Ernest Chemists Ltd (Accra)',
     batchNumber: 'GSK-PD-41',
     expiryDate: '2026-11-15',
+    imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=400&q=80',
   },
   {
     id: 'prod-010',
@@ -547,6 +557,56 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     reorderLevel: 40,
     batchNumber: 'IDM-2026-SP',
     expiryDate: '2027-04-12',
+    imageUrl: 'https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    id: 'prod-011',
+    sku: 'KIVO-GARI-200G',
+    barcode: '603009112233',
+    name: 'Kivo Fine Gari Soaking Mix 200g',
+    localName: 'Kivo Gari Sugar & Groundnut Pack',
+    category: 'Provisions & Grains',
+    categoryId: 'cat-provisions',
+    costPrice: 4.80,
+    retailPrice: 7.00,
+    currentStock: 95,
+    baseUnit: 'Pack',
+    uomOptions: [
+      { name: 'Single Pack 200g', factor: 1, price: 7.00 },
+      { name: 'Roll of 10 Packs', factor: 10, price: 65.00 },
+    ],
+    reorderLevel: 20,
+    safetyThreshold: 20,
+    targetStockLevel: 120,
+    supplierName: 'Kivo Products Ghana (Spintex)',
+    batchNumber: 'KV-2026-G1',
+    expiryDate: '2027-05-20',
+    imageUrl: 'https://images.unsplash.com/photo-1574484284002-952d92456975?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    id: 'prod-012',
+    sku: 'KVO-MALT-330ML',
+    barcode: '603009445566',
+    name: 'Kvo Premium Malt Beverage 330ml Can',
+    localName: 'Kvo Cold Malt Drink',
+    category: 'Beverages & Breakfast',
+    categoryId: 'cat-beverages',
+    costPrice: 6.50,
+    retailPrice: 9.50,
+    currentStock: 140,
+    baseUnit: 'Can',
+    uomOptions: [
+      { name: 'Single Can 330ml', factor: 1, price: 9.50 },
+      { name: 'Pack of 6 Cans', factor: 6, price: 54.00 },
+      { name: 'Crate of 24 Cans', factor: 24, price: 210.00 },
+    ],
+    reorderLevel: 24,
+    safetyThreshold: 24,
+    targetStockLevel: 160,
+    supplierName: 'Accra Brewery PLC',
+    batchNumber: 'KVO-2026-M2',
+    expiryDate: '2027-09-10',
+    imageUrl: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=400&q=80',
   },
 ];
 
@@ -600,7 +660,7 @@ export async function initializeLocalDatabase(): Promise<void> {
   if (productCount === 0) {
     await db.products.bulkAdd(INITIAL_GHANA_PRODUCTS);
   } else {
-    // Ensure safety thresholds and suppliers are synced
+    // Ensure safety thresholds, suppliers, and image URLs are synced, and new products are inserted
     for (const p of INITIAL_GHANA_PRODUCTS) {
       const existing = await db.products.get(p.id);
       if (existing) {
@@ -609,7 +669,10 @@ export async function initializeLocalDatabase(): Promise<void> {
           targetStockLevel: p.targetStockLevel || (p.reorderLevel * 3),
           supplierName: p.supplierName || 'Ghana Central Wholesalers Ltd',
           currentStock: (p.currentStock <= p.reorderLevel) ? p.currentStock : existing.currentStock,
+          imageUrl: (existing.imageUrl && !existing.imageUrl.includes('photo-1607349913338')) ? existing.imageUrl : p.imageUrl,
         });
+      } else {
+        await db.products.add(p);
       }
     }
   }

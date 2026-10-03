@@ -368,17 +368,32 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                           }`}
                         >
                           <td className="p-3.5 font-sans">
-                            <span className={`font-bold block ${
-                              isBelowSafety
-                                ? isDark ? 'text-amber-200' : 'text-amber-950'
-                                : isDark ? 'text-white' : 'text-slate-900'
-                            }`}>
-                              {prod.name}
-                            </span>
-                            <span className="text-[10px] text-[#8A99A8] font-mono">
-                              {prod.sku} · Barcode: {prod.barcode}
-                              {prod.localName && <span className="ml-1 text-amber-400">({prod.localName})</span>}
-                            </span>
+                            <div className="flex items-center gap-2.5">
+                              {prod.imageUrl ? (
+                                <img
+                                  src={prod.imageUrl}
+                                  alt={prod.name}
+                                  className="w-9 h-9 rounded-xl object-cover border border-stone-200 dark:border-[#242D37] shrink-0"
+                                />
+                              ) : (
+                                <div className="w-9 h-9 rounded-xl bg-stone-100 dark:bg-[#1A2027] border border-stone-200 dark:border-[#242D37] flex items-center justify-center shrink-0 text-stone-400">
+                                  <Package className="w-4 h-4" />
+                                </div>
+                              )}
+                              <div className="min-w-0">
+                                <span className={`font-bold block truncate max-w-xs ${
+                                  isBelowSafety
+                                    ? isDark ? 'text-amber-200' : 'text-amber-950'
+                                    : isDark ? 'text-white' : 'text-slate-900'
+                                }`}>
+                                  {prod.name}
+                                </span>
+                                <span className="text-[10px] text-[#8A99A8] font-mono">
+                                  {prod.sku} · Barcode: {prod.barcode}
+                                  {prod.localName && <span className="ml-1 text-amber-400">({prod.localName})</span>}
+                                </span>
+                              </div>
+                            </div>
                           </td>
 
                           <td className="p-3.5 text-[#8A99A8] font-sans">{prod.category}</td>

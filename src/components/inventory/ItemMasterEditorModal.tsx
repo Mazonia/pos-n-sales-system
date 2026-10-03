@@ -16,8 +16,26 @@ import {
   ShieldCheck,
   CheckCircle2,
   Sparkles,
-  Info
+  Info,
+  ImageIcon,
+  Upload,
+  Trash2,
 } from 'lucide-react';
+
+const GHANA_PRODUCT_IMAGE_PRESETS = [
+  { name: 'Gari Mix', url: 'https://images.unsplash.com/photo-1574484284002-952d92456975?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Malt Drink', url: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Jasmine Rice', url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Milo Tin', url: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Milk Tin', url: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Tomato Paste', url: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Cooking Oil', url: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Yogurt Pouch', url: 'https://images.unsplash.com/photo-1563227812-0ea4c22e6cc8?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Chocolate Bar', url: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Mineral Water', url: 'https://images.unsplash.com/photo-1548839140-29a749e1bc4e?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Panadol Extra', url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=400&q=80' },
+  { name: 'Instant Noodles', url: 'https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=400&q=80' },
+];
 
 interface ItemMasterEditorModalProps {
   isOpen: boolean;
@@ -60,6 +78,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
     batchNumber: '',
     expiryDate: '',
     isTaxExempt: false,
+    imageUrl: '',
   });
 
   const [customCategory, setCustomCategory] = useState('');
@@ -84,6 +103,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
         batchNumber: product.batchNumber || '',
         expiryDate: product.expiryDate || '',
         isTaxExempt: product.isTaxExempt || false,
+        imageUrl: product.imageUrl || '',
       });
       setCustomCategory('');
     } else {
@@ -105,6 +125,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
         batchNumber: `BAT-${new Date().getFullYear()}-${randCode}`,
         expiryDate: '',
         isTaxExempt: false,
+        imageUrl: '',
       });
     }
     setErrorMsg('');
@@ -127,6 +148,21 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
       ...prev,
       barcode: `${ghanaPrefix}${randPart}`,
     }));
+  };
+
+  const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 3 * 1024 * 1024) {
+      setErrorMsg('Image size exceeds 3MB limit. Please choose a smaller photo.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData(prev => ({ ...prev, imageUrl: reader.result as string }));
+      setErrorMsg('');
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -177,6 +213,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
         batchNumber: formData.batchNumber.trim() || undefined,
         expiryDate: formData.expiryDate.trim() || undefined,
         isTaxExempt: Boolean(formData.isTaxExempt),
+        imageUrl: formData.imageUrl.trim() || undefined,
       };
 
       // Save to Dexie products table
@@ -188,7 +225,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
         action: isNew ? 'PRODUCT_CATALOG_CREATE' : 'PRODUCT_MASTER_EDIT',
         userId: currentUser.id,
         userName: currentUser.fullName,
-        details: `${isNew ? 'New item added to catalog' : 'Item updated'}: "${targetProduct.name}" (SKU: ${targetProduct.sku}, Category: ${targetProduct.category}, Retail: GH₵${targetProduct.retailPrice.toFixed(2)}, Cost: GH₵${targetProduct.costPrice.toFixed(2)}, Stock: ${targetProduct.currentStock} ${targetProduct.baseUnit}, Safety Threshold: ${targetProduct.safetyThreshold}) by ${currentUser.fullName} (${currentUser.role}).`,
+        details: `${isNew ? 'New item added to catalog' : 'Item updated'}: "${targetProduct.name}" (SKU: ${targetProduct.sku}, Category: ${targetProduct.category}, Retail: GH₵${targetProduct.retailPrice.toFixed(2)}, Cost: GH₵${targetProduct.costPrice.toFixed(2)}, Stock: ${targetProduct.currentStock} ${targetProduct.baseUnit}, Safety Threshold: ${targetProduct.safetyThreshold}${targetProduct.imageUrl ? ', with photo' : ''}) by ${currentUser.fullName} (${currentUser.role}).`,
         timestamp: new Date().toISOString(),
       });
 
@@ -360,6 +397,100 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                       isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
                     }`}
                   />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Section: Product Image & Packaging Photo */}
+          <div className={`p-4 rounded-2xl border space-y-3 ${
+            isDark ? 'bg-[#090B0E]/50 border-[#242D37]' : 'bg-slate-50 border-[#E2E5E9]'
+          }`}>
+            <div className="flex items-center justify-between">
+              <h4 className="font-bold text-[11px] uppercase tracking-wider text-[#8A99A8] flex items-center gap-1.5">
+                <ImageIcon className="w-3.5 h-3.5 text-amber-500" />
+                <span>Product Image & Packaging Photo</span>
+              </h4>
+              {formData.imageUrl && (
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, imageUrl: '' }))}
+                  className="text-[10px] text-rose-500 hover:text-rose-400 font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  <Trash2 className="w-3 h-3" />
+                  <span>Remove Photo</span>
+                </button>
+              )}
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-start gap-4">
+              {/* Image Preview / Placeholder */}
+              <div className="w-24 h-24 rounded-2xl border shrink-0 overflow-hidden flex items-center justify-center bg-stone-100 dark:bg-[#11151A] border-stone-200 dark:border-[#242D37] shadow-inner relative group">
+                {formData.imageUrl ? (
+                  <img
+                    src={formData.imageUrl}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '';
+                      setErrorMsg('Failed to load image from the provided URL.');
+                    }}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-stone-400 dark:text-stone-600 gap-1 p-2 text-center">
+                    <ImageIcon className="w-6 h-6" />
+                    <span className="text-[9px] font-bold">No Image</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Upload Controls & URL input */}
+              <div className="flex-1 space-y-2.5 w-full">
+                <div className="flex flex-wrap items-center gap-2">
+                  <label className="cursor-pointer px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs inline-flex items-center gap-1.5 active:scale-95 transition shadow-sm">
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Upload Image File</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageFileUpload}
+                      className="hidden"
+                    />
+                  </label>
+                  <span className="text-[11px] text-[#8A99A8]">or enter direct image URL below</span>
+                </div>
+
+                <input
+                  type="url"
+                  value={formData.imageUrl}
+                  onChange={e => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
+                  placeholder="https://images.unsplash.com/... or paste image URL"
+                  className={`w-full px-3 py-2 rounded-xl border text-xs outline-none focus:border-amber-500 ${
+                    isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                  }`}
+                />
+
+                {/* Quick Presets Gallery */}
+                <div className="space-y-1">
+                  <span className="text-[10px] text-[#8A99A8] font-bold block">Quick Retail Packaging Presets:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {GHANA_PRODUCT_IMAGE_PRESETS.map(preset => (
+                      <button
+                        key={preset.name}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, imageUrl: preset.url }))}
+                        className={`text-[10.5px] px-2 py-0.5 rounded-lg border transition cursor-pointer ${
+                          formData.imageUrl === preset.url
+                            ? 'bg-amber-500 text-stone-950 font-bold border-amber-500'
+                            : isDark
+                            ? 'bg-[#1A1C22] border-[#282B34] text-stone-300 hover:border-amber-500/50'
+                            : 'bg-white border-stone-200 text-stone-700 hover:border-amber-500/50'
+                        }`}
+                      >
+                        {preset.name}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

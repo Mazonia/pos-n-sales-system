@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   LocalProduct,
   LocalCartItem,
@@ -16,6 +16,7 @@ import {
   generateGraFiscalSignature,
   formatGhs
 } from '../../utils/ghanaTaxEngine';
+import { performSmartSearch, SmartSearchResult } from '../../utils/smartSearch';
 import { updateShiftWithSale } from '../../utils/shiftManager';
 import { triggerHaptic } from '../../utils/haptics';
 import { ProductCard } from './ProductCard';
@@ -35,7 +36,12 @@ import {
   Keyboard,
   ArrowUpRight,
   Sparkles,
-  Lock
+  Lock,
+  Eye,
+  EyeOff,
+  CornerDownLeft,
+  ImageIcon,
+  Check,
 } from 'lucide-react';
 
 interface ParkedCart {
@@ -79,6 +85,58 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
 
+  // Product packaging images visibility toggle (persisted in localStorage)
+  const [showProductImages, setShowProductImages] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('pos_show_product_images') !== 'false';
+    } catch {
+      return true;
+    }
+  });
+
+  const toggleShowImages = () => {
+    setShowProductImages(prev => {
+      const next = !prev;
+      try {
+        localStorage.setItem('pos_show_product_images', String(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  // Smart Search Suggestion Dropdown state
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Close suggestions popover when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+        setIsSearchFocused(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Compute smart search with exact matches on top and typo/fuzzy matches below
+  const smartSearchResult: SmartSearchResult = useMemo(() => {
+    return performSmartSearch(products, searchQuery, selectedCategory);
+  }, [products, searchQuery, selectedCategory]);
+
+  const allSuggestions = useMemo(() => {
+    return [
+      ...smartSearchResult.directMatches.map(m => ({ product: m.product, isTypo: false, label: m.matchedField, typoReason: '' })),
+      ...smartSearchResult.typoMatches.map(m => ({ product: m.product, isTypo: true, label: m.suggestedWord, typoReason: m.matchReason })),
+    ];
+  }, [smartSearchResult]);
+
+  useEffect(() => {
+    setSelectedSuggestionIndex(-1);
+  }, [searchQuery]);
+
   // Mobile cart sheet toggle
   const [mobileCartOpen, setMobileCartOpen] = useState(false);
 
@@ -108,21 +166,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
   const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [discountPercentInput, setDiscountPercentInput] = useState<number>(5);
 
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
   const categories = ['ALL', ...Array.from(new Set(products.map(p => p.category)))];
-
-  const filteredProducts = products.filter(product => {
-    const matchesCategory = selectedCategory === 'ALL' || product.category === selectedCategory;
-    const query = searchQuery.toLowerCase().trim();
-    if (!query) return matchesCategory;
-
-    const matchesName = product.name.toLowerCase().includes(query) || (product.localName && product.localName.toLowerCase().includes(query));
-    const matchesSku = product.sku.toLowerCase().includes(query);
-    const matchesBarcode = product.barcode.includes(query);
-
-    return matchesCategory && (matchesName || matchesSku || matchesBarcode);
-  });
 
   // Global Keyboard Shortcuts (F1: Cash, F2: MoMo, F4: Hold, F9 / Cmd+K: Search, Space: Pay)
   useEffect(() => {
@@ -130,10 +174,12 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         searchInputRef.current?.focus();
+        setIsSearchFocused(true);
       }
       if (e.key === 'F9') {
         e.preventDefault();
         searchInputRef.current?.focus();
+        setIsSearchFocused(true);
       }
       if (e.key === 'F4') {
         e.preventDefault();
@@ -154,13 +200,45 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
   }, [cart, showPaymentModal]);
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedSuggestionIndex(prev => Math.min(prev + 1, allSuggestions.length - 1));
+      return;
+    }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedSuggestionIndex(prev => Math.max(prev - 1, 0));
+      return;
+    }
+    if (e.key === 'Escape') {
+      setIsSearchFocused(false);
+      return;
+    }
     if (e.key === 'Enter') {
-      const match = products.find(
+      e.preventDefault();
+      if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < allSuggestions.length) {
+        addToCart(allSuggestions[selectedSuggestionIndex].product);
+        setSearchQuery('');
+        setIsSearchFocused(false);
+        return;
+      }
+
+      // Check exact barcode or SKU first
+      const exactMatch = products.find(
         p => p.barcode === searchQuery.trim() || p.sku.toLowerCase() === searchQuery.toLowerCase().trim()
       );
-      if (match) {
-        addToCart(match);
+      if (exactMatch) {
+        addToCart(exactMatch);
         setSearchQuery('');
+        setIsSearchFocused(false);
+        return;
+      }
+
+      // Add top available suggestion if present
+      if (allSuggestions.length > 0) {
+        addToCart(allSuggestions[0].product);
+        setSearchQuery('');
+        setIsSearchFocused(false);
       }
     }
   };
@@ -437,47 +515,283 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
       
       {/* LEFT 65%: PRODUCT CATALOG & ACTIONS */}
       <div className={`flex-1 flex flex-col h-full overflow-hidden border-r ${
-        isDark ? 'border-slate-800' : 'border-slate-200'
+        isDark ? 'border-[#282B34]' : 'border-stone-200'
       }`}>
         
         {/* Top Controls: Search Bar & Barcode Quick-Scanner */}
         <div className={`p-4 border-b space-y-3 shrink-0 ${
-          isDark ? 'border-slate-800 bg-[#131A26]' : 'border-slate-200 bg-white'
+          isDark ? 'border-[#282B34] bg-[#16181F]' : 'border-stone-200 bg-white'
         }`}>
           <div className="flex items-center gap-2.5">
-            {/* Search Input */}
-            <div className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" strokeWidth={2} />
+            {/* Search Input Container with Smart Suggestions Popover */}
+            <div ref={searchContainerRef} className="relative flex-1">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" strokeWidth={2} />
               <input
                 ref={searchInputRef}
                 type="text"
                 value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onChange={e => {
+                  setSearchQuery(e.target.value);
+                  setIsSearchFocused(true);
+                }}
                 onKeyDown={handleSearchKeyDown}
-                placeholder="Search products by title, SKU, or scan barcode..."
+                placeholder="Search products by title, SKU, typo pattern, or barcode..."
                 className={`w-full pl-10 pr-24 py-2.5 rounded-xl text-xs sm:text-sm font-semibold border outline-none transition-all ${
                   isDark
-                    ? 'bg-slate-900 border-slate-700 text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
-                    : 'bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
+                    ? 'bg-[#1A1C22] border-[#282B34] text-white placeholder-stone-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20'
+                    : 'bg-stone-50 border-stone-200 text-stone-900 placeholder-stone-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20'
                 }`}
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
                 {searchQuery && (
                   <button
                     type="button"
-                    onClick={() => setSearchQuery('')}
-                    className="p-1 rounded-full text-slate-400 hover:text-slate-600 transition"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setIsSearchFocused(false);
+                    }}
+                    className="p-1 rounded-full text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
                 )}
                 <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
-                  isDark ? 'text-slate-400 bg-slate-800' : 'text-slate-500 bg-slate-200'
+                  isDark ? 'text-stone-400 bg-[#252833]' : 'text-stone-500 bg-stone-200'
                 }`}>
                   F9
                 </span>
               </div>
+
+              {/* Floating Smart Suggestions Popover */}
+              {isSearchFocused && searchQuery.trim().length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-2 z-50 rounded-2xl border shadow-2xl overflow-hidden backdrop-blur-md max-h-[460px] flex flex-col bg-white/95 dark:bg-[#16181F]/95 border-stone-200 dark:border-[#282B34] animate-in fade-in duration-100">
+                  <div className="p-3 border-b flex items-center justify-between bg-stone-50/80 dark:bg-[#1A1C22]/80 border-stone-200 dark:border-[#282B34] shrink-0">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-amber-500" />
+                      <span className="text-xs font-bold text-stone-900 dark:text-stone-100">
+                        Smart Suggestions for "{searchQuery}"
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[10.5px]">
+                      <span className="font-semibold text-stone-500 dark:text-stone-400">
+                        {smartSearchResult.directMatches.length} Direct
+                      </span>
+                      {smartSearchResult.typoMatches.length > 0 && (
+                        <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400 font-bold border border-amber-500/30">
+                          {smartSearchResult.typoMatches.length} Similar / Typo
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="overflow-y-auto flex-1 divide-y divide-stone-100 dark:divide-[#282B34]/60">
+                    {/* 1. Direct / Exact Matches */}
+                    {smartSearchResult.directMatches.length > 0 && (
+                      <div>
+                        <div className="px-3.5 py-1.5 bg-stone-100/70 dark:bg-[#1A1C22]/70 text-[10px] uppercase font-bold tracking-wider text-stone-500 dark:text-stone-400 flex items-center justify-between">
+                          <span>Direct Matches ({smartSearchResult.directMatches.length})</span>
+                          <span className="text-[9.5px] opacity-75">Exact title, prefix, barcode or SKU</span>
+                        </div>
+
+                        {smartSearchResult.directMatches.map((dm, idx) => {
+                          const isSelected = selectedSuggestionIndex === idx;
+                          return (
+                            <div
+                              key={dm.product.id}
+                              onClick={() => {
+                                addToCart(dm.product);
+                                setSearchQuery('');
+                                setIsSearchFocused(false);
+                              }}
+                              className={`p-2.5 sm:p-3 flex items-center justify-between gap-3 cursor-pointer transition ${
+                                isSelected
+                                  ? 'bg-amber-500/15 dark:bg-amber-500/20'
+                                  : 'hover:bg-stone-50 dark:hover:bg-[#1A1C22]'
+                              }`}
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                {showProductImages && (
+                                  <div className="w-11 h-11 rounded-lg overflow-hidden bg-stone-100 dark:bg-[#11151A] border border-stone-200 dark:border-[#282B34] shrink-0 flex items-center justify-center">
+                                    {dm.product.imageUrl ? (
+                                      <img src={dm.product.imageUrl} alt={dm.product.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                      <ImageIcon className="w-4 h-4 text-stone-400" />
+                                    )}
+                                  </div>
+                                )}
+
+                                <div className="min-w-0">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="font-bold text-xs sm:text-sm text-stone-900 dark:text-stone-100 truncate">
+                                      {dm.product.name}
+                                    </span>
+                                    <span className="text-[9.5px] px-1.5 py-0.2 rounded-md bg-stone-200/80 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-mono font-medium">
+                                      {dm.product.sku}
+                                    </span>
+                                  </div>
+                                  {dm.product.localName && (
+                                    <p className="text-[11px] text-stone-500 dark:text-stone-400 truncate">
+                                      {dm.product.localName}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-3 shrink-0">
+                                <div className="text-right">
+                                  <span className="text-xs sm:text-sm font-black text-amber-600 dark:text-amber-400 font-mono block">
+                                    {formatGhs(dm.product.retailPrice)}
+                                  </span>
+                                  <span className="text-[10px] text-stone-400">
+                                    {dm.product.currentStock} in stock
+                                  </span>
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    addToCart(dm.product);
+                                    setSearchQuery('');
+                                    setIsSearchFocused(false);
+                                  }}
+                                  className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs shadow-xs active:scale-95 transition cursor-pointer"
+                                >
+                                  + Add
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* 2. Suggested & Typo Matches */}
+                    {smartSearchResult.typoMatches.length > 0 && (
+                      <div>
+                        <div className="px-3.5 py-1.5 bg-amber-500/10 dark:bg-amber-500/15 text-[10px] uppercase font-bold tracking-wider text-amber-800 dark:text-amber-400 flex items-center justify-between border-t border-amber-500/20">
+                          <span className="flex items-center gap-1">
+                            <Sparkles className="w-3 h-3 text-amber-500" />
+                            Suggested / Similar Matches ({smartSearchResult.typoMatches.length})
+                          </span>
+                          <span className="text-[9.5px] opacity-80">Typo & mistake tolerant</span>
+                        </div>
+
+                        {smartSearchResult.typoMatches.map((tm, idx) => {
+                          const overallIdx = smartSearchResult.directMatches.length + idx;
+                          const isSelected = selectedSuggestionIndex === overallIdx;
+                          return (
+                            <div
+                              key={tm.product.id}
+                              onClick={() => {
+                                addToCart(tm.product);
+                                setSearchQuery('');
+                                setIsSearchFocused(false);
+                              }}
+                              className={`p-2.5 sm:p-3 flex items-center justify-between gap-3 cursor-pointer transition ${
+                                isSelected
+                                  ? 'bg-amber-500/15 dark:bg-amber-500/20'
+                                  : 'hover:bg-amber-500/5 dark:hover:bg-[#1A1C22]'
+                              }`}
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                {showProductImages && (
+                                  <div className="w-11 h-11 rounded-lg overflow-hidden bg-stone-100 dark:bg-[#11151A] border border-amber-500/30 shrink-0 flex items-center justify-center">
+                                    {tm.product.imageUrl ? (
+                                      <img src={tm.product.imageUrl} alt={tm.product.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                      <ImageIcon className="w-4 h-4 text-stone-400" />
+                                    )}
+                                  </div>
+                                )}
+
+                                <div className="min-w-0">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="font-bold text-xs sm:text-sm text-stone-900 dark:text-stone-100 truncate">
+                                      {tm.product.name}
+                                    </span>
+                                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold border border-amber-500/40">
+                                      Did you mean: {tm.suggestedWord}?
+                                    </span>
+                                  </div>
+                                  <p className="text-[10.5px] text-stone-500 dark:text-stone-400">
+                                    {tm.matchReason} · <span className="font-mono">{tm.product.sku}</span>
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-3 shrink-0">
+                                <div className="text-right">
+                                  <span className="text-xs sm:text-sm font-black text-amber-600 dark:text-amber-400 font-mono block">
+                                    {formatGhs(tm.product.retailPrice)}
+                                  </span>
+                                  <span className="text-[10px] text-stone-400">
+                                    {tm.product.currentStock} in stock
+                                  </span>
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    addToCart(tm.product);
+                                    setSearchQuery('');
+                                    setIsSearchFocused(false);
+                                  }}
+                                  className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs shadow-xs active:scale-95 transition cursor-pointer"
+                                >
+                                  + Add
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Empty State */}
+                    {!smartSearchResult.hasMatches && (
+                      <div className="py-8 text-center text-stone-400 text-xs space-y-1">
+                        <p className="font-bold text-stone-600 dark:text-stone-300">No products matching "{searchQuery}"</p>
+                        <p className="text-[11px]">Check spelling or browse by category above.</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Popover Footer */}
+                  <div className="px-3 py-1.5 bg-stone-100/90 dark:bg-[#13151A] border-t border-stone-200 dark:border-[#282B34] flex items-center justify-between text-[10px] text-stone-500 dark:text-stone-400 shrink-0">
+                    <div className="flex items-center gap-3">
+                      <span><kbd className="px-1 py-0.5 rounded bg-stone-200 dark:bg-stone-800 font-mono">↑↓</kbd> Navigate</span>
+                      <span><kbd className="px-1 py-0.5 rounded bg-stone-200 dark:bg-stone-800 font-mono">Enter</kbd> Add item</span>
+                      <span><kbd className="px-1 py-0.5 rounded bg-stone-200 dark:bg-stone-800 font-mono">Esc</kbd> Close</span>
+                    </div>
+                    <span>Smart Typo Tolerance Active</span>
+                  </div>
+                </div>
+              )}
             </div>
+
+            {/* Photo Visibility Toggle (Teller Option) */}
+            <button
+              type="button"
+              onClick={toggleShowImages}
+              className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold shrink-0 transition active:scale-95 cursor-pointer ${
+                showProductImages
+                  ? 'border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-400 font-bold'
+                  : isDark
+                  ? 'border-[#282B34] bg-[#1A1C22] text-stone-400 hover:text-stone-200'
+                  : 'border-stone-200 bg-stone-50 text-stone-600 hover:text-stone-900'
+              }`}
+              title="Toggle display of product packaging photos on cards & suggestions"
+            >
+              {showProductImages ? (
+                <Eye className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              ) : (
+                <EyeOff className="w-3.5 h-3.5" />
+              )}
+              <span>Photos: {showProductImages ? 'ON' : 'OFF'}</span>
+            </button>
 
             {/* Scanner Status */}
             <div className={`hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold shrink-0 ${
@@ -526,27 +840,32 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
 
         {/* Product Grid */}
         <div className="flex-1 p-4 sm:p-5 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-3.5 content-start pb-24 md:pb-6 bg-[#F5F5F7] dark:bg-[#121316]">
-          {filteredProducts.length === 0 ? (
+          {smartSearchResult.allRanked.length === 0 ? (
             <div className="col-span-full py-16 text-center text-stone-400 space-y-2">
               <p className="text-sm font-bold">No products found</p>
               <p className="text-xs">Try searching for a different keyword or SKU.</p>
               <button
                 type="button"
                 onClick={() => { setSearchQuery(''); setSelectedCategory('ALL'); }}
-                className="text-xs text-amber-600 dark:text-amber-400 font-bold hover:underline"
+                className="text-xs text-amber-600 dark:text-amber-400 font-bold hover:underline cursor-pointer"
               >
                 Clear all filters
               </button>
             </div>
           ) : (
-            filteredProducts.map(product => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={addToCart}
-                isDark={isDark}
-              />
-            ))
+            smartSearchResult.allRanked.map(product => {
+              const typoMatch = smartSearchResult.typoMatches.find(m => m.product.id === product.id);
+              return (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={addToCart}
+                  isDark={isDark}
+                  showImage={showProductImages}
+                  suggestedMatchBadge={typoMatch ? `Suggested for "${searchQuery}" (Matches: ${typoMatch.suggestedWord})` : undefined}
+                />
+              );
+            })
           )}
         </div>
 
@@ -602,21 +921,21 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
       {/* MOBILE FLOATING TICKET SUMMARY (for screens < 768px) */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 p-3">
         <div className={`p-3 rounded-2xl border flex items-center justify-between shadow-xl ${
-          isDark ? 'bg-[#16202E] border-slate-700' : 'bg-white border-slate-200'
+          isDark ? 'bg-[#1A1C22] border-[#282B34]' : 'bg-white border-stone-200'
         }`}>
           <button
             type="button"
             onClick={() => setMobileCartOpen(true)}
             className="flex items-center gap-3 flex-1 text-left"
           >
-            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white font-black font-mono text-sm flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-amber-500 text-stone-950 font-black font-mono text-sm flex items-center justify-center">
               {totalItemCount}
             </div>
             <div>
-              <span className={`text-xs block font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <span className={`text-xs block font-bold ${isDark ? 'text-stone-200' : 'text-stone-900'}`}>
                 Current Ticket
               </span>
-              <span className="text-sm font-black font-mono tabular-nums text-emerald-600 dark:text-emerald-400">
+              <span className="text-sm font-black font-mono tabular-nums text-amber-600 dark:text-amber-400">
                 {formatGhs(grandTotal)}
               </span>
             </div>
@@ -626,7 +945,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
             type="button"
             disabled={cart.length === 0}
             onClick={() => setShowPaymentModal(true)}
-            className="px-5 py-2.5 font-black rounded-xl text-xs flex items-center gap-1.5 transition active:scale-95 bg-emerald-600 text-white shadow-md disabled:opacity-40"
+            className="px-5 py-2.5 font-bold rounded-xl text-xs flex items-center gap-1.5 transition active:scale-95 bg-amber-500 text-stone-950 shadow-md disabled:opacity-40 cursor-pointer"
           >
             <Banknote className="w-4 h-4" />
             <span>Pay</span>
@@ -639,14 +958,14 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
         <div className="md:hidden fixed inset-0 z-50 flex flex-col justify-end bg-black/60 backdrop-blur-md animate-fade-slide-in">
           <div className={`h-[88vh] w-full rounded-t-[24px] flex flex-col overflow-hidden border-t animate-slide-in-bottom ${
             isDark 
-              ? 'bg-[#0A0D12] border-[rgba(48,62,80,0.4)] shadow-[0_-8px_32px_rgba(0,0,0,0.5)]' 
-              : 'bg-white border-[rgba(209,215,224,0.5)] shadow-[0_-8px_24px_rgba(0,0,0,0.08)]'
+              ? 'bg-[#121316] border-[#282B34] shadow-[0_-8px_32px_rgba(0,0,0,0.5)]' 
+              : 'bg-white border-stone-200 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]'
           }`}>
             <div className={`p-3.5 border-b flex items-center justify-between shrink-0 ${
-              isDark ? 'border-[rgba(48,62,80,0.3)]' : 'border-[rgba(209,215,224,0.4)]'
+              isDark ? 'border-[#282B34]' : 'border-stone-200'
             }`}>
               <div className="flex items-center gap-2 font-bold text-sm">
-                <ShoppingBag className="w-4 h-4 text-emerald-500" strokeWidth={1.8} />
+                <ShoppingBag className="w-4 h-4 text-amber-500" strokeWidth={1.8} />
                 <span>Ticket Ledger ({totalItemCount} items)</span>
               </div>
               <button
