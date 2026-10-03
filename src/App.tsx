@@ -137,6 +137,7 @@ export default function App() {
   const [products, setProducts] = useState<LocalProduct[]>([]);
   const [customers, setCustomers] = useState<LocalCustomer[]>([]);
   const [activeShift, setActiveShift] = useState<LocalShift | null>(null);
+  const [shiftLockToast, setShiftLockToast] = useState<string | null>(null);
 
   // Background Sync State (Quiet, automatic offline-first)
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
@@ -764,9 +765,19 @@ export default function App() {
           onShiftClosed={(report: ShiftSummaryReport) => {
             setActiveShift(null);
             setShowShiftModal(false);
+            setShiftLockToast(`Till successfully locked! Z-Report #${report.zReportNumber} saved (${report.varianceStatus}). Cash drawer closed.`);
             refreshAllData();
+            setTimeout(() => setShiftLockToast(null), 6500);
           }}
         />
+      )}
+
+      {/* SHIFT LOCK CONFIRMATION TOAST */}
+      {shiftLockToast && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl bg-emerald-600 text-white font-serif font-bold text-xs shadow-2xl flex items-center gap-2.5 animate-bounce border border-emerald-400/40">
+          <CheckCircle2 className="w-4 h-4 text-white shrink-0" />
+          <span>{shiftLockToast}</span>
+        </div>
       )}
 
       {/* PROMPT OPEN NEW SHIFT */}

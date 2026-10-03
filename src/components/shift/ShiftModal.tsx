@@ -24,9 +24,16 @@ import {
   ShieldCheck,
   Banknote,
   Smartphone,
-  BookOpen
+  BookOpen,
+  Calendar,
+  Clock,
+  User,
+  Hash,
+  Sparkles,
+  Loader2
 } from 'lucide-react';
-import { OfficialPrintPortal } from '../common/OfficialPrintPortal';
+import { OfficialPrintPortal, printOfficialDocument } from '../common/OfficialPrintPortal';
+import { triggerHaptic } from '../../utils/haptics';
 
 interface ShiftModalProps {
   shift: LocalShift;
@@ -50,6 +57,61 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
   const [dropReason, setDropReason] = useState<string>('Emergency fuel for generator (Dumsor outage)');
   const [isDropSuccess, setIsDropSuccess] = useState(false);
 
+  // Dynamic configurations for Cash Movements (Pay-Out, Safe Deposit, Pay-In)
+  const movementConfigs: Record<'PAY_OUT' | 'SAFE_DEPOSIT' | 'PAY_IN', {
+    label: string;
+    placeholder: string;
+    defaultReason: string;
+    icon: React.ComponentType<{ className?: string }>;
+    iconColor: string;
+    badgeStyle: string;
+    title: string;
+    description: string;
+    cashImpact: string;
+  }> = {
+    PAY_OUT: {
+      label: 'Pay-Out (Store Expense)',
+      placeholder: 'e.g. 50 Litres Diesel for Generator during Dumsor / Pure Water bags / Store cleaning supplies',
+      defaultReason: 'Emergency fuel for generator (Dumsor outage)',
+      icon: Flame,
+      iconColor: 'text-[#FF4500]',
+      badgeStyle: 'bg-rose-500/10 border-rose-500/30 text-rose-300',
+      title: 'Dumsor Resilience & Store Operational Expenses:',
+      description: 'Expenses like generator fuel during grid power outages, ice blocks for perishable chillers, and emergency bags are recorded as certified petty cash write-offs. This legitimately reduces the expected cash in your till.',
+      cashImpact: `-GH₵ ${dropAmount.toFixed(2)} (Deducted from Drawer Cash)`,
+    },
+    SAFE_DEPOSIT: {
+      label: 'Safe Deposit (Anti-Theft Skim)',
+      placeholder: 'e.g. Skimmed 10x GH₵100 high-value notes to main branch vault for anti-theft security',
+      defaultReason: 'Anti-theft cash skim: High-denomination notes moved to main vault',
+      icon: ShieldCheck,
+      iconColor: 'text-amber-400',
+      badgeStyle: 'bg-amber-500/10 border-amber-500/30 text-amber-300',
+      title: 'Anti-Theft Counter Safe Skim:',
+      description: 'Transferring large notes (GH₵200, GH₵100) from the drawer to the drop-safe protects the cashier, limits robbery liability, and maintains safe drawer cash levels during peak trading hours.',
+      cashImpact: `-GH₵ ${dropAmount.toFixed(2)} (Transferred to Main Vault)`,
+    },
+    PAY_IN: {
+      label: 'Pay-In (Float Replenishment)',
+      placeholder: 'e.g. Replenished GH₵200 small change from manager safe (GH₵5, GH₵2 notes & 1 GHS coins)',
+      defaultReason: 'Small change replenishment: Fresh coins & small notes added from manager safe',
+      icon: Banknote,
+      iconColor: 'text-emerald-400',
+      badgeStyle: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300',
+      title: 'Small Change Float Replenishment:',
+      description: 'Adding fresh small coins (50 Pesewas, 1 GHS, 2 GHS) or small notes from the branch safe ensures cashiers can always provide quick, exact change to customers without delaying queues.',
+      cashImpact: `+GH₵ ${dropAmount.toFixed(2)} (Added to Drawer Cash)`,
+    },
+  };
+
+  const handleSelectDropType = (type: 'PAY_IN' | 'PAY_OUT' | 'SAFE_DEPOSIT') => {
+    const isOldReasonDefault = !dropReason || Object.values(movementConfigs).some(c => c.defaultReason === dropReason);
+    setDropType(type);
+    if (isOldReasonDefault) {
+      setDropReason(movementConfigs[type].defaultReason);
+    }
+  };
+
   // X-Report State
   const [xReport, setXReport] = useState<ShiftSummaryReport | null>(null);
 
@@ -68,6 +130,7 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
   const [closingNotes, setClosingNotes] = useState<string>('');
   const [managerPin, setManagerPin] = useState<string>('');
   const [zReportResult, setZReportResult] = useState<ShiftSummaryReport | null>(null);
+  const [isClosingShift, setIsClosingShift] = useState(false);
 
   const countedPhysicalCash = calculateDenominationTotal(denoms);
 
@@ -94,15 +157,23 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
   };
 
   const handleExecuteShiftClose = async () => {
-    const report = await closeShiftAndGenerateZReport({
-      shiftId: shift.id,
-      countedCashPhysical: countedPhysicalCash,
-      managerPin,
-      closingNotes,
-    });
+    setIsClosingShift(true);
+    try {
+      const report = await closeShiftAndGenerateZReport({
+        shiftId: shift.id,
+        countedCashPhysical: countedPhysicalCash,
+        managerPin,
+        closingNotes,
+      });
 
-    setZReportResult(report);
-    onShiftClosed(report);
+      triggerHaptic('success');
+      setZReportResult(report);
+    } catch (err) {
+      console.error('Error closing shift:', err);
+      alert('Failed to lock till. Please check inputs and try again.');
+    } finally {
+      setIsClosingShift(false);
+    }
   };
 
   return (
@@ -311,7 +382,7 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <button
                   type="button"
-                  onClick={() => setDropType('PAY_OUT')}
+                  onClick={() => handleSelectDropType('PAY_OUT')}
                   className={`p-3 rounded-2xl border text-left transition cursor-pointer ${
                     dropType === 'PAY_OUT' ? 'bg-rose-500/20 text-rose-300 border-rose-500 shadow-xs' : 'bg-white/5 text-slate-400 border-white/10 hover:bg-white/10'
                   }`}
@@ -327,7 +398,7 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => setDropType('SAFE_DEPOSIT')}
+                  onClick={() => handleSelectDropType('SAFE_DEPOSIT')}
                   className={`p-3 rounded-2xl border text-left transition cursor-pointer ${
                     dropType === 'SAFE_DEPOSIT' ? 'bg-amber-500/20 text-amber-300 border-amber-500 shadow-xs' : 'bg-white/5 text-slate-400 border-white/10 hover:bg-white/10'
                   }`}
@@ -343,7 +414,7 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => setDropType('PAY_IN')}
+                  onClick={() => handleSelectDropType('PAY_IN')}
                   className={`p-3 rounded-2xl border text-left transition cursor-pointer ${
                     dropType === 'PAY_IN' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500 shadow-xs' : 'bg-white/5 text-slate-400 border-white/10 hover:bg-white/10'
                   }`}
@@ -382,12 +453,22 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
                 required
                 value={dropReason}
                 onChange={e => setDropReason(e.target.value)}
-                placeholder="e.g. 50 Litres Diesel for Generator during Dumsor / Pure Water bags"
+                placeholder={movementConfigs[dropType].placeholder}
                 className="w-full px-3 py-2.5 bg-black/40 border border-white/10 rounded-xl text-xs text-white outline-none focus:border-amber-400"
               />
-              <div className="flex items-center gap-1 text-[11px] text-amber-400 mt-1.5">
-                <Flame className="w-3.5 h-3.5 text-[#FF4500]" />
-                <span>Dumsor resilience: Generator fuel and ice block expenses are logged into audited petty cash.</span>
+              <div className={`p-3 rounded-xl border ${movementConfigs[dropType].badgeStyle} text-xs space-y-1.5 mt-2`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 font-bold">
+                    {React.createElement(movementConfigs[dropType].icon, { className: `w-4 h-4 ${movementConfigs[dropType].iconColor}` })}
+                    <span>{movementConfigs[dropType].title}</span>
+                  </div>
+                  <span className="font-mono font-bold text-[10px] px-2 py-0.5 rounded-full bg-black/40">
+                    {movementConfigs[dropType].cashImpact}
+                  </span>
+                </div>
+                <p className="text-[11px] leading-relaxed opacity-90">
+                  {movementConfigs[dropType].description}
+                </p>
               </div>
             </div>
 
@@ -418,57 +499,113 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
                 <span>What is a Mid-Day X-Report?</span>
               </div>
               <p className="text-[11px] text-sky-100/90 leading-relaxed">
-                An <strong>X-Report</strong> is an interim snapshot of your sales so far. It shows orders completed, cash vs MoMo breakdown, and expected drawer money <strong>WITHOUT</strong> locking or closing your till. You can check and print an X-Report at any time (e.g. at lunch break or change of shifts).
+                An <strong>X-Report</strong> is an official interim snapshot of your sales so far. It shows orders completed, cash vs MoMo breakdown, and expected drawer money <strong>WITHOUT</strong> locking or closing your till. You can inspect and print an X-Report at any time (e.g. at lunch break or change of shifts).
               </p>
             </div>
 
             {xReport ? (
-              <div className="p-4 bg-white text-black font-mono rounded-2xl border border-slate-300 text-xs space-y-2 shadow-inner">
-                <div className="text-center pb-2 border-b border-dashed border-gray-400">
-                  <div className="font-bold text-sm">AKWAABA RETAIL OS</div>
-                  <div className="text-[10px] text-gray-700">*** X-REPORT (INTERIM MID-DAY READING) ***</div>
-                  <div className="text-[9px] text-gray-500">Till remains ACTIVE and OPEN for sales</div>
-                </div>
-
-                <div className="text-[10px] space-y-0.5">
-                  <div className="flex justify-between">
-                    <span>Shift #:</span>
-                    <span className="font-bold">{xReport.shiftNumber}</span>
+              <div className="bg-white text-slate-900 rounded-2xl border border-slate-300 p-5 shadow-lg space-y-4 font-sans">
+                {/* Official Corporate Header */}
+                <div className="flex justify-between items-start border-b-2 border-black pb-3">
+                  <div>
+                    <h3 className="font-serif font-black text-sm uppercase tracking-tight text-black">
+                      AKWAABA RETAIL SYSTEMS & WHOLESALE LTD.
+                    </h3>
+                    <p className="text-[10px] text-gray-600 font-medium">Central Retail Operations • Store Terminal #01</p>
+                    <p className="text-[9px] text-gray-500 font-mono">Digital Address: GA-183-9022, Accra Central • GRA TIN: C0029482190</p>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Cashier:</span>
-                    <span>{xReport.cashierName}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Orders Completed:</span>
-                    <span className="font-bold">{xReport.totalOrders}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Report Time:</span>
-                    <span>{new Date().toLocaleTimeString('en-GH')}</span>
+                  <div className="text-right">
+                    <span className="inline-block border border-black px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-gray-50 text-black">
+                      OFFICIAL VOUCHER
+                    </span>
+                    <div className="text-[11px] font-black text-[#008285] font-mono mt-0.5">
+                      INTERIM X-REPORT
+                    </div>
                   </div>
                 </div>
 
-                <div className="border-t border-dashed border-gray-400 pt-1 space-y-0.5 text-[10px]">
-                  <div className="flex justify-between">
-                    <span>Opening Starting Float:</span>
-                    <span>{xReport.openingFloat.toFixed(2)}</span>
+                {/* Metadata Grid */}
+                <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                  <div>
+                    <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Shift Number</div>
+                    <div className="font-mono font-bold text-slate-900">{xReport.shiftNumber}</div>
+                    <div className="text-[10px] text-slate-500 mt-1">Cashier: <strong className="text-slate-900 font-serif">{xReport.cashierName}</strong></div>
                   </div>
-                  <div className="flex justify-between text-emerald-700 font-bold">
-                    <span>Cash Sales (In Drawer):</span>
-                    <span>+{xReport.cashSales.toFixed(2)}</span>
+                  <div className="text-right">
+                    <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Audit Inspection Status</div>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      ACTIVE (TILL OPEN)
+                    </span>
+                    <div className="text-[10px] text-slate-500 mt-1">Completed Sales: <strong className="font-mono">{xReport.totalOrders}</strong></div>
                   </div>
-                  <div className="flex justify-between text-amber-700 font-bold">
-                    <span>MoMo Sales (In Phone):</span>
-                    <span>{xReport.momoSales.toFixed(2)}</span>
+                </div>
+
+                {/* Accounting Channel Table */}
+                <div className="border border-slate-200 rounded-xl overflow-hidden text-xs">
+                  <table className="w-full text-left">
+                    <thead className="bg-slate-100 text-[10px] font-bold text-slate-600 uppercase border-b border-slate-200">
+                      <tr>
+                        <th className="p-2.5">Till Revenue Channel / Balance Item</th>
+                        <th className="p-2.5 text-right">Amount (GHS)</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 font-mono text-[11px]">
+                      <tr>
+                        <td className="p-2.5 font-sans font-medium text-slate-800">Opening Starting Float</td>
+                        <td className="p-2.5 text-right font-bold text-slate-900">{formatGhs(xReport.openingFloat)}</td>
+                      </tr>
+                      <tr>
+                        <td className="p-2.5 font-sans font-medium text-emerald-800">Cash Sales Collected (In Drawer)</td>
+                        <td className="p-2.5 text-right font-bold text-emerald-700">+{formatGhs(xReport.cashSales)}</td>
+                      </tr>
+                      <tr>
+                        <td className="p-2.5 font-sans font-medium text-amber-800">Mobile Money Sales (MTN / Telecel / AT)</td>
+                        <td className="p-2.5 text-right font-bold text-amber-700">{formatGhs(xReport.momoSales)}</td>
+                      </tr>
+                      <tr>
+                        <td className="p-2.5 font-sans font-medium text-blue-800">Card / POS Terminal Payments</td>
+                        <td className="p-2.5 text-right font-bold text-blue-700">{formatGhs(xReport.cardSales)}</td>
+                      </tr>
+                      <tr>
+                        <td className="p-2.5 font-sans font-medium text-purple-800">Bisa Debt Sales (Store Credit)</td>
+                        <td className="p-2.5 text-right font-bold text-purple-700">{formatGhs(xReport.debtSales)}</td>
+                      </tr>
+                      {xReport.totalPaidIn > 0 && (
+                        <tr>
+                          <td className="p-2.5 font-sans font-medium text-teal-800">Add: Cash Float Replenishment (Paid-In)</td>
+                          <td className="p-2.5 text-right font-bold text-teal-700">+{formatGhs(xReport.totalPaidIn)}</td>
+                        </tr>
+                      )}
+                      {xReport.totalPaidOut > 0 && (
+                        <tr>
+                          <td className="p-2.5 font-sans font-medium text-rose-800">Less: Petty Expenses / Dumsor Fuel (Paid-Out)</td>
+                          <td className="p-2.5 text-right font-bold text-rose-700">-{formatGhs(xReport.totalPaidOut)}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                    <tfoot className="bg-slate-50 border-t-2 border-black font-mono">
+                      <tr>
+                        <td className="p-3 font-sans font-black uppercase text-xs text-black">
+                          Expected Physical Cash In Drawer:
+                        </td>
+                        <td className="p-3 text-right font-black text-sm text-[#008285]">
+                          {formatGhs(xReport.expectedCashInTill)}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+
+                {/* Audit Sign-off Preview */}
+                <div className="grid grid-cols-2 gap-6 pt-3 border-t border-slate-200 text-[10px] text-slate-500">
+                  <div>
+                    <span className="block border-b border-slate-300 w-36 mb-1"></span>
+                    <span>Cashier Attendant: <strong>{xReport.cashierName}</strong></span>
                   </div>
-                  <div className="flex justify-between text-slate-600">
-                    <span>Bisa Debt Credit Sales:</span>
-                    <span>{xReport.debtSales.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between font-extrabold text-xs pt-1.5 border-t border-gray-400 text-black">
-                    <span>EXPECTED IN CASH DRAWER:</span>
-                    <span>GH₵ {xReport.expectedCashInTill.toFixed(2)}</span>
+                  <div className="text-right">
+                    <span className="block border-b border-slate-300 w-36 ml-auto mb-1"></span>
+                    <span>Supervisor / Store Auditor</span>
                   </div>
                 </div>
               </div>
@@ -478,12 +615,14 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
               </div>
             )}
 
+            {/* Print Official Mid-Day Document Button */}
             <button
-              onClick={() => window.print()}
-              className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+              type="button"
+              onClick={printOfficialDocument}
+              className="w-full py-3 bg-[#008285] hover:bg-[#007073] text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transition cursor-pointer active:scale-98"
             >
               <Printer className="w-4 h-4" />
-              <span>Print X-Report (ESC/POS Thermal Format)</span>
+              <span>Print Official Mid-Day Audit Document</span>
             </button>
           </div>
         )}
@@ -633,53 +772,138 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
 
                 <button
                   type="button"
+                  disabled={isClosingShift}
                   onClick={handleExecuteShiftClose}
-                  className="w-full py-3.5 bg-rose-600 hover:bg-rose-500 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg transition cursor-pointer active:scale-98"
+                  className="w-full py-3.5 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transition cursor-pointer active:scale-98"
                 >
-                  <Lock className="w-4 h-4" />
-                  <span>Lock Till, Finalize Cashier Accounts & Generate Z-Report</span>
+                  {isClosingShift ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Locking Cash Drawer & Generating Z-Report...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="w-4 h-4" />
+                      <span>Lock Till, Finalize Cashier Accounts & Generate Z-Report</span>
+                    </>
+                  )}
                 </button>
               </>
             ) : (
               <div className="space-y-4">
-                <div className="p-4 bg-white text-black font-mono rounded-2xl border border-slate-300 text-xs space-y-2">
-                  <div className="text-center pb-2 border-b border-dashed border-gray-400">
-                    <div className="font-bold text-sm">AKWAABA RETAIL OS</div>
-                    <div className="text-[10px] font-bold text-rose-600">*** FINAL Z-REPORT ***</div>
+                {/* Celebratory & Official Lock Confirmation Banner */}
+                <div className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 flex items-center gap-3.5 shadow-lg">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
+                    <Lock className="w-6 h-6" />
                   </div>
-                  <div className="space-y-1">
-                    <div className="flex justify-between">
-                      <span>Z-Report #:</span>
-                      <span className="font-bold">{zReportResult.zReportNumber}</span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-serif font-black text-sm text-emerald-300">TILL SUCCESSFULLY LOCKED & AUDITED</h3>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-400 text-slate-950 font-black">
+                        LOCKED
+                      </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Expected:</span>
-                      <span>{zReportResult.expectedCashInTill.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Counted:</span>
-                      <span>{zReportResult.countedCashPhysical?.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between font-bold border-t border-gray-400 pt-1">
-                      <span>VARIANCE:</span>
-                      <span>GH₵ {zReportResult.cashVariance?.toFixed(2)} ({zReportResult.varianceStatus})</span>
-                    </div>
+                    <p className="text-[11px] text-emerald-100/90 mt-0.5 leading-snug">
+                      Shift #{shift.shiftNumber} has been officially locked and finalized. Z-Report #{zReportResult.zReportNumber} has been permanently saved to the store audit ledger.
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                {/* Official Corporate Z-Report Voucher Card */}
+                <div className="bg-white text-slate-900 rounded-2xl border border-slate-300 p-5 shadow-lg space-y-3 font-sans">
+                  <div className="flex justify-between items-start border-b-2 border-black pb-3">
+                    <div>
+                      <h4 className="font-serif font-black text-sm uppercase text-black">
+                        AKWAABA RETAIL SYSTEMS LTD.
+                      </h4>
+                      <p className="text-[10px] text-gray-600">Accra Central Mall Store • Terminal #01 • GRA TIN: C0029482190</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="inline-block border border-black px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-rose-50 text-rose-800">
+                        FINAL CLOSURE
+                      </span>
+                      <div className="text-[11px] font-black text-rose-600 font-mono mt-0.5">
+                        DAILY Z-REPORT
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono">
+                    <div>
+                      <span className="text-[10px] text-slate-500 uppercase font-sans font-bold block">Z-Report Voucher No:</span>
+                      <strong className="text-slate-900 text-xs">{zReportResult.zReportNumber}</strong>
+                      <span className="text-[10px] text-slate-500 block mt-1">Closed: {new Date(zReportResult.closedAt).toLocaleTimeString('en-GH')}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[10px] text-slate-500 uppercase font-sans font-bold block">Till Audit Status:</span>
+                      <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        zReportResult.varianceStatus === 'BALANCED'
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          : zReportResult.varianceStatus === 'SHORTAGE'
+                          ? 'bg-rose-100 text-rose-800 border border-rose-300'
+                          : 'bg-amber-100 text-amber-800 border border-amber-300'
+                      }`}>
+                        {zReportResult.varianceStatus}
+                      </span>
+                      <span className="text-[10px] text-slate-500 block mt-1">Orders: {zReportResult.totalOrders}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5 text-xs font-mono border-t border-b border-slate-200 py-3">
+                    <div className="flex justify-between text-slate-700">
+                      <span className="font-sans">Opening Starting Float:</span>
+                      <span>{formatGhs(zReportResult.openingFloat)}</span>
+                    </div>
+                    <div className="flex justify-between text-slate-700">
+                      <span className="font-sans">Expected Drawer Cash:</span>
+                      <span>{formatGhs(zReportResult.expectedCashInTill)}</span>
+                    </div>
+                    <div className="flex justify-between font-bold text-slate-900">
+                      <span className="font-sans">Counted Physical Cash:</span>
+                      <span>{formatGhs(zReportResult.countedCashPhysical || 0)}</span>
+                    </div>
+                    <div className="flex justify-between font-black text-sm pt-2 border-t border-slate-300">
+                      <span className="font-sans">Cash Discrepancy / Variance:</span>
+                      <span className={
+                        zReportResult.cashVariance === 0
+                          ? 'text-emerald-700'
+                          : zReportResult.cashVariance! < 0
+                          ? 'text-rose-700'
+                          : 'text-amber-700'
+                      }>
+                        {zReportResult.cashVariance! >= 0 ? `+${formatGhs(zReportResult.cashVariance!)}` : `-${formatGhs(Math.abs(zReportResult.cashVariance!))}`}
+                      </span>
+                    </div>
+                  </div>
+
+                  {zReportResult.closingNotes && (
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-700">
+                      <strong className="block text-[10px] uppercase text-slate-500 font-bold mb-0.5">Handover Notes:</strong>
+                      <span>{zReportResult.closingNotes}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Final Actions */}
+                <div className="flex flex-col sm:flex-row gap-2.5">
                   <button
-                    onClick={() => window.print()}
-                    className="flex-1 py-2 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-1.5"
+                    type="button"
+                    onClick={printOfficialDocument}
+                    className="flex-1 py-3 bg-[#008285] hover:bg-[#007073] text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer transition active:scale-98"
                   >
                     <Printer className="w-4 h-4" />
-                    <span>Print Z-Report</span>
+                    <span>Print Official Z-Report Voucher</span>
                   </button>
                   <button
-                    onClick={onClose}
-                    className="flex-1 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs"
+                    type="button"
+                    onClick={() => {
+                      onShiftClosed(zReportResult);
+                      onClose();
+                    }}
+                    className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer transition active:scale-98"
                   >
-                    Close
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Complete Handover & Open Next Shift</span>
                   </button>
                 </div>
               </div>

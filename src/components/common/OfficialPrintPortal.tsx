@@ -50,3 +50,26 @@ export function triggerOfficialPrint(elementOrHtml: HTMLElement | string) {
     window.print();
   }, 50);
 }
+
+/**
+ * Triggers clean printing of the official portal document by temporarily
+ * hiding the entire #root application and all screen UI.
+ */
+export function printOfficialDocument() {
+  document.body.classList.add('printing-official');
+
+  const cleanup = () => {
+    document.body.classList.remove('printing-official');
+    window.removeEventListener('afterprint', cleanup);
+  };
+
+  window.addEventListener('afterprint', cleanup);
+
+  // Give DOM 60ms to apply .printing-official layout before print dialog freezes execution
+  setTimeout(() => {
+    window.print();
+    // Fallback cleanup if afterprint doesn't fire
+    setTimeout(cleanup, 2500);
+  }, 60);
+}
+

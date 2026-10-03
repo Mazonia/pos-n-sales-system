@@ -411,9 +411,9 @@
     visibility: hidden !important;
   }
 
-  /* Strip all dark modal backdrops, overlays, blur filters */
-  .fixed.inset-0,
-  [class*="backdrop-blur"] {
+  /* Strip all dark modal backdrops, overlays, blur filters for modals meant to be printed directly */
+  .fixed.inset-0:not(.no-print):not([class*="no-print"]),
+  [class*="backdrop-blur"]:not(.no-print):not([class*="no-print"]) {
     position: static !important;
     background: transparent !important;
     backdrop-filter: none !important;
@@ -428,10 +428,8 @@
     display: block !important;
   }
 
-  /* Modal cards: strip rounded borders, dark backgrounds, and max-widths */
-  .official-print-modal-content,
-  [class*="rounded-3xl"].border,
-  [class*="rounded-2xl"].border {
+  /* Modal cards meant to be printed */
+  .official-print-modal-content:not(.no-print) {
     position: static !important;
     background: #FFFFFF !important;
     color: #000000 !important;
@@ -444,6 +442,22 @@
     overflow: visible !important;
     margin: 0 !important;
     padding: 0 !important;
+  }
+
+  /* ABSOLUTE GUARANTEE: Never render anything marked no-print under any circumstances */
+  .no-print,
+  .no-print *,
+  [class*="no-print"],
+  #root .no-print {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
   /* Thermal Receipt Print Mode */
