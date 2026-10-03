@@ -212,7 +212,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
   return (
     <div className={`min-h-screen w-screen flex flex-col justify-between overflow-y-auto select-none transition-colors duration-200 ${
-      isDark ? 'bg-[#0B0F17] text-slate-100' : 'bg-slate-50 text-slate-900'
+      isDark ? 'bg-[#0B0F17] text-slate-100' : 'bg-[#EBEEF2] text-[#0F172A]'
     }`}>
 
       {/* Toast Notification */}
@@ -233,7 +233,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       <header className={`h-[60px] border-b flex items-center justify-between px-4 sm:px-6 shrink-0 transition-all duration-300 relative z-10 ${
         isDark 
           ? 'border-[rgba(48,62,80,0.3)] bg-[rgba(13,17,23,0.7)] backdrop-blur-xl' 
-          : 'border-[rgba(209,215,224,0.5)] bg-[rgba(255,255,255,0.8)] backdrop-blur-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)]'
+          : 'border-slate-300 bg-white/95 backdrop-blur-xl shadow-xs'
       }`}>
         <div className="flex items-center gap-3">
           <div className={`w-10 h-10 rounded-[14px] flex items-center justify-center font-black text-base shadow-sm transition-all duration-300 ${
@@ -282,7 +282,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             className={`px-2.5 py-[7px] rounded-[12px] border text-[11px] font-semibold flex items-center gap-1.5 transition-all duration-200 active:scale-[0.96] ${
               isDark 
                 ? 'border-[rgba(48,62,80,0.5)] text-[#8B9DB5] hover:text-white hover:bg-[#1C2333]' 
-                : 'border-[rgba(209,215,224,0.5)] text-slate-700 hover:bg-[#F0F2F5]'
+                : 'border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100 shadow-2xs'
             }`}
             title="Super Admin or General Manager only"
           >
@@ -298,7 +298,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             className={`p-2 rounded-[12px] border transition-all duration-200 active:scale-90 ${
               isDark
                 ? 'border-[rgba(48,62,80,0.5)] text-amber-400 hover:bg-[#1C2333]'
-                : 'border-[rgba(209,215,224,0.5)] text-slate-500 hover:bg-[#F0F2F5]'
+                : 'border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100 shadow-2xs'
             }`}
             title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
           >
@@ -315,7 +315,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           <div className={`lg:col-span-6 rounded-2xl border p-5 sm:p-6 flex flex-col justify-between transition-colors ${
             isDark 
               ? 'bg-[#131A26] border-slate-800 shadow-md' 
-              : 'bg-white border-slate-200 shadow-sm'
+              : 'bg-white border-slate-300 shadow-sm'
           }`}>
             <div>
               <div className="flex items-center gap-2 mb-3">
@@ -363,7 +363,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                             : 'bg-emerald-50/60 border-emerald-400/50 shadow-[0_0_0_1px_rgba(5,150,105,0.1),0_2px_8px_rgba(5,150,105,0.06)]'
                           : isDark
                           ? 'bg-[#0A0D12]/40 border-[rgba(48,62,80,0.3)] hover:border-[rgba(48,62,80,0.6)] hover:bg-[#151B23]/50'
-                          : 'bg-[#FAFBFC] border-[rgba(209,215,224,0.4)] hover:border-[rgba(175,184,196,0.5)] hover:bg-white'
+                          : 'bg-slate-50 border-slate-200 hover:border-slate-400 hover:bg-white'
                       }`}
                       style={{ transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)' }}
                     >

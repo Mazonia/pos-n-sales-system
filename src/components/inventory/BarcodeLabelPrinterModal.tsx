@@ -146,29 +146,29 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-5 overflow-y-auto">
       <div className={`w-full max-w-5xl rounded-3xl border shadow-2xl flex flex-col max-h-[92vh] overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-150 font-serif ${
-        isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-[#FFFFFF] border-[#E2E5E9]'
+        isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-[#EBEEF2] border-slate-300'
       }`}>
         
         {/* Top Header */}
         <div className={`p-4 sm:p-5 border-b flex items-center justify-between shrink-0 ${
-          isDark ? 'border-[#282B34] bg-[#16181F]' : 'border-[#E2E5E9] bg-[#F8F9FA]'
+          isDark ? 'border-[#282B34] bg-[#16181F]' : 'border-slate-300 bg-white'
         }`}>
           <div className="flex items-center gap-3">
             <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm ${
-              isDark ? 'bg-[#00CED1]/15 text-[#00CED1] border border-[#00CED1]/30' : 'bg-cyan-100 text-cyan-800'
+              isDark ? 'bg-[#00CED1]/15 text-[#00CED1] border border-[#00CED1]/30' : 'bg-teal-50 text-[#008285] border border-teal-200'
             }`}>
               <Barcode className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className={`text-base font-bold tracking-tight ${isDark ? 'text-[#F4F6F8]' : 'text-[#0F172A]'}`}>
+                <h2 className={`text-base font-bold tracking-tight ${isDark ? 'text-[#F4F6F8]' : 'text-slate-900'}`}>
                   Retail Barcode & Shelf Label Printer
                 </h2>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#00CED1]/15 text-[#00CED1] border border-[#00CED1]/30">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-teal-500/15 text-[#008285] dark:text-[#00CED1] border border-teal-500/30">
                   {totalLabelsCount} {totalLabelsCount === 1 ? 'Label' : 'Labels'} Queued
                 </span>
               </div>
-              <p className="text-xs text-[#8A99A8]">
+              <p className="text-xs text-slate-500 dark:text-[#8A99A8]">
                 Generate scannable Code128 barcodes for thermal sticker rolls or standard A4 label sheets
               </p>
             </div>
@@ -186,7 +186,7 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
             <button
               onClick={onClose}
               className={`p-1.5 rounded-xl border transition cursor-pointer ${
-                isDark ? 'border-[#282B34] text-[#8A99A8] hover:text-white' : 'border-[#E2E5E9] text-[#64748B] hover:text-black'
+                isDark ? 'border-[#282B34] text-[#8A99A8] hover:text-white' : 'border-slate-300 text-slate-500 hover:text-black hover:bg-slate-100'
               }`}
             >
               <X className="w-5 h-5" />
@@ -199,13 +199,13 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
           
           {/* Left Column: Layout & Product Selection Controls (4.5 cols) */}
           <div className={`lg:col-span-4 p-4 border-b lg:border-b-0 lg:border-r overflow-y-auto space-y-4 ${
-            isDark ? 'border-[#282B34] bg-[#16181F]/50' : 'border-[#E2E5E9] bg-[#F8F9FA]/50'
+            isDark ? 'border-[#282B34] bg-[#16181F]/50' : 'border-slate-300 bg-white/70'
           }`}>
             
             {/* Template Selector */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#8A99A8] flex items-center gap-1.5">
-                <Grid3X3 className="w-3.5 h-3.5 text-[#00CED1]" />
+              <label className="text-xs font-semibold text-slate-600 dark:text-[#8A99A8] flex items-center gap-1.5">
+                <Grid3X3 className="w-3.5 h-3.5 text-[#008285] dark:text-[#00CED1]" />
                 <span>Label Dimension / Format:</span>
               </label>
               <div className="grid grid-cols-2 gap-1.5">
@@ -221,14 +221,14 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
                     onClick={() => setTemplate(t.id as LabelTemplate)}
                     className={`p-2.5 rounded-xl border text-left transition cursor-pointer ${
                       template === t.id
-                        ? 'bg-[#00CED1]/15 border-[#00CED1] text-[#00CED1] font-bold shadow-xs'
+                        ? 'bg-teal-500/15 border-teal-500 text-[#008285] dark:text-[#00CED1] font-bold shadow-xs'
                         : isDark
                         ? 'bg-[#16181F] border-[#282B34] text-[#8A99A8] hover:text-[#F4F6F8]'
-                        : 'bg-white border-[#E2E5E9] text-[#64748B] hover:text-[#0F172A]'
+                        : 'bg-white border-slate-300 text-slate-700 hover:text-slate-900 shadow-2xs'
                     }`}
                   >
                     <div className="text-xs">{t.label}</div>
-                    <div className="text-[10px] font-mono text-[#8A99A8]">{t.desc}</div>
+                    <div className="text-[10px] font-mono text-slate-500 dark:text-[#8A99A8]">{t.desc}</div>
                   </button>
                 ))}
               </div>
@@ -236,11 +236,11 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
 
             {/* Label Elements Toggle */}
             <div className={`p-3 rounded-2xl border space-y-2 text-xs ${
-              isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-white border-[#E2E5E9]'
+              isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-white border-slate-300 shadow-2xs'
             }`}>
-              <div className="font-semibold text-[#8A99A8] flex items-center justify-between pb-1 border-b border-[#282B34]/40">
+              <div className="font-semibold text-slate-600 dark:text-[#8A99A8] flex items-center justify-between pb-1 border-b border-slate-200 dark:border-[#282B34]/40">
                 <span className="flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5 text-[#00CED1]" />
+                  <Sliders className="w-3.5 h-3.5 text-[#008285] dark:text-[#00CED1]" />
                   <span>Display Elements:</span>
                 </span>
               </div>
@@ -251,7 +251,7 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
                   type="checkbox"
                   checked={showStoreName}
                   onChange={e => setShowStoreName(e.target.checked)}
-                  className="rounded text-[#00CED1] focus:ring-[#00CED1] w-4 h-4 cursor-pointer"
+                  className="rounded text-[#008285] dark:text-[#00CED1] focus:ring-[#008285] w-4 h-4 cursor-pointer"
                 />
               </label>
 
@@ -261,7 +261,7 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
                   type="checkbox"
                   checked={showPrice}
                   onChange={e => setShowPrice(e.target.checked)}
-                  className="rounded text-[#00CED1] focus:ring-[#00CED1] w-4 h-4 cursor-pointer"
+                  className="rounded text-[#008285] dark:text-[#00CED1] focus:ring-[#008285] w-4 h-4 cursor-pointer"
                 />
               </label>
 
@@ -271,7 +271,7 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
                   type="checkbox"
                   checked={showLocalName}
                   onChange={e => setShowLocalName(e.target.checked)}
-                  className="rounded text-[#00CED1] focus:ring-[#00CED1] w-4 h-4 cursor-pointer"
+                  className="rounded text-[#008285] dark:text-[#00CED1] focus:ring-[#008285] w-4 h-4 cursor-pointer"
                 />
               </label>
 
@@ -281,7 +281,7 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
                   type="checkbox"
                   checked={showSku}
                   onChange={e => setShowSku(e.target.checked)}
-                  className="rounded text-[#00CED1] focus:ring-[#00CED1] w-4 h-4 cursor-pointer"
+                  className="rounded text-[#008285] dark:text-[#00CED1] focus:ring-[#008285] w-4 h-4 cursor-pointer"
                 />
               </label>
 
@@ -291,7 +291,7 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
                   type="checkbox"
                   checked={showExpiry}
                   onChange={e => setShowExpiry(e.target.checked)}
-                  className="rounded text-[#00CED1] focus:ring-[#00CED1] w-4 h-4 cursor-pointer"
+                  className="rounded text-[#008285] dark:text-[#00CED1] focus:ring-[#008285] w-4 h-4 cursor-pointer"
                 />
               </label>
             </div>
@@ -299,17 +299,17 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
             {/* Selected Products in Queue */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold text-[#8A99A8] flex items-center gap-1.5">
-                  <Layers className="w-3.5 h-3.5 text-[#00CED1]" />
+                <label className="text-xs font-semibold text-slate-600 dark:text-[#8A99A8] flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-[#008285] dark:text-[#00CED1]" />
                   <span>Products in Print Queue ({selectedItems.length}):</span>
                 </label>
                 <div className="flex items-center gap-1.5 text-[11px] font-mono">
-                  <span className="text-[#8A99A8]">Batch Multiplier:</span>
+                  <span className="text-slate-500 dark:text-[#8A99A8]">Batch Multiplier:</span>
                   <select
                     value={batchMultiplier}
                     onChange={e => setBatchMultiplier(parseInt(e.target.value) || 1)}
                     className={`px-2 py-0.5 rounded-lg border text-xs font-bold ${
-                      isDark ? 'bg-[#121316] border-[#282B34] text-[#00CED1]' : 'bg-white border-[#E2E5E9] text-cyan-700'
+                      isDark ? 'bg-[#121316] border-[#282B34] text-[#00CED1]' : 'bg-white border-slate-300 text-teal-800'
                     }`}
                   >
                     <option value={1}>1x</option>
@@ -327,13 +327,13 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
                   value={searchProductQuery}
                   onChange={e => setSearchProductQuery(stripEmojis(e.target.value))}
                   placeholder="Type to add item to label queue..."
-                  className={`w-full px-3 py-1.5 rounded-xl text-xs border outline-none transition focus:border-[#00CED1] ${
-                    isDark ? 'bg-[#121316] border-[#282B34] text-white' : 'bg-white border-[#E2E5E9] text-[#0F172A]'
+                  className={`w-full px-3 py-1.5 rounded-xl text-xs border outline-none transition focus:border-[#008285] ${
+                    isDark ? 'bg-[#121316] border-[#282B34] text-white' : 'bg-white border-slate-300 text-slate-900'
                   }`}
                 />
                 {searchProductQuery && (
                   <div className={`absolute left-0 right-0 top-full mt-1 rounded-xl border shadow-xl z-20 max-h-40 overflow-y-auto divide-y ${
-                    isDark ? 'bg-[#16181F] border-[#282B34] divide-white/5' : 'bg-white border-[#E2E5E9] divide-slate-100'
+                    isDark ? 'bg-[#16181F] border-[#282B34] divide-white/5' : 'bg-white border-slate-300 divide-slate-100'
                   }`}>
                     {products
                       .filter(p => p.name.toLowerCase().includes(searchProductQuery.toLowerCase()) || p.sku.toLowerCase().includes(searchProductQuery.toLowerCase()))
@@ -349,9 +349,9 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
                         >
                           <div className="truncate pr-2">
                             <span className="font-semibold block truncate">{p.name}</span>
-                            <span className="text-[10px] text-[#8A99A8] font-mono">{p.sku} · {formatGhs(p.retailPrice)}</span>
+                            <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">{p.sku} · {formatGhs(p.retailPrice)}</span>
                           </div>
-                          <span className="px-2 py-0.5 rounded bg-[#00CED1] text-slate-950 font-bold text-[10px]">
+                          <span className="px-2 py-0.5 rounded bg-[#008285] dark:bg-[#00CED1] text-white dark:text-slate-950 font-bold text-[10px]">
                             + Add
                           </span>
                         </button>
@@ -366,14 +366,14 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
                   <div
                     key={item.product.id}
                     className={`p-2.5 rounded-xl border flex items-center justify-between text-xs ${
-                      isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-white border-[#E2E5E9]'
+                      isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-white border-slate-300 shadow-2xs'
                     }`}
                   >
                     <div className="truncate pr-2 flex-1">
-                      <div className={`font-semibold truncate ${isDark ? 'text-white' : 'text-[#0F172A]'}`}>
+                      <div className={`font-semibold truncate ${isDark ? 'text-white' : 'text-slate-900'}`}>
                         {item.product.name}
                       </div>
-                      <div className="text-[10px] text-[#8A99A8] font-mono">
+                      <div className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">
                         {item.product.sku} · {formatGhs(item.product.retailPrice)}
                       </div>
                     </div>
@@ -383,7 +383,7 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
                         type="button"
                         onClick={() => handleUpdateCount(item.product.id, item.count - 1)}
                         className={`w-6 h-6 rounded-lg border flex items-center justify-center font-bold text-xs cursor-pointer transition ${
-                          isDark ? 'border-[#282B34] text-white hover:border-[#00CED1]' : 'border-[#E2E5E9] text-black hover:border-[#00CED1]'
+                          isDark ? 'border-[#282B34] text-white hover:border-[#00CED1]' : 'border-slate-300 text-black hover:border-[#008285]'
                         }`}
                       >
                         -
@@ -395,7 +395,7 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
                         type="button"
                         onClick={() => handleUpdateCount(item.product.id, item.count + 1)}
                         className={`w-6 h-6 rounded-lg border flex items-center justify-center font-bold text-xs cursor-pointer transition ${
-                          isDark ? 'border-[#282B34] text-white hover:border-[#00CED1]' : 'border-[#E2E5E9] text-black hover:border-[#00CED1]'
+                          isDark ? 'border-[#282B34] text-white hover:border-[#00CED1]' : 'border-slate-300 text-black hover:border-[#008285]'
                         }`}
                       >
                         +
@@ -403,7 +403,7 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
                       <button
                         type="button"
                         onClick={() => handleUpdateCount(item.product.id, 0)}
-                        className="text-[#8A99A8] hover:text-[#FF4500] p-1 ml-1 cursor-pointer transition"
+                        className="text-slate-400 hover:text-[#FF4500] p-1 ml-1 cursor-pointer transition"
                         title="Remove from print batch"
                       >
                         <X className="w-3.5 h-3.5" />
@@ -417,19 +417,19 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
           </div>
 
           {/* Right Column: Live Printable Labels Preview (7.5 cols) */}
-          <div className="lg:col-span-8 p-4 sm:p-6 flex flex-col h-full overflow-hidden bg-slate-900/50">
+          <div className="lg:col-span-8 p-4 sm:p-6 flex flex-col h-full overflow-hidden bg-slate-100 dark:bg-slate-900/50">
             <div className="flex items-center justify-between mb-3 shrink-0">
-              <span className="text-xs font-semibold text-[#8A99A8] flex items-center gap-1.5">
-                <Tag className="w-3.5 h-3.5 text-[#00CED1]" />
+              <span className="text-xs font-semibold text-slate-600 dark:text-[#8A99A8] flex items-center gap-1.5">
+                <Tag className="w-3.5 h-3.5 text-[#008285] dark:text-[#00CED1]" />
                 <span>Live Barcode Label Print Preview ({flattenedLabels.length} labels ready):</span>
               </span>
-              <span className="text-[10px] text-[#8A99A8] font-mono">
+              <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">
                 Printer: Thermal / Desktop Laser
               </span>
             </div>
 
             {/* Scrollable Preview Canvas with Print-Area ID */}
-            <div className="flex-1 overflow-y-auto p-4 rounded-2xl bg-[#090B0E]/60 border border-white/10 flex items-start justify-center">
+            <div className="flex-1 overflow-y-auto p-4 rounded-2xl bg-white dark:bg-[#090B0E]/60 border border-slate-300 dark:border-white/10 shadow-xs flex items-start justify-center">
               
               <div
                 id="printable-barcode-labels"

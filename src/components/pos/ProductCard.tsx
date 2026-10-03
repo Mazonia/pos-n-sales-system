@@ -108,7 +108,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Product Image (when enabled by teller) */}
         {showImage && (
-          <div className="w-full aspect-[16/10] max-h-28 sm:max-h-32 mb-2 rounded-xl overflow-hidden bg-stone-100 dark:bg-[#15171D] border border-stone-200/80 dark:border-[#282B34] flex items-center justify-center relative group-hover:border-[#FF4500]/40 transition-colors shrink-0">
+          <div className="w-full aspect-[16/10] max-h-28 sm:max-h-32 mb-2 rounded-xl overflow-hidden bg-slate-100 dark:bg-[#15171D] border border-slate-300 dark:border-[#282B34] flex items-center justify-center relative group-hover:border-[#FF4500]/60 transition-colors shrink-0">
             {hasValidImage ? (
               <img
                 src={product.imageUrl}
@@ -118,7 +118,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
             ) : (
-              <div className="flex flex-col items-center justify-center gap-1 text-stone-400 dark:text-stone-600">
+              <div className="flex flex-col items-center justify-center gap-1 text-slate-400 dark:text-stone-600">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${iconBg}`}>
                   <Icon className="w-3.5 h-3.5" />
                 </div>
@@ -135,12 +135,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   Out of Stock
                 </span>
               ) : isLowStock ? (
-                <span className="text-[9px] font-bold text-[#C43400] dark:text-[#FF6E40] bg-orange-50/95 dark:bg-orange-950/90 backdrop-blur-xs border border-orange-300/80 dark:border-orange-800/80 px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs">
+                <span className="text-[9px] font-bold text-[#C43400] dark:text-[#FF6E40] bg-orange-50/95 dark:bg-orange-950/90 backdrop-blur-xs border border-orange-300 dark:border-orange-800/80 px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#FF4500] animate-pulse" />
                   {product.currentStock} left
                 </span>
               ) : (
-                <span className="text-[9.5px] font-medium text-stone-700 dark:text-stone-300 bg-white/90 dark:bg-stone-900/90 backdrop-blur-xs border border-stone-200/80 dark:border-[#282B34] px-1.5 py-0.5 rounded-md tabular-nums shadow-xs">
+                <span className="text-[9.5px] font-semibold text-slate-800 dark:text-stone-300 bg-white/95 dark:bg-stone-900/90 backdrop-blur-xs border border-slate-300 dark:border-[#282B34] px-1.5 py-0.5 rounded-md tabular-nums shadow-xs">
                   {product.currentStock} in stock
                 </span>
               )}
@@ -171,7 +171,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   {product.currentStock} left
                 </span>
               ) : (
-                <span className="text-[10px] font-medium text-stone-500 dark:text-stone-400 tabular-nums">
+                <span className="text-[10px] font-semibold text-slate-600 dark:text-stone-400 tabular-nums">
                   {product.currentStock} left
                 </span>
               )}
@@ -185,29 +185,29 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <span className={`text-[9.5px] font-semibold px-1.5 py-0.5 rounded-md border truncate ${badgeClass}`}>
               {product.category}
             </span>
-            <span className="text-[10px] font-mono text-stone-400 dark:text-stone-500 truncate">
+            <span className="text-[10px] font-mono text-slate-500 dark:text-stone-500 font-semibold truncate">
               {product.sku}
             </span>
           </div>
         )}
 
         {/* Product Title */}
-        <h4 className="font-bold text-[13px] sm:text-[13.5px] leading-snug line-clamp-2 min-w-0 text-stone-900 dark:text-stone-100 group-hover:text-[#FF4500] dark:group-hover:text-[#FF5722] transition-colors">
+        <h4 className="font-bold text-[13px] sm:text-[13.5px] leading-snug line-clamp-2 min-w-0 text-slate-900 dark:text-stone-100 group-hover:text-[#FF4500] dark:group-hover:text-[#FF5722] transition-colors">
           {product.name}
         </h4>
 
         {/* Localized / Variant Subtitle */}
         {product.localName && (
-          <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 truncate font-normal min-w-0">
+          <p className="text-[11px] text-slate-600 dark:text-stone-400 mt-0.5 truncate font-medium min-w-0">
             {product.localName}
           </p>
         )}
       </div>
 
       {/* Bottom Row: Fixed Pinned Price & Add Action (Always visible & inside the card) */}
-      <div className="mt-2.5 pt-2 border-t border-stone-100 dark:border-[#282B34] flex items-center justify-between gap-1.5 shrink-0">
+      <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-[#282B34] flex items-center justify-between gap-1.5 shrink-0">
         <div className="min-w-0 flex-1 overflow-hidden">
-          <span className="text-[9.5px] uppercase font-bold tracking-wider text-stone-400 dark:text-stone-500 block leading-none mb-0.5">
+          <span className="text-[9.5px] uppercase font-bold tracking-wider text-slate-500 dark:text-stone-500 block leading-none mb-0.5">
             Price
           </span>
           <span className="text-[15px] sm:text-[16px] font-black tracking-tight text-[#FF4500] dark:text-[#FF5722] tabular-nums truncate block">
@@ -221,15 +221,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               <button
                 type="button"
                 onClick={() => setShowUomMenu(!showUomMenu)}
-                className="pos-btn p-1.5 rounded-lg text-xs flex items-center cursor-pointer"
+                className="pos-btn p-1.5 rounded-lg text-xs flex items-center cursor-pointer border border-slate-300 dark:border-[#282B34]"
                 title="Select package unit"
               >
                 <ChevronDown className="w-3.5 h-3.5" />
               </button>
 
               {showUomMenu && (
-                <div className="pos-card absolute bottom-full right-0 mb-2 z-30 w-52 p-1.5 text-xs space-y-1 shadow-lg">
-                  <div className="px-2 py-1 text-[10px] font-bold text-stone-400 uppercase tracking-wider">
+                <div className="pos-card absolute bottom-full right-0 mb-2 z-30 w-52 p-1.5 text-xs space-y-1 shadow-lg border border-slate-300 dark:border-[#282B34]">
+                  <div className="px-2 py-1 text-[10px] font-bold text-slate-500 dark:text-stone-400 uppercase tracking-wider">
                     Package Sizes:
                   </div>
                   {product.uomOptions.map(uom => (
@@ -261,7 +261,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               e.stopPropagation();
               handleCardClick();
             }}
-            className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs transition-all bg-stone-100 hover:bg-[#FF4500] hover:text-white text-stone-800 dark:bg-[#20232B] dark:text-stone-200 dark:hover:bg-[#FF4500] dark:hover:text-white active:scale-90 cursor-pointer shadow-2xs"
+            className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs transition-all bg-slate-100 hover:bg-[#FF4500] hover:text-white text-slate-900 border border-slate-300 dark:border-transparent dark:bg-[#20232B] dark:text-stone-200 dark:hover:bg-[#FF4500] dark:hover:text-white active:scale-90 cursor-pointer shadow-2xs"
             title="Add to Ticket"
           >
             {justAdded ? (

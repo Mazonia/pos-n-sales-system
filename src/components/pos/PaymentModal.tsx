@@ -228,24 +228,24 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-3 sm:p-5 overflow-y-auto">
       <div className={`w-full max-w-4xl rounded-3xl border shadow-2xl flex flex-col max-h-[92vh] overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-150 ${
-        isDark ? 'bg-[#1A1C22] border-[#282B34]' : 'bg-[#FFFFFF] border-stone-200'
+        isDark ? 'bg-[#1A1C22] border-[#282B34]' : 'bg-[#EBEEF2] border-slate-300'
       }`}>
         
         {/* Header */}
         <div className={`p-4 sm:p-5 border-b flex items-center justify-between ${
-          isDark ? 'border-[#282B34] bg-[#141519]' : 'border-stone-200 bg-stone-50'
+          isDark ? 'border-[#282B34] bg-[#141519]' : 'border-slate-300 bg-white'
         }`}>
           <div className="flex items-center gap-3">
             <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs ${
-              isDark ? 'bg-[#FF4500]/15 text-[#FF5722] border border-[#FF4500]/30' : 'bg-[#FF4500]/10 text-[#FF4500]'
+              isDark ? 'bg-[#FF4500]/15 text-[#FF5722] border border-[#FF4500]/30' : 'bg-[#FF4500]/10 text-[#FF4500] border border-[#FF4500]/20'
             }`}>
               ₵
             </div>
             <div>
-              <h2 className={`text-base font-bold tracking-tight ${isDark ? 'text-stone-100' : 'text-stone-900'}`}>
+              <h2 className={`text-base font-bold tracking-tight ${isDark ? 'text-stone-100' : 'text-slate-900'}`}>
                 Tender & Split-Payment Terminal
               </h2>
-              <p className="text-xs text-stone-400">
+              <p className={`text-xs ${isDark ? 'text-stone-400' : 'text-slate-500'}`}>
                 Select payment methods and verify exact pesewas allocation
               </p>
             </div>
@@ -254,7 +254,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           <button
             onClick={onClose}
             className={`p-1.5 rounded-xl border transition ${
-              isDark ? 'border-[#282B34] text-stone-400 hover:text-white' : 'border-stone-200 text-stone-600 hover:text-black'
+              isDark ? 'border-[#282B34] text-stone-400 hover:text-white' : 'border-slate-300 text-slate-600 hover:text-slate-950 hover:bg-slate-100'
             }`}
           >
             <X className="w-5 h-5" />
@@ -266,12 +266,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           
           {/* Left Column: Tendering Forms (7 cols) */}
           <div className={`md:col-span-7 p-4 sm:p-6 space-y-4 border-b md:border-b-0 md:border-r ${
-            isDark ? 'border-[#282B34]' : 'border-stone-200'
+            isDark ? 'border-[#282B34]' : 'border-slate-300'
           }`}>
             
             {/* Payment Method Selector Tabs */}
             <div className={`p-1 rounded-2xl border flex gap-1 ${
-              isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-stone-100 border-stone-200'
+              isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-slate-200/80 border-slate-300'
             }`}>
               {[
                 { id: 'CASH', label: 'Cash', icon: Banknote },
@@ -292,7 +292,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         ? 'bg-[#FF4500] text-white font-bold shadow-sm'
                         : isDark
                         ? 'text-stone-400 hover:text-stone-200'
-                        : 'text-stone-600 hover:text-stone-900'
+                        : 'text-slate-700 hover:text-slate-950 hover:bg-white'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -305,10 +305,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             {/* TAB 1: CASH TENDER */}
             {activeTab === 'CASH' && (
               <div className={`p-4 rounded-2xl border space-y-4 ${
-                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-stone-50 border-stone-200'
+                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-white border-slate-300 shadow-2xs'
               }`}>
                 <div className="flex items-center justify-between text-xs">
-                  <label className="font-semibold text-stone-400">Physical Cash Received:</label>
+                  <label className="font-semibold text-slate-600 dark:text-stone-400">Physical Cash Received:</label>
                   <span className="font-mono font-bold tabular-nums text-[#FF4500] dark:text-[#FF5722]">
                     Due: {formatGhs(remainingDue)}
                   </span>
@@ -335,7 +335,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     className={`w-full pl-16 pr-20 py-3 rounded-xl text-xl font-mono tabular-nums font-bold border outline-none transition focus:ring-2 focus:ring-[#00CED1]/30 ${
                       isDark
                         ? 'bg-[#1A1C22] border-[#282B34] text-white focus:border-[#00CED1]'
-                        : 'bg-white border-stone-200 text-stone-900 focus:border-[#00CED1]'
+                        : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-[#FF4500]'
                     }`}
                     placeholder="0.00"
                   />
@@ -347,7 +347,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs border transition active:scale-95 cursor-pointer ${
                         isDark
                           ? 'bg-[#141519] border-[#282B34] text-stone-300 hover:text-[#00CED1] hover:border-[#00CED1]/50'
-                          : 'bg-stone-100 border-stone-200 text-stone-700 hover:text-[#00CED1] hover:border-[#00CED1]'
+                          : 'bg-white border-slate-300 text-slate-800 hover:text-[#008285] hover:border-[#008285]'
                       }`}
                       title="Decrease amount (-1)"
                     >
@@ -359,7 +359,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs border transition active:scale-95 cursor-pointer ${
                         isDark
                           ? 'bg-[#141519] border-[#282B34] text-stone-300 hover:text-[#00CED1] hover:border-[#00CED1]/50'
-                          : 'bg-stone-100 border-stone-200 text-stone-700 hover:text-[#00CED1] hover:border-[#00CED1]'
+                          : 'bg-white border-slate-300 text-slate-800 hover:text-[#008285] hover:border-[#008285]'
                       }`}
                       title="Increase amount (+1)"
                     >
@@ -370,7 +370,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
                 {/* Tactile Cash Shortcut Chips */}
                 <div>
-                  <span className="text-[11px] text-stone-400 block mb-2 font-medium">Quick Note Tenders:</span>
+                  <span className="text-[11px] text-slate-600 dark:text-stone-400 block mb-2 font-medium">Quick Note Tenders:</span>
                   <div className="grid grid-cols-6 gap-1.5">
                     {[200, 100, 50, 20, 10].map(d => (
                       <button
@@ -380,7 +380,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         className={`py-2 rounded-xl border text-xs font-mono font-bold tabular-nums transition active:scale-95 cursor-pointer ${
                           isDark
                             ? 'bg-[#20232B] border-[#282B34] hover:border-[#00CED1] hover:text-[#00CED1] text-stone-100'
-                            : 'bg-white border-stone-200 hover:border-[#00CED1] hover:text-[#00CED1] text-stone-900'
+                            : 'bg-slate-100 border-slate-300 hover:border-[#008285] hover:text-[#008285] text-slate-900'
                         }`}
                       >
                         +₵{d}
@@ -392,7 +392,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       className={`py-2 rounded-xl border text-xs font-semibold transition active:scale-95 cursor-pointer ${
                         isDark
                           ? 'bg-[#20232B] border-[#282B34] text-[#00CED1] hover:border-[#00CED1] hover:bg-[#00CED1]/10'
-                          : 'bg-white border-stone-200 text-[#00CED1] hover:border-[#00CED1] hover:bg-[#00CED1]/10'
+                          : 'bg-slate-100 border-slate-300 text-[#008285] hover:border-[#008285] hover:bg-[#00CED1]/10 font-bold'
                       }`}
                     >
                       Exact
@@ -400,50 +400,50 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   </div>
                 </div>
 
-                {/* Smart Direct Cash Calculation: Change Due (#00CED1) vs Left to Pay (#FF4500) */}
+                {/* Smart Direct Cash Calculation: Change Due (#00CED1 / #008285) vs Left to Pay (#FF4500) */}
                 {isOverpaid && (
-                  <div className="p-3.5 rounded-2xl bg-[#00CED1]/10 border-2 border-[#00CED1]/40 text-[#00CED1] space-y-1.5 animate-in fade-in duration-150 shadow-xs">
+                  <div className="p-3.5 rounded-2xl bg-[#00CED1]/10 border-2 border-[#008285]/40 dark:border-[#00CED1]/40 text-[#008285] dark:text-[#00CED1] space-y-1.5 animate-in fade-in duration-150 shadow-xs">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider">
-                        <Coins className="w-4 h-4 text-[#00CED1]" />
+                        <Coins className="w-4 h-4 text-[#008285] dark:text-[#00CED1]" />
                         <span>Change Due</span>
                       </div>
-                      <span className="font-mono font-black text-2xl text-[#00CED1] tabular-nums">
+                      <span className="font-mono font-black text-2xl tabular-nums">
                         {formatGhs(changeToGive)}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-[11px] text-stone-600 dark:text-stone-300 font-medium pt-1 border-t border-[#00CED1]/20">
-                      <span>Tendered: <strong className="font-mono text-stone-900 dark:text-white">{formatGhs(cashTendered)}</strong></span>
-                      <span className="text-[#00CED1] font-bold">Return to customer</span>
+                    <div className="flex items-center justify-between text-[11px] text-slate-700 dark:text-stone-300 font-medium pt-1 border-t border-[#00CED1]/20">
+                      <span>Tendered: <strong className="font-mono text-slate-950 dark:text-white">{formatGhs(cashTendered)}</strong></span>
+                      <span className="font-bold">Return to customer</span>
                     </div>
                   </div>
                 )}
 
                 {isUnderpaid && (
-                  <div className="p-3.5 rounded-2xl bg-[#FF4500]/10 border-2 border-[#FF4500]/40 text-[#FF4500] dark:text-[#FF5722] space-y-1.5 animate-in fade-in duration-150 shadow-xs">
+                  <div className="p-3.5 rounded-2xl bg-[#FF4500]/10 border-2 border-[#FF4500]/40 text-[#C23600] dark:text-[#FF5722] space-y-1.5 animate-in fade-in duration-150 shadow-xs">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider">
                         <AlertCircle className="w-4 h-4 text-[#FF4500]" />
                         <span>Left to Pay</span>
                       </div>
-                      <span className="font-mono font-black text-2xl text-[#FF4500] dark:text-[#FF5722] tabular-nums">
+                      <span className="font-mono font-black text-2xl tabular-nums">
                         {formatGhs(remainingToPay)}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-[11px] text-stone-600 dark:text-stone-300 font-medium pt-1 border-t border-[#FF4500]/20">
-                      <span>Tendered: <strong className="font-mono text-stone-900 dark:text-white">{formatGhs(cashTendered)}</strong></span>
-                      <span className="text-[#FF4500] dark:text-[#FF5722] font-bold">Remaining balance</span>
+                    <div className="flex items-center justify-between text-[11px] text-slate-700 dark:text-stone-300 font-medium pt-1 border-t border-[#FF4500]/20">
+                      <span>Tendered: <strong className="font-mono text-slate-950 dark:text-white">{formatGhs(cashTendered)}</strong></span>
+                      <span className="font-bold">Remaining balance</span>
                     </div>
                   </div>
                 )}
 
                 {isExact && (
-                  <div className="p-3 rounded-2xl bg-[#00CED1]/10 border border-[#00CED1]/30 text-[#00CED1] flex items-center justify-between text-xs animate-in fade-in duration-150">
+                  <div className="p-3 rounded-2xl bg-[#00CED1]/10 border border-[#008285]/30 dark:border-[#00CED1]/30 text-[#008285] dark:text-[#00CED1] flex items-center justify-between text-xs animate-in fade-in duration-150">
                     <div className="flex items-center gap-2 font-bold uppercase tracking-wider">
-                      <CheckCircle2 className="w-4 h-4 text-[#00CED1]" />
+                      <CheckCircle2 className="w-4 h-4 text-[#008285] dark:text-[#00CED1]" />
                       <span>Exact Cash Received</span>
                     </div>
-                    <span className="font-mono font-bold text-sm text-[#00CED1]">
+                    <span className="font-mono font-bold text-sm">
                       No Change Due
                     </span>
                   </div>
@@ -451,9 +451,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
                 {cashTendered === 0 && (
                   <div className={`p-3 rounded-xl border flex items-center justify-between text-xs ${
-                    isDark ? 'bg-[#1A1C22] border-[#282B34]' : 'bg-white border-stone-200'
+                    isDark ? 'bg-[#1A1C22] border-[#282B34]' : 'bg-slate-50 border-slate-300'
                   }`}>
-                    <span className="text-stone-400">Enter tendered cash to calculate:</span>
+                    <span className="text-slate-600 dark:text-stone-400">Enter tendered cash to calculate:</span>
                     <span className="font-mono font-bold text-[#FF4500] dark:text-[#FF5722] tabular-nums">
                       Due: {formatGhs(remainingDue)}
                     </span>
@@ -481,11 +481,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             {/* TAB 2: MOBILE MONEY (MOMO) */}
             {activeTab === 'MOMO' && (
               <div className={`p-4 rounded-2xl border space-y-4 ${
-                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-stone-50 border-stone-200'
+                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-white border-slate-300 shadow-2xs'
               }`}>
                 {/* Telco Selector Pills */}
                 <div>
-                  <label className="text-xs text-stone-400 block mb-1.5 font-medium">Select Telco Network:</label>
+                  <label className="text-xs text-slate-600 dark:text-stone-400 block mb-1.5 font-medium">Select Telco Network:</label>
                   <div className="grid grid-cols-3 gap-2">
                     {/* MTN */}
                     <button
@@ -493,10 +493,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       onClick={() => setMomoNetwork('MTN')}
                       className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer ${
                         momoNetwork === 'MTN'
-                          ? 'border-amber-400 bg-amber-400/15 text-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.2)] font-bold'
+                          ? 'border-amber-400 bg-amber-400/15 text-amber-500 dark:text-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.2)] font-bold'
                           : isDark
                           ? 'border-[#282B34] text-stone-400 hover:text-white'
-                          : 'border-stone-200 text-stone-600 hover:text-stone-900'
+                          : 'border-slate-300 text-slate-700 hover:text-slate-950 hover:bg-slate-50'
                       }`}
                     >
                       <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
@@ -509,10 +509,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       onClick={() => setMomoNetwork('TELECEL')}
                       className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer ${
                         momoNetwork === 'TELECEL'
-                          ? 'border-red-500 bg-red-500/15 text-rose-400 shadow-[0_0_12px_rgba(239,68,68,0.2)] font-bold'
+                          ? 'border-red-500 bg-red-500/15 text-rose-500 dark:text-rose-400 shadow-[0_0_12px_rgba(239,68,68,0.2)] font-bold'
                           : isDark
                           ? 'border-[#282B34] text-stone-400 hover:text-white'
-                          : 'border-stone-200 text-stone-600 hover:text-stone-900'
+                          : 'border-slate-300 text-slate-700 hover:text-slate-950 hover:bg-slate-50'
                       }`}
                     >
                       <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
@@ -525,13 +525,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       onClick={() => setMomoNetwork('AT')}
                       className={`py-2.5 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer ${
                         momoNetwork === 'AT'
-                          ? 'border-stone-500 bg-stone-600/20 text-stone-200 shadow-[0_0_12px_rgba(161,161,170,0.2)] font-bold'
+                          ? 'border-slate-400 bg-slate-200 dark:border-stone-500 dark:bg-stone-600/20 text-slate-900 dark:text-stone-200 font-bold'
                           : isDark
                           ? 'border-[#282B34] text-stone-400 hover:text-white'
-                          : 'border-stone-200 text-stone-600 hover:text-stone-900'
+                          : 'border-slate-300 text-slate-700 hover:text-slate-950 hover:bg-slate-50'
                       }`}
                     >
-                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                      <span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
                       <span>AT Money</span>
                     </button>
                   </div>
@@ -539,7 +539,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
                 {/* Mode Selector */}
                 <div className={`p-1 rounded-xl border flex gap-1 text-xs ${
-                  isDark ? 'bg-[#1A1C22] border-[#282B34]' : 'bg-white border-stone-200'
+                  isDark ? 'bg-[#1A1C22] border-[#282B34]' : 'bg-slate-100 border-slate-300'
                 }`}>
                   <button
                     type="button"
@@ -547,7 +547,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     className={`flex-1 py-1.5 rounded-lg font-medium transition cursor-pointer ${
                       momoMode === 'USSD_PUSH'
                         ? 'bg-[#FF4500] text-white font-bold'
-                        : 'text-stone-400 hover:text-stone-200'
+                        : isDark
+                        ? 'text-stone-400 hover:text-stone-200'
+                        : 'text-slate-600 hover:text-slate-950'
                     }`}
                   >
                     Direct USSD Push
@@ -558,7 +560,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     className={`flex-1 py-1.5 rounded-lg font-medium transition cursor-pointer ${
                       momoMode === 'MANUAL_REF'
                         ? 'bg-[#FF4500] text-white font-bold'
-                        : 'text-stone-400 hover:text-stone-200'
+                        : isDark
+                        ? 'text-stone-400 hover:text-stone-200'
+                        : 'text-slate-600 hover:text-slate-950'
                     }`}
                   >
                     Manual Merchant Till Ref
@@ -567,16 +571,16 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
                 {/* Phone Input */}
                 <div>
-                  <label className="text-xs text-stone-400 block mb-1">Customer Mobile Number:</label>
+                  <label className="text-xs text-slate-600 dark:text-stone-400 block mb-1">Customer Mobile Number:</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs font-mono">+233</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-mono">+233</span>
                     <input
                       type="text"
                       value={momoPhone}
                       onChange={e => setMomoPhone(e.target.value)}
                       placeholder="024 412 3456"
                       className={`w-full pl-14 pr-3 py-2 rounded-xl text-sm font-mono border outline-none focus:border-[#FF4500] ${
-                        isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-white border-stone-200 text-stone-900'
+                        isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                       }`}
                     />
                   </div>
@@ -585,14 +589,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 {momoMode === 'MANUAL_REF' ? (
                   <div className="space-y-3">
                     <div>
-                      <label className="text-xs text-stone-400 block mb-1">SMS / Network Tx Ref ID:</label>
+                      <label className="text-xs text-slate-600 dark:text-stone-400 block mb-1">SMS / Network Tx Ref ID:</label>
                       <input
                         type="text"
                         value={momoManualRef}
                         onChange={e => setMomoManualRef(e.target.value)}
                         placeholder="e.g. 26091823901"
                         className={`w-full px-3 py-2 rounded-xl text-sm font-mono uppercase border outline-none focus:border-[#FF4500] ${
-                          isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-white border-stone-200 text-stone-900'
+                          isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                         }`}
                       />
                     </div>
@@ -613,7 +617,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         type="button"
                         onClick={handleStartMoMoPush}
                         disabled={remainingDue <= 0 || !momoPhone}
-                        className="w-full py-3 bg-[#10B981] hover:bg-[#059669] disabled:opacity-40 text-[#090B0E] font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98] cursor-pointer"
+                        className="w-full py-3 bg-[#10B981] hover:bg-[#059669] disabled:opacity-40 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98] cursor-pointer"
                       >
                         <Send className="w-4 h-4" />
                         <span>Push USSD Prompt ({formatGhs(remainingDue)}) to Handset</span>
@@ -622,7 +626,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
                     {momoPushStatus === 'PUSHING' && (
                       <div className={`p-3 rounded-xl border text-center flex flex-col items-center justify-center space-y-1 ${
-                        isDark ? 'bg-[#1A1C22] border-[#FF4500]/40' : 'bg-white border-[#FF4500]/40'
+                        isDark ? 'bg-[#1A1C22] border-[#FF4500]/40' : 'bg-slate-50 border-[#FF4500]/40'
                       }`}>
                         <Loader2 className="w-5 h-5 text-[#FF4500] animate-spin" />
                         <span className="text-xs text-[#FF4500] font-semibold">Initiating Telco USSD Push...</span>
@@ -640,14 +644,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                             {momoPushCountdown}s
                           </span>
                         </div>
-                        <div className="text-[11px] text-stone-400">
-                          Prompt sent to <span className="font-mono text-white">{momoPhone}</span> to authorize{' '}
+                        <div className="text-[11px] text-slate-700 dark:text-stone-400">
+                          Prompt sent to <span className="font-mono font-bold text-slate-900 dark:text-white">{momoPhone}</span> to authorize{' '}
                           <span className="text-[#FF4500] dark:text-[#FF5722] font-bold tabular-nums">{formatGhs(remainingDue)}</span>.
                         </div>
                         <button
                           type="button"
                           onClick={() => setMomoPushStatus('SUCCESS')}
-                          className="w-full text-[10px] text-stone-400 hover:text-white underline text-right cursor-pointer"
+                          className="w-full text-[10px] text-slate-500 hover:text-slate-900 dark:text-stone-400 dark:hover:text-white underline text-right cursor-pointer"
                         >
                           (Simulate instant user PIN confirmation)
                         </button>
@@ -656,7 +660,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
                     {momoPushStatus === 'SUCCESS' && (
                       <div className="p-3.5 rounded-2xl border border-emerald-500/40 bg-emerald-500/10 space-y-2 text-center">
-                        <div className="flex items-center justify-center gap-1.5 text-emerald-400 font-bold text-xs">
+                        <div className="flex items-center justify-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
                           <CheckCircle2 className="w-4 h-4" />
                           <span>USSD Payment Authorized!</span>
                         </div>
@@ -677,17 +681,17 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             {/* TAB 3: CARD */}
             {activeTab === 'CARD' && (
               <div className={`p-4 rounded-2xl border space-y-4 ${
-                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-stone-50 border-stone-200'
+                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-white border-slate-300 shadow-2xs'
               }`}>
                 <div>
-                  <label className="text-xs text-stone-400 block mb-1">Card Last 4 Digits:</label>
+                  <label className="text-xs text-slate-600 dark:text-stone-400 block mb-1">Card Last 4 Digits:</label>
                   <input
                     type="text"
                     maxLength={4}
                     value={cardLastFour}
                     onChange={e => setCardLastFour(e.target.value)}
                     className={`w-full px-3 py-2 rounded-xl text-sm font-mono text-center border outline-none focus:border-[#FF4500] ${
-                      isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-white border-stone-200 text-stone-900'
+                      isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                     }`}
                   />
                 </div>
@@ -706,15 +710,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             {/* TAB 4: BISA STORE CREDIT */}
             {activeTab === 'BISA' && (
               <div className={`p-4 rounded-2xl border space-y-4 ${
-                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-stone-50 border-stone-200'
+                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-white border-slate-300 shadow-2xs'
               }`}>
                 <div>
-                  <label className="text-xs text-stone-400 block mb-1">Customer Credit Profile:</label>
+                  <label className="text-xs text-slate-600 dark:text-stone-400 block mb-1">Customer Credit Profile:</label>
                   <select
                     value={currentCustomer?.id || ''}
                     onChange={e => setCurrentCustomer(customers.find(c => c.id === e.target.value))}
                     className={`w-full px-3 py-2 rounded-xl text-xs font-semibold border outline-none ${
-                      isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-white border-stone-200 text-stone-900'
+                      isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                     }`}
                   >
                     {customers.map(c => (
@@ -727,21 +731,21 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
                 {currentCustomer && (
                   <div className={`p-3 rounded-xl border space-y-1.5 text-xs font-mono tabular-nums ${
-                    isDark ? 'bg-[#1A1C22] border-[#282B34]' : 'bg-white border-stone-200'
+                    isDark ? 'bg-[#1A1C22] border-[#282B34]' : 'bg-slate-50 border-slate-300'
                   }`}>
-                    <div className="flex justify-between text-stone-400">
+                    <div className="flex justify-between text-slate-600 dark:text-stone-400">
                       <span>Credit Limit:</span>
-                      <span className={isDark ? 'text-white font-bold' : 'text-stone-900 font-bold'}>
+                      <span className={isDark ? 'text-white font-bold' : 'text-slate-900 font-bold'}>
                         {formatGhs(currentCustomer.creditLimit)}
                       </span>
                     </div>
-                    <div className="flex justify-between text-stone-400">
+                    <div className="flex justify-between text-slate-600 dark:text-stone-400">
                       <span>Current Debt:</span>
                       <span className="text-[#FF4500] dark:text-[#FF5722] font-bold">{formatGhs(currentCustomer.currentDebt)}</span>
                     </div>
-                    <div className="flex justify-between border-t border-stone-700/50 pt-1">
-                      <span>Available Credit:</span>
-                      <span className={`font-bold ${availableCredit > 0 ? 'text-[#FF4500] dark:text-[#FF5722]' : 'text-rose-500'}`}>
+                    <div className="flex justify-between border-t border-slate-200 dark:border-stone-700/50 pt-1">
+                      <span className="text-slate-600 dark:text-stone-400">Available Credit:</span>
+                      <span className={`font-bold ${availableCredit > 0 ? 'text-[#008285] dark:text-[#00CED1]' : 'text-rose-600'}`}>
                         {formatGhs(availableCredit)}
                       </span>
                     </div>
@@ -763,15 +767,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             {/* TAB 5: LOYALTY POINTS REDEMPTION */}
             {activeTab === 'LOYALTY' && (
               <div className={`p-4 rounded-2xl border space-y-4 ${
-                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-stone-50 border-stone-200'
+                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-white border-slate-300 shadow-2xs'
               }`}>
                 <div>
-                  <label className="text-xs text-stone-400 block mb-1">Customer Loyalty Account:</label>
+                  <label className="text-xs text-slate-600 dark:text-stone-400 block mb-1">Customer Loyalty Account:</label>
                   <select
                     value={currentCustomer?.id || ''}
                     onChange={e => setCurrentCustomer(customers.find(c => c.id === e.target.value))}
                     className={`w-full px-3 py-2 rounded-xl text-xs font-semibold border outline-none ${
-                      isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-white border-stone-200 text-stone-900'
+                      isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                     }`}
                   >
                     {customers.map(c => (
@@ -786,10 +790,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   <div className="space-y-3">
                     {/* Points Dossier Card */}
                     <div className={`p-3.5 rounded-2xl border space-y-2 text-xs font-mono ${
-                      isDark ? 'bg-[#1A1C22] border-[#FF4500]/30' : 'bg-white border-[#FF4500]/30 shadow-xs'
+                      isDark ? 'bg-[#1A1C22] border-[#FF4500]/30' : 'bg-slate-50 border-slate-300 shadow-xs'
                     }`}>
                       <div className="flex items-center justify-between">
-                        <span className="text-stone-400 flex items-center gap-1.5 font-sans font-medium">
+                        <span className="text-slate-600 dark:text-stone-400 flex items-center gap-1.5 font-sans font-medium">
                           <Award className="w-4 h-4 text-[#FF4500] dark:text-[#FF5722]" />
                           <span>Loyalty Points Balance:</span>
                         </span>
@@ -798,14 +802,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         </span>
                       </div>
 
-                      <div className="flex justify-between text-[11px] text-stone-400">
+                      <div className="flex justify-between text-[11px] text-slate-600 dark:text-stone-400">
                         <span>Cash Value (10 pts = GH₵ 1.00):</span>
-                        <span className="font-bold text-white">
+                        <span className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                           {formatGhs(roundToPesewas(customerLoyaltyPoints / 10))}
                         </span>
                       </div>
 
-                      <div className="flex justify-between text-[11px] text-stone-400 border-t border-[#282B34] pt-1">
+                      <div className="flex justify-between text-[11px] text-slate-600 dark:text-stone-400 border-t border-slate-200 dark:border-[#282B34] pt-1">
                         <span>Max Redeemable for this Bill:</span>
                         <span className="font-bold text-[#FF4500] dark:text-[#FF5722]">
                           {maxRedeemablePointsForBill} pts ({formatGhs(maxRedeemableGhsValue)})
@@ -814,21 +818,21 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     </div>
 
                     {customerLoyaltyPoints <= 0 ? (
-                      <div className="p-3 rounded-xl bg-[#FF4500]/10 border border-[#FF4500]/30 text-[#FF4500] dark:text-[#FF5722] text-xs text-center">
+                      <div className="p-3 rounded-xl bg-[#FF4500]/10 border border-[#FF4500]/30 text-[#C23600] dark:text-[#FF5722] text-xs text-center">
                         This customer currently has 0 loyalty points. Points accrue automatically on every sale (1 pt per GH₵ 1.00 spent).
                       </div>
                     ) : (
                       <>
                         {/* Preset Chips */}
                         <div>
-                          <span className="text-[11px] text-stone-400 block mb-1.5 font-medium">Quick Points Redemptions:</span>
+                          <span className="text-[11px] text-slate-600 dark:text-stone-400 block mb-1.5 font-medium">Quick Points Redemptions:</span>
                           <div className="grid grid-cols-4 gap-1.5 text-xs font-mono font-bold">
                             <button
                               type="button"
                               onClick={() => setLoyaltyPointsToRedeem(Math.min(50, maxRedeemablePointsForBill))}
                               disabled={customerLoyaltyPoints < 50}
                               className={`py-2 px-1 rounded-xl border text-center transition disabled:opacity-30 cursor-pointer ${
-                                isDark ? 'bg-[#20232B] border-[#282B34] text-white hover:border-[#FF4500]' : 'bg-white border-stone-200 text-stone-900 hover:border-[#FF4500]'
+                                isDark ? 'bg-[#20232B] border-[#282B34] text-white hover:border-[#FF4500]' : 'bg-white border-slate-300 text-slate-900 hover:border-[#FF4500]'
                               }`}
                             >
                               50 pts (₵5)
@@ -838,7 +842,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                               onClick={() => setLoyaltyPointsToRedeem(Math.min(100, maxRedeemablePointsForBill))}
                               disabled={customerLoyaltyPoints < 100}
                               className={`py-2 px-1 rounded-xl border text-center transition disabled:opacity-30 cursor-pointer ${
-                                isDark ? 'bg-[#20232B] border-[#282B34] text-white hover:border-[#FF4500]' : 'bg-white border-stone-200 text-stone-900 hover:border-[#FF4500]'
+                                isDark ? 'bg-[#20232B] border-[#282B34] text-white hover:border-[#FF4500]' : 'bg-white border-slate-300 text-slate-900 hover:border-[#FF4500]'
                               }`}
                             >
                               100 pts (₵10)
@@ -848,7 +852,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                               onClick={() => setLoyaltyPointsToRedeem(Math.min(200, maxRedeemablePointsForBill))}
                               disabled={customerLoyaltyPoints < 200}
                               className={`py-2 px-1 rounded-xl border text-center transition disabled:opacity-30 cursor-pointer ${
-                                isDark ? 'bg-[#20232B] border-[#282B34] text-white hover:border-[#FF4500]' : 'bg-white border-stone-200 text-stone-900 hover:border-[#FF4500]'
+                                isDark ? 'bg-[#20232B] border-[#282B34] text-white hover:border-[#FF4500]' : 'bg-white border-slate-300 text-slate-900 hover:border-[#FF4500]'
                               }`}
                             >
                               200 pts (₵20)
@@ -866,7 +870,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         {/* Custom Points Input */}
                         <div>
                           <div className="flex justify-between text-xs mb-1">
-                            <label className="text-stone-400 font-medium">Points to Redeem:</label>
+                            <label className="text-slate-600 dark:text-stone-400 font-medium">Points to Redeem:</label>
                             <span className="font-mono font-bold text-[#FF4500] dark:text-[#FF5722]">
                               Discount Value: {formatGhs(roundToPesewas((loyaltyPointsToRedeem || 0) / 10))}
                             </span>
@@ -887,11 +891,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                                 setLoyaltyPointsToRedeem(Math.min(val, maxRedeemablePointsForBill));
                               }}
                               className={`w-full px-3 py-2 rounded-xl text-base font-mono font-bold border outline-none focus:border-[#00CED1] focus:ring-2 focus:ring-[#00CED1]/30 ${
-                                isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-white border-stone-200 text-stone-900'
+                                isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                               }`}
                               placeholder="Enter points..."
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-stone-400">
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">
                               pts
                             </span>
                           </div>
@@ -912,7 +916,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     )}
                   </div>
                 ) : (
-                  <div className="p-3 text-xs text-stone-400 text-center italic">
+                  <div className="p-3 text-xs text-slate-500 dark:text-stone-400 text-center italic">
                     Select a customer profile to redeem loyalty points.
                   </div>
                 )}
@@ -923,30 +927,30 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
           {/* Right Column: Allocation & Summary (5 cols) */}
           <div className={`md:col-span-5 p-4 sm:p-6 flex flex-col justify-between space-y-4 ${
-            isDark ? 'bg-[#141519]/70' : 'bg-stone-50/70'
+            isDark ? 'bg-[#141519]/70' : 'bg-white border-l border-slate-300'
           }`}>
             <div className="space-y-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-stone-400">
                 Payment Allocation
               </span>
 
               {/* Total Card */}
               <div className={`p-4 rounded-2xl border space-y-2 text-xs font-mono tabular-nums ${
-                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-white border-stone-200'
+                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-slate-50 border-slate-300 shadow-xs'
               }`}>
-                <div className="flex justify-between text-stone-400">
+                <div className="flex justify-between text-slate-600 dark:text-stone-400">
                   <span>Total Due:</span>
-                  <span className={`font-bold ${isDark ? 'text-white' : 'text-stone-900'}`}>{formatGhs(totalAmount)}</span>
+                  <span className={`font-bold ${isDark ? 'text-white' : 'text-slate-950 font-black'}`}>{formatGhs(totalAmount)}</span>
                 </div>
-                <div className="flex justify-between text-stone-400">
+                <div className="flex justify-between text-slate-600 dark:text-stone-400">
                   <span>Total Tendered:</span>
                   <span className="text-[#FF4500] dark:text-[#FF5722] font-bold">{formatGhs(totalAllocated)}</span>
                 </div>
-                <div className="flex justify-between font-bold text-sm border-t border-[#282B34] pt-2">
-                  <span className={remainingDue > 0 ? 'text-[#FF4500] dark:text-[#FF5722]' : 'text-stone-300'}>
+                <div className="flex justify-between font-bold text-sm border-t border-slate-200 dark:border-[#282B34] pt-2">
+                  <span className={remainingDue > 0 ? 'text-[#FF4500] dark:text-[#FF5722]' : isDark ? 'text-stone-300' : 'text-slate-800'}>
                     {remainingDue > 0 ? 'Remaining Balance:' : 'Settled in Full'}
                   </span>
-                  <span className={remainingDue > 0 ? 'text-[#FF4500] dark:text-[#FF5722]' : 'text-stone-300'}>
+                  <span className={remainingDue > 0 ? 'text-[#FF4500] dark:text-[#FF5722]' : isDark ? 'text-stone-300' : 'text-slate-800 font-black'}>
                     {formatGhs(remainingDue)}
                   </span>
                 </div>
@@ -955,17 +959,17 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               {/* Tenders Breakdown */}
               <div className="space-y-1.5 max-h-48 overflow-y-auto">
                 {payments.length === 0 ? (
-                  <p className="text-xs text-stone-400 text-center py-4 italic">No tenders applied yet.</p>
+                  <p className="text-xs text-slate-500 dark:text-stone-400 text-center py-4 italic">No tenders applied yet.</p>
                 ) : (
                   payments.map((p, i) => (
                     <div
                       key={i}
                       className={`flex items-center justify-between p-2.5 rounded-xl border text-xs font-mono tabular-nums ${
-                        isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-white border-stone-200'
+                        isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-slate-50 border-slate-300'
                       }`}
                     >
                       <div>
-                        <span className={`font-semibold font-sans ${isDark ? 'text-white' : 'text-stone-900'}`}>
+                        <span className={`font-semibold font-sans ${isDark ? 'text-white' : 'text-slate-900'}`}>
                           {p.type === 'CASH' && 'Cash'}
                           {p.type === 'MOMO_MTN' && 'MTN MoMo'}
                           {p.type === 'MOMO_TELECEL' && 'Telecel Cash'}
@@ -974,7 +978,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                           {p.type === 'CUSTOMER_DEBT_BISA' && 'Bisa Debt'}
                           {p.type === 'LOYALTY_POINTS' && 'Akwaaba Points'}
                         </span>
-                        {p.momoTxId && <span className="text-[10px] text-stone-400 block">{p.momoTxId}</span>}
+                        {p.momoTxId && <span className="text-[10px] text-slate-500 dark:text-stone-400 block">{p.momoTxId}</span>}
                         {p.type === 'LOYALTY_POINTS' && (
                           <span className="text-[10px] text-[#FF4500] dark:text-[#FF5722] block font-mono">
                             Redeemed {p.loyaltyPointsRedeemed || Math.round(p.amount * 10)} pts
@@ -983,10 +987,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <span className={`font-bold ${isDark ? 'text-white' : 'text-stone-900'}`}>
+                        <span className={`font-bold ${isDark ? 'text-white' : 'text-slate-950'}`}>
                           {formatGhs(p.amount)}
                         </span>
-                        <button onClick={() => handleRemovePayment(i)} className="text-stone-400 hover:text-rose-400 cursor-pointer">
+                        <button onClick={() => handleRemovePayment(i)} className="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 cursor-pointer">
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
@@ -1012,7 +1016,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 type="button"
                 onClick={onClose}
                 className={`w-full py-2 text-xs font-semibold rounded-xl transition cursor-pointer ${
-                  isDark ? 'text-stone-400 hover:text-white' : 'text-stone-600 hover:text-black'
+                  isDark ? 'text-stone-400 hover:text-white' : 'text-slate-700 hover:text-slate-950 hover:bg-slate-200/60'
                 }`}
               >
                 Cancel / Return to Cart

@@ -518,17 +518,17 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
       
       {/* LEFT 65%: PRODUCT CATALOG & ACTIONS */}
       <div className={`flex-1 flex flex-col h-full overflow-hidden border-r ${
-        isDark ? 'border-[#282B34]' : 'border-stone-200'
+        isDark ? 'border-[#282B34]' : 'border-slate-300'
       }`}>
         
         {/* Top Controls: Search Bar & Barcode Quick-Scanner */}
         <div className={`p-4 border-b space-y-3 shrink-0 ${
-          isDark ? 'border-[#282B34] bg-[#16181F]' : 'border-stone-200 bg-white'
+          isDark ? 'border-[#282B34] bg-[#16181F]' : 'border-slate-300 bg-white'
         }`}>
           <div className="flex items-center gap-2.5">
             {/* Search Input Container with Smart Suggestions Popover */}
             <div ref={searchContainerRef} className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" strokeWidth={2} />
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" strokeWidth={2} />
               <input
                 ref={searchInputRef}
                 type="text"
@@ -543,7 +543,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                 className={`w-full pl-10 pr-24 py-2.5 rounded-xl text-xs sm:text-sm font-semibold border outline-none transition-all ${
                   isDark
                     ? 'bg-[#1A1C22] border-[#282B34] text-white placeholder-stone-500 focus:border-[#FF4500] focus:ring-2 focus:ring-[#FF4500]/20'
-                    : 'bg-stone-50 border-stone-200 text-stone-900 placeholder-stone-400 focus:border-[#FF4500] focus:ring-2 focus:ring-[#FF4500]/20'
+                    : 'bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-[#FF4500] focus:ring-2 focus:ring-[#FF4500]/20'
                 }`}
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
@@ -554,13 +554,13 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                       setSearchQuery('');
                       setIsSearchFocused(false);
                     }}
-                    className="p-1 rounded-full text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition cursor-pointer"
+                    className="p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-stone-200 transition cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
                 )}
                 <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
-                  isDark ? 'text-stone-400 bg-[#252833]' : 'text-stone-500 bg-stone-200'
+                  isDark ? 'text-stone-400 bg-[#252833]' : 'text-slate-700 bg-slate-200 border border-slate-300'
                 }`}>
                   F9
                 </span>
@@ -568,16 +568,16 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
 
               {/* Floating Smart Suggestions Popover */}
               {isSearchFocused && searchQuery.trim().length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 z-50 rounded-2xl border shadow-2xl overflow-hidden backdrop-blur-md max-h-[460px] flex flex-col bg-white/95 dark:bg-[#16181F]/95 border-stone-200 dark:border-[#282B34] animate-in fade-in duration-100">
-                  <div className="p-3 border-b flex items-center justify-between bg-stone-50/80 dark:bg-[#1A1C22]/80 border-stone-200 dark:border-[#282B34] shrink-0">
+                <div className="absolute top-full left-0 right-0 mt-2 z-50 rounded-2xl border shadow-2xl overflow-hidden backdrop-blur-md max-h-[460px] flex flex-col bg-white/95 dark:bg-[#16181F]/95 border-slate-300 dark:border-[#282B34] animate-in fade-in duration-100">
+                  <div className="p-3 border-b flex items-center justify-between bg-slate-100/90 dark:bg-[#1A1C22]/80 border-slate-300 dark:border-[#282B34] shrink-0">
                     <div className="flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-[#FF4500]" />
-                      <span className="text-xs font-bold text-stone-900 dark:text-stone-100">
+                      <span className="text-xs font-bold text-slate-900 dark:text-stone-100">
                         Smart Suggestions for "{searchQuery}"
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-[10.5px]">
-                      <span className="font-semibold text-stone-500 dark:text-stone-400">
+                      <span className="font-semibold text-slate-600 dark:text-stone-400">
                         {smartSearchResult.directMatches.length} Direct
                       </span>
                       {smartSearchResult.typoMatches.length > 0 && (
@@ -588,11 +588,11 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                     </div>
                   </div>
 
-                  <div className="overflow-y-auto flex-1 divide-y divide-stone-100 dark:divide-[#282B34]/60">
+                  <div className="overflow-y-auto flex-1 divide-y divide-slate-200 dark:divide-[#282B34]/60">
                     {/* 1. Direct / Exact Matches */}
                     {smartSearchResult.directMatches.length > 0 && (
                       <div>
-                        <div className="px-3.5 py-1.5 bg-stone-100/70 dark:bg-[#1A1C22]/70 text-[10px] uppercase font-bold tracking-wider text-stone-500 dark:text-stone-400 flex items-center justify-between">
+                        <div className="px-3.5 py-1.5 bg-slate-100 dark:bg-[#1A1C22]/70 text-[10px] uppercase font-bold tracking-wider text-slate-600 dark:text-stone-400 flex items-center justify-between border-b border-slate-200 dark:border-transparent">
                           <span>Direct Matches ({smartSearchResult.directMatches.length})</span>
                           <span className="text-[9.5px] opacity-75">Exact title, prefix, barcode or SKU</span>
                         </div>
@@ -615,11 +615,11 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                             >
                               <div className="flex items-center gap-3 min-w-0">
                                 {showProductImages && (
-                                  <div className="w-11 h-11 rounded-lg overflow-hidden bg-stone-100 dark:bg-[#11151A] border border-stone-200 dark:border-[#282B34] shrink-0 flex items-center justify-center">
+                                  <div className="w-11 h-11 rounded-lg overflow-hidden bg-slate-100 dark:bg-[#11151A] border border-slate-300 dark:border-[#282B34] shrink-0 flex items-center justify-center">
                                     {dm.product.imageUrl ? (
                                       <img src={dm.product.imageUrl} alt={dm.product.name} className="w-full h-full object-cover" />
                                     ) : (
-                                      <ImageIcon className="w-4 h-4 text-stone-400" />
+                                      <ImageIcon className="w-4 h-4 text-slate-400" />
                                     )}
                                   </div>
                                 )}
@@ -763,11 +763,11 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                   </div>
 
                   {/* Popover Footer */}
-                  <div className="px-3 py-1.5 bg-stone-100/90 dark:bg-[#13151A] border-t border-stone-200 dark:border-[#282B34] flex items-center justify-between text-[10px] text-stone-500 dark:text-stone-400 shrink-0">
+                  <div className="px-3 py-1.5 bg-slate-100 dark:bg-[#13151A] border-t border-slate-300 dark:border-[#282B34] flex items-center justify-between text-[10px] text-slate-600 dark:text-stone-400 shrink-0">
                     <div className="flex items-center gap-3">
-                      <span><kbd className="px-1 py-0.5 rounded bg-stone-200 dark:bg-stone-800 font-mono">↑↓</kbd> Navigate</span>
-                      <span><kbd className="px-1 py-0.5 rounded bg-stone-200 dark:bg-stone-800 font-mono">Enter</kbd> Add item</span>
-                      <span><kbd className="px-1 py-0.5 rounded bg-stone-200 dark:bg-stone-800 font-mono">Esc</kbd> Close</span>
+                      <span><kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-stone-800 font-mono text-slate-800 dark:text-stone-300">↑↓</kbd> Navigate</span>
+                      <span><kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-stone-800 font-mono text-slate-800 dark:text-stone-300">Enter</kbd> Add item</span>
+                      <span><kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-stone-800 font-mono text-slate-800 dark:text-stone-300">Esc</kbd> Close</span>
                     </div>
                     <span>Smart Typo Tolerance Active</span>
                   </div>
@@ -784,7 +784,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                   ? 'border-[#FF4500]/50 bg-[#FF4500]/10 text-[#FF4500] dark:text-[#FF5722] font-bold'
                   : isDark
                   ? 'border-[#282B34] bg-[#1A1C22] text-stone-400 hover:text-stone-200'
-                  : 'border-stone-200 bg-stone-50 text-stone-600 hover:text-stone-900'
+                  : 'border-slate-300 bg-slate-50 text-slate-700 hover:text-slate-950 hover:bg-slate-100'
               }`}
               title="Toggle display of product packaging photos on cards & suggestions"
             >
@@ -798,7 +798,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
 
             {/* Scanner Status */}
             <div className={`hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold shrink-0 transition-all ${
-              isDark ? 'border-[#00CED1]/30 bg-[#00CED1]/10 text-[#00CED1]' : 'border-[#00CED1]/40 bg-[#00CED1]/10 text-[#008B8B]'
+              isDark ? 'border-[#00CED1]/30 bg-[#00CED1]/10 text-[#00CED1]' : 'border-[#00CED1]/50 bg-[#00CED1]/15 text-[#007A7C] font-bold'
             }`}>
               <Barcode className="w-4 h-4 text-[#00CED1]" />
               <span className="relative flex h-2 w-2">
@@ -826,16 +826,16 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                       ? 'bg-[#FF4500] text-white shadow-xs font-bold'
                       : isDark
                       ? 'bg-[#1A1C22] text-stone-300 hover:text-white hover:bg-[#252833] border border-[#282B34]'
-                      : 'bg-white text-stone-600 hover:text-stone-950 hover:bg-stone-100 border border-stone-200'
+                      : 'bg-white text-slate-700 hover:text-slate-950 hover:bg-slate-100 border border-slate-300 shadow-2xs'
                   }`}
                 >
                   <span>{cat}</span>
-                  <span className={`text-[10.5px] px-1.5 py-0.2 rounded-full tabular-nums font-medium ${
+                  <span className={`text-[10.5px] px-1.5 py-0.2 rounded-full tabular-nums font-semibold ${
                     isActive
                       ? 'bg-black/20 text-white font-bold'
                       : isDark
                       ? 'bg-[#121316] text-[#00CED1]'
-                      : 'bg-stone-100 text-stone-600'
+                      : 'bg-slate-100 text-slate-700 border border-slate-200'
                   }`}>
                     {count}
                   </span>
@@ -846,15 +846,15 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
         </div>
 
         {/* Product Grid: Auto-fills cleanly with minmax(210px, 1fr) and auto-rows-max so prices are never cut off */}
-        <div className="flex-1 p-3.5 sm:p-4 md:p-5 overflow-y-auto grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] auto-rows-max gap-3 sm:gap-3.5 content-start pb-24 md:pb-6 bg-[#F5F5F7] dark:bg-[#121316]">
+        <div className="flex-1 p-3.5 sm:p-4 md:p-5 overflow-y-auto grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] auto-rows-max gap-3 sm:gap-3.5 content-start pb-24 md:pb-6 bg-[#EBEEF2] dark:bg-[#121316]">
           {searchQuery.trim().length > 0 && (
-            <div className="col-span-full mb-1 p-3 rounded-2xl border flex items-center justify-between text-xs bg-white dark:bg-[#16181F] border-stone-200 dark:border-[#282B34] shadow-xs animate-in fade-in duration-100">
+            <div className="col-span-full mb-1 p-3 rounded-2xl border flex items-center justify-between text-xs bg-white dark:bg-[#16181F] border-slate-300 dark:border-[#282B34] shadow-xs animate-in fade-in duration-100">
               <div className="flex items-center gap-2.5">
                 <span className="w-2 h-2 rounded-full bg-[#00CED1] animate-pulse" />
-                <span className="text-stone-600 dark:text-stone-300 font-medium font-sans">
-                  Showing all products matching <strong className="text-[#00CED1] font-bold">"{searchQuery}"</strong>:
+                <span className="text-slate-700 dark:text-stone-300 font-medium font-sans">
+                  Showing all products matching <strong className="text-[#008285] dark:text-[#00CED1] font-bold">"{searchQuery}"</strong>:
                 </span>
-                <span className="font-mono font-bold text-xs text-stone-900 dark:text-white px-2 py-0.5 rounded-lg bg-stone-100 dark:bg-[#20232B] border border-stone-200 dark:border-[#282B34]">
+                <span className="font-mono font-bold text-xs text-slate-900 dark:text-white px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-[#20232B] border border-slate-300 dark:border-[#282B34]">
                   {smartSearchResult.allRanked.length} items
                 </span>
               </div>
@@ -869,8 +869,8 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
             </div>
           )}
           {smartSearchResult.allRanked.length === 0 ? (
-            <div className="col-span-full py-16 text-center text-stone-400 space-y-2">
-              <p className="text-sm font-bold">No products found</p>
+            <div className="col-span-full py-16 text-center text-slate-500 dark:text-stone-400 space-y-2">
+              <p className="text-sm font-bold text-slate-800 dark:text-stone-200">No products found</p>
               <p className="text-xs">Try searching for a different keyword or SKU.</p>
               <button
                 type="button"
@@ -899,7 +899,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
 
         {/* Keyboard Shortcut Bar */}
         <div className={`hidden sm:flex items-center justify-between px-4 py-2 border-t text-[11.5px] tabular-nums shrink-0 select-none ${
-          isDark ? 'border-[#282B34] bg-[#16181F] text-stone-400' : 'border-stone-200 bg-stone-50 text-stone-500'
+          isDark ? 'border-[#282B34] bg-[#16181F] text-stone-400' : 'border-slate-300 bg-white text-slate-600'
         }`}>
           <div className="flex items-center gap-4">
             {[
@@ -910,9 +910,9 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
             ].map(s => (
               <span key={s.key} className="flex items-center gap-1.5">
                 <kbd className={`px-1.5 py-0.5 rounded font-bold text-[10px] ${
-                  isDark ? 'bg-[#1F222B] text-[#FF5722] border border-[#2D313C]' : 'bg-white text-[#FF4500] border border-stone-300 shadow-2xs'
+                  isDark ? 'bg-[#1F222B] text-[#FF5722] border border-[#2D313C]' : 'bg-slate-100 text-[#FF4500] border border-slate-300 shadow-2xs'
                 }`}>{s.key}</kbd>
-                <span>{s.label}</span>
+                <span className="font-medium text-slate-700 dark:text-stone-400">{s.label}</span>
               </span>
             ))}
           </div>
@@ -949,7 +949,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
       {/* MOBILE FLOATING TICKET SUMMARY (for screens < 768px) */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 p-3">
         <div className={`p-3 rounded-2xl border flex items-center justify-between shadow-xl ${
-          isDark ? 'bg-[#1A1C22] border-[#282B34]' : 'bg-white border-stone-200'
+          isDark ? 'bg-[#1A1C22] border-[#282B34]' : 'bg-white border-slate-300'
         }`}>
           <button
             type="button"
@@ -960,7 +960,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
               {totalItemCount}
             </div>
             <div>
-              <span className={`text-xs block font-bold ${isDark ? 'text-stone-200' : 'text-stone-900'}`}>
+              <span className={`text-xs block font-bold ${isDark ? 'text-stone-200' : 'text-slate-900'}`}>
                 Current Ticket
               </span>
               <span className="text-sm font-black font-mono tabular-nums text-[#FF4500] dark:text-[#FF5722]">
@@ -987,12 +987,12 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
           <div className={`h-[88vh] w-full rounded-t-[24px] flex flex-col overflow-hidden border-t animate-slide-in-bottom ${
             isDark 
               ? 'bg-[#121316] border-[#282B34] shadow-[0_-8px_32px_rgba(0,0,0,0.5)]' 
-              : 'bg-white border-stone-200 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]'
+              : 'bg-[#EBEEF2] border-slate-300 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]'
           }`}>
             <div className={`p-3.5 border-b flex items-center justify-between shrink-0 ${
-              isDark ? 'border-[#282B34]' : 'border-stone-200'
+              isDark ? 'border-[#282B34] bg-[#141519]' : 'border-slate-300 bg-white'
             }`}>
-              <div className="flex items-center gap-2 font-bold text-sm">
+              <div className="flex items-center gap-2 font-bold text-sm text-slate-900 dark:text-stone-100">
                 <ShoppingBag className="w-4 h-4 text-[#FF4500]" strokeWidth={1.8} />
                 <span>Ticket Ledger ({totalItemCount} items)</span>
               </div>

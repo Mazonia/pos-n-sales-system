@@ -9,18 +9,18 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Modern Clean Light Theme: Warm Alabaster, Deep Charcoal & Fiery Red-Orange (#FF4500) */
-  --pos-canvas: #F5F5F7;
+  /* Modern Ergonomic Light Theme: Soothing Soft Slate Canvas (#EBEEF2), Crisp Slate-300 Borders (#CBD5E1), High-Contrast Slate Text & Fiery Red-Orange (#FF4500) */
+  --pos-canvas: #EBEEF2;
   --pos-card: #FFFFFF;
-  --pos-card-border: #E4E4E7;
-  --pos-card-hover: #FAFAFA;
-  --pos-text-main: #18181B;
-  --pos-text-muted: #71717A;
-  --pos-text-subtle: #A1A1AA;
+  --pos-card-border: #CBD5E1;
+  --pos-card-hover: #F8FAFC;
+  --pos-text-main: #0F172A;
+  --pos-text-muted: #334155;
+  --pos-text-subtle: #64748B;
   --pos-accent: #FF4500;
   --pos-accent-hover: #E03E00;
-  --pos-cyan: #00CED1;
-  --pos-cyan-hover: #00B4B7;
+  --pos-cyan: #008B8B;
+  --pos-cyan-hover: #007A7C;
 }
 
 .theme-dark, .dark {
@@ -102,14 +102,14 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: #D1D5DB;
+    background-color: #94A3B8;
     border-radius: 9999px;
     transition: background-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background-color: #00CED1;
-    box-shadow: 0 0 6px rgba(0, 206, 209, 0.4);
+    background-color: #008B8B;
+    box-shadow: 0 0 6px rgba(0, 139, 139, 0.4);
   }
 
   .dark ::-webkit-scrollbar-thumb {
@@ -147,13 +147,13 @@
   color: var(--pos-text-main);
   border: 1px solid var(--pos-card-border) !important;
   border-radius: 1rem;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05);
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pos-card:hover, .neo-card:hover {
-  border-color: #D4D4D8 !important;
-  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+  border-color: #94A3B8 !important;
+  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
 }
 
 .theme-dark .pos-card:hover, .dark .pos-card:hover,
@@ -164,10 +164,10 @@
 
 /* Inset Container / Well */
 .pos-inset, .neo-card-inset, .neo-inset {
-  background-color: #EEEEF1 !important;
-  border: 1px solid #E4E4E7 !important;
+  background-color: #EAEFF5 !important;
+  border: 1px solid #CBD5E1 !important;
   border-radius: 0.875rem;
-  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+  box-shadow: inset 0 1px 2px 0 rgba(15, 23, 42, 0.03);
 }
 
 .theme-dark .pos-inset, .theme-dark .neo-card-inset, .theme-dark .neo-inset,
@@ -180,11 +180,11 @@
 /* Touch-Optimized POS Button */
 .pos-btn, .neo-btn {
   background-color: #FFFFFF !important;
-  border: 1px solid #E4E4E7 !important;
+  border: 1px solid #CBD5E1 !important;
   border-radius: 0.75rem;
   font-weight: 600;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-  color: #18181B;
+  box-shadow: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  color: #0F172A;
   transition: all 0.15s ease-in-out;
   cursor: pointer;
 }
@@ -198,9 +198,9 @@
 }
 
 .pos-btn:hover, .neo-btn:hover {
-  background-color: #F4F4F5 !important;
-  border-color: #D4D4D8 !important;
-  color: #09090B;
+  background-color: #F8FAFC !important;
+  border-color: #94A3B8 !important;
+  color: #020617;
 }
 
 .theme-dark .pos-btn:hover, .theme-dark .neo-btn:hover,

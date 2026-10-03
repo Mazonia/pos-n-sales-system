@@ -74,7 +74,7 @@ export const PwaInstallBanner: React.FC<PwaInstallBannerProps> = ({ isDark }) =>
       <div className={`border-b px-4 py-2 flex flex-wrap items-center justify-between gap-3 shrink-0 relative transition-colors ${
         isDark
           ? 'bg-[#1A1C22] border-[#282B34] text-stone-100'
-          : 'bg-stone-100 border-stone-200 text-stone-800'
+          : 'bg-white border-slate-300 text-slate-900 shadow-xs'
       }`}>
         {/* Left: App Identity & Offline Capability Details */}
         <div className="flex items-center gap-3">
@@ -83,7 +83,7 @@ export const PwaInstallBanner: React.FC<PwaInstallBannerProps> = ({ isDark }) =>
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-extrabold text-xs tracking-tight flex items-center gap-1.5">
+              <span className={`font-extrabold text-xs tracking-tight flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 Install Akwaaba POS for Offline Operation
               </span>
               <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-500 border border-amber-500/30 text-[10px] font-mono font-bold flex items-center gap-1">
@@ -97,7 +97,7 @@ export const PwaInstallBanner: React.FC<PwaInstallBannerProps> = ({ isDark }) =>
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-stone-400 mt-0.5">
+            <p className={`text-[11px] ${isDark ? 'text-stone-400' : 'text-slate-600 font-medium'} mt-0.5`}>
               Installs to home screen with standalone window, barcode scanner acceleration, and complete zero-network reliability.
             </p>
           </div>
@@ -124,7 +124,7 @@ export const PwaInstallBanner: React.FC<PwaInstallBannerProps> = ({ isDark }) =>
                 triggerHaptic('tap');
                 setShowIOSGuide(true);
               }}
-              className="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 border border-amber-500/30 font-bold text-xs flex items-center gap-1.5 transition active:scale-95 touch-manipulation cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 border border-amber-500/30 font-bold text-xs flex items-center gap-1.5 transition active:scale-95 touch-manipulation cursor-pointer"
             >
               <Smartphone className="w-3.5 h-3.5" />
               <span>Add to Home Screen</span>
@@ -139,7 +139,7 @@ export const PwaInstallBanner: React.FC<PwaInstallBannerProps> = ({ isDark }) =>
                 alert('Akwaaba POS is equipped with an active Service Worker! To install on your desktop or mobile browser, look for the install icon in your address bar or menu.');
               }}
               className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 touch-manipulation ${
-                isDark ? 'border-[#282B34] text-stone-300 hover:bg-[#20232B]' : 'border-stone-300 text-stone-700 hover:bg-white'
+                isDark ? 'border-[#282B34] text-stone-300 hover:bg-[#20232B]' : 'border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100 shadow-2xs'
               }`}
             >
               <CheckCircle2 className="w-3.5 h-3.5 text-amber-500" />
@@ -150,7 +150,9 @@ export const PwaInstallBanner: React.FC<PwaInstallBannerProps> = ({ isDark }) =>
           {/* Dismiss button */}
           <button
             onClick={handleDismiss}
-            className="p-1.5 rounded-xl text-stone-400 hover:text-white transition touch-manipulation"
+            className={`p-1.5 rounded-xl transition touch-manipulation ${
+              isDark ? 'text-stone-400 hover:text-white' : 'text-slate-500 hover:text-slate-900'
+            }`}
             title="Dismiss banner for this session"
           >
             <X className="w-4 h-4" />
@@ -162,63 +164,63 @@ export const PwaInstallBanner: React.FC<PwaInstallBannerProps> = ({ isDark }) =>
       {showIOSGuide && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
           <div className={`w-full max-w-sm rounded-3xl border p-6 shadow-2xl space-y-4 ${
-            isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-white border-stone-200 text-stone-900'
+            isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-[#EBEEF2] border-slate-300 text-slate-900'
           }`}>
-            <div className="flex items-center justify-between pb-2 border-b border-[#282B34]/40">
-              <div className="flex items-center gap-2 text-amber-400 font-bold text-sm">
+            <div className={`flex items-center justify-between pb-2 border-b ${isDark ? 'border-[#282B34]/40' : 'border-slate-200'}`}>
+              <div className="flex items-center gap-2 text-amber-500 font-bold text-sm">
                 <Smartphone className="w-4 h-4" />
                 <span>Install on iPhone / iPad</span>
               </div>
               <button
                 onClick={() => setShowIOSGuide(false)}
-                className="text-stone-400 hover:text-white"
+                className={`transition ${isDark ? 'text-stone-400 hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-xs text-stone-400 leading-relaxed">
+            <p className={`text-xs ${isDark ? 'text-stone-400' : 'text-slate-600'} leading-relaxed`}>
               Install <strong>Akwaaba POS</strong> as a standalone application on your iOS device for full-screen checkout and offline resilience:
             </p>
 
             <div className="space-y-3 text-xs">
               <div className={`p-3 rounded-2xl border flex items-start gap-3 ${
-                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-stone-50 border-stone-200'
+                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-white border-slate-300 shadow-2xs'
               }`}>
-                <div className="p-1.5 rounded-xl bg-amber-500/20 text-amber-400 shrink-0">
+                <div className="p-1.5 rounded-xl bg-amber-500/20 text-amber-500 shrink-0">
                   <Share className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="font-bold">1. Tap Safari Share Button</div>
-                  <div className="text-[11px] text-stone-400 mt-0.5">
+                  <div className={`text-[11px] ${isDark ? 'text-stone-400' : 'text-slate-600'} mt-0.5`}>
                     Tap the square share button with an arrow pointing up at the bottom of Safari.
                   </div>
                 </div>
               </div>
 
               <div className={`p-3 rounded-2xl border flex items-start gap-3 ${
-                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-stone-50 border-stone-200'
+                isDark ? 'bg-[#141519] border-[#282B34]' : 'bg-white border-slate-300 shadow-2xs'
               }`}>
-                <div className="p-1.5 rounded-xl bg-stone-500/20 text-stone-300 shrink-0">
+                <div className={`p-1.5 rounded-xl shrink-0 ${isDark ? 'bg-stone-500/20 text-stone-300' : 'bg-slate-200 text-slate-700'}`}>
                   <PlusSquare className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="font-bold">2. Select "Add to Home Screen"</div>
-                  <div className="text-[11px] text-stone-400 mt-0.5">
+                  <div className={`text-[11px] ${isDark ? 'text-stone-400' : 'text-slate-600'} mt-0.5`}>
                     Scroll down the options list and select <strong>Add to Home Screen</strong>.
                   </div>
                 </div>
               </div>
 
               <div className={`p-3 rounded-2xl border flex items-start gap-3 ${
-                isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-white border-slate-300 shadow-2xs'
               }`}>
-                <div className="p-1.5 rounded-xl bg-purple-500/20 text-purple-400 shrink-0">
+                <div className="p-1.5 rounded-xl bg-purple-500/20 text-purple-600 dark:text-purple-400 shrink-0">
                   <CheckCircle2 className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="font-bold">3. Launch Standalone App</div>
-                  <div className="text-[11px] text-[#8A99A8] mt-0.5">
+                  <div className={`text-[11px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-600'} mt-0.5`}>
                     Open from your home screen. Full offline till, barcode scanner, and tax returns work without cellular data.
                   </div>
                 </div>
@@ -230,7 +232,7 @@ export const PwaInstallBanner: React.FC<PwaInstallBannerProps> = ({ isDark }) =>
                 triggerHaptic('tap');
                 setShowIOSGuide(false);
               }}
-              className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition active:scale-95 cursor-pointer"
+              className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition active:scale-95 cursor-pointer shadow-sm"
             >
               Got It
             </button>

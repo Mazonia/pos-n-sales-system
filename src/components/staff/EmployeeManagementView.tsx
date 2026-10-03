@@ -395,44 +395,58 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
       case 'SUPER_ADMIN':
         return {
           label: 'Super Admin',
-          color: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+          color: isDark
+            ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+            : 'bg-amber-100 text-amber-800 border-amber-300',
         };
       case 'GENERAL_MANAGER':
         return {
           label: 'General Manager',
-          color: 'bg-purple-500/15 text-purple-400 border-purple-500/30',
+          color: isDark
+            ? 'bg-purple-500/15 text-purple-400 border-purple-500/30'
+            : 'bg-purple-100 text-purple-800 border-purple-300',
         };
       case 'BRANCH_MANAGER':
         return {
           label: 'Branch Manager',
-          color: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+          color: isDark
+            ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+            : 'bg-amber-100 text-amber-800 border-amber-300',
         };
       case 'CASHIER':
         return {
           label: 'Cashier / Till',
-          color: 'bg-stone-500/15 text-stone-300 border-stone-500/30',
+          color: isDark
+            ? 'bg-stone-500/15 text-stone-300 border-stone-500/30'
+            : 'bg-slate-100 text-slate-800 border-slate-300',
         };
       case 'INVENTORY_OFFICER':
         return {
           label: 'Inventory Officer',
-          color: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
+          color: isDark
+            ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+            : 'bg-rose-100 text-rose-800 border-rose-300',
         };
       case 'AUDITOR':
         return {
           label: 'Tax Auditor',
-          color: 'bg-stone-500/15 text-stone-300 border-stone-500/30',
+          color: isDark
+            ? 'bg-stone-500/15 text-stone-300 border-stone-500/30'
+            : 'bg-slate-100 text-slate-800 border-slate-300',
         };
       default:
         return {
           label: role,
-          color: 'bg-slate-500/15 text-slate-400 border-slate-500/30',
+          color: isDark
+            ? 'bg-slate-500/15 text-slate-400 border-slate-500/30'
+            : 'bg-slate-100 text-slate-700 border-slate-300',
         };
     }
   };
 
   return (
     <div className={`flex-1 flex flex-col h-full overflow-hidden transition-colors ${
-      isDark ? 'bg-[#090B0E] text-[#F4F6F8]' : 'bg-[#F8F9FA] text-[#0F172A]'
+      isDark ? 'bg-[#090B0E] text-[#F4F6F8]' : 'bg-[#EBEEF2] text-[#0F172A]'
     }`}>
       {/* Toast Notification */}
       {successToast && (
@@ -446,7 +460,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
 
       {/* Top Header Bar */}
       <header className={`p-4 border-b shrink-0 flex flex-wrap items-center justify-between gap-3 ${
-        isDark ? 'border-[#242D37] bg-[#11151A]' : 'border-[#E2E5E9] bg-white shadow-xs'
+        isDark ? 'border-[#242D37] bg-[#11151A]' : 'border-slate-300 bg-white/95 shadow-xs'
       }`}>
         <div className="flex items-center gap-3">
           <div className={`p-2.5 rounded-2xl border ${
@@ -471,7 +485,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                   : 'READ ONLY'}
               </span>
             </div>
-            <p className="text-xs text-[#8A99A8]">
+            <p className={`text-xs ${isDark ? 'text-[#8A99A8]' : 'text-slate-600 font-medium'}`}>
               Manage multi-branch retail staff, operators, and POS cashier credentials with Bank of Ghana audit trails.
             </p>
           </div>
@@ -482,7 +496,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
           <button
             onClick={loadUsersList}
             className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition ${
-              isDark ? 'border-[#242D37] text-slate-300 hover:bg-[#1A2027]' : 'border-[#E2E5E9] text-slate-700 hover:bg-[#F1F3F5]'
+              isDark ? 'border-[#242D37] text-slate-300 hover:bg-[#1A2027]' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100 shadow-2xs'
             }`}
             title="Refresh staff roster"
           >
@@ -509,44 +523,44 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
 
       {/* KPI Stats Ribbon */}
       <div className={`grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 p-4 border-b shrink-0 ${
-        isDark ? 'bg-[#090B0E]/80 border-[#242D37]' : 'bg-[#F8F9FA] border-[#E2E5E9]'
+        isDark ? 'bg-[#090B0E]/80 border-[#242D37]' : 'bg-slate-100/90 border-slate-300'
       }`}>
-        <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'}`}>
-          <div className="text-[10px] text-[#8A99A8] font-bold uppercase tracking-wider">Total Staff</div>
+        <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'}`}>
+          <div className={`text-[10px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-500'} font-bold uppercase tracking-wider`}>Total Staff</div>
           <div className={`text-lg font-black font-mono mt-0.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>{users.length}</div>
         </div>
 
-        <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'}`}>
-          <div className="text-[10px] text-[#8A99A8] font-bold uppercase tracking-wider">Active Staff</div>
+        <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'}`}>
+          <div className={`text-[10px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-500'} font-bold uppercase tracking-wider`}>Active Staff</div>
           <div className="text-lg font-black font-mono mt-0.5 text-emerald-500">
             {users.filter(u => (u.status || 'ACTIVE') === 'ACTIVE').length}
           </div>
         </div>
 
-        <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'}`}>
-          <div className="text-[10px] text-[#8A99A8] font-bold uppercase tracking-wider">Cashiers</div>
-          <div className="text-lg font-black font-mono mt-0.5 text-teal-400">
+        <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'}`}>
+          <div className={`text-[10px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-500'} font-bold uppercase tracking-wider`}>Cashiers</div>
+          <div className="text-lg font-black font-mono mt-0.5 text-teal-600 dark:text-teal-400">
             {users.filter(u => u.role === 'CASHIER').length}
           </div>
         </div>
 
-        <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'}`}>
-          <div className="text-[10px] text-[#8A99A8] font-bold uppercase tracking-wider">General Mgrs</div>
-          <div className="text-lg font-black font-mono mt-0.5 text-purple-400">
+        <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'}`}>
+          <div className={`text-[10px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-500'} font-bold uppercase tracking-wider`}>General Mgrs</div>
+          <div className="text-lg font-black font-mono mt-0.5 text-purple-600 dark:text-purple-400">
             {users.filter(u => u.role === 'GENERAL_MANAGER').length}
           </div>
         </div>
 
-        <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'}`}>
-          <div className="text-[10px] text-[#8A99A8] font-bold uppercase tracking-wider">Super Admins</div>
-          <div className="text-lg font-black font-mono mt-0.5 text-amber-400">
+        <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'}`}>
+          <div className={`text-[10px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-500'} font-bold uppercase tracking-wider`}>Super Admins</div>
+          <div className="text-lg font-black font-mono mt-0.5 text-amber-600 dark:text-amber-400">
             {users.filter(u => u.role === 'SUPER_ADMIN').length}
           </div>
         </div>
 
-        <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'}`}>
-          <div className="text-[10px] text-[#8A99A8] font-bold uppercase tracking-wider">Branch Managers</div>
-          <div className="text-lg font-black font-mono mt-0.5 text-amber-500">
+        <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'}`}>
+          <div className={`text-[10px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-500'} font-bold uppercase tracking-wider`}>Branch Managers</div>
+          <div className="text-lg font-black font-mono mt-0.5 text-amber-600 dark:text-amber-500">
             {users.filter(u => u.role === 'BRANCH_MANAGER').length}
           </div>
         </div>
@@ -554,7 +568,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
 
       {/* Filter and Search Toolbar */}
       <div className={`p-3 sm:p-4 border-b flex flex-wrap items-center justify-between gap-3 shrink-0 ${
-        isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'
+        isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'
       }`}>
         <div className="flex-1 min-w-[240px] max-w-md relative">
           <Search className="w-4 h-4 text-[#8A99A8] absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -566,7 +580,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
             className={`w-full pl-9 pr-4 py-2 rounded-xl text-xs border outline-none transition ${
               isDark
                 ? 'bg-[#090B0E] border-[#242D37] text-white placeholder-slate-500 focus:border-purple-500'
-                : 'bg-[#F8F9FA] border-[#E2E5E9] text-slate-900 placeholder-slate-400 focus:border-purple-500'
+                : 'bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-purple-600'
             }`}
           />
           {searchQuery && (
@@ -585,7 +599,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
             value={roleFilter}
             onChange={e => setRoleFilter(e.target.value)}
             className={`px-3 py-2 rounded-xl border text-xs font-semibold outline-none transition ${
-              isDark ? 'bg-[#090B0E] border-[#242D37] text-[#F4F6F8]' : 'bg-[#F8F9FA] border-[#E2E5E9] text-slate-800'
+              isDark ? 'bg-[#090B0E] border-[#242D37] text-[#F4F6F8]' : 'bg-slate-50 border-slate-300 text-slate-800 focus:border-purple-600'
             }`}
           >
             <option value="ALL">All Roles</option>
@@ -601,7 +615,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
             value={branchFilter}
             onChange={e => setBranchFilter(e.target.value)}
             className={`px-3 py-2 rounded-xl border text-xs font-semibold outline-none transition ${
-              isDark ? 'bg-[#090B0E] border-[#242D37] text-[#F4F6F8]' : 'bg-[#F8F9FA] border-[#E2E5E9] text-slate-800'
+              isDark ? 'bg-[#090B0E] border-[#242D37] text-[#F4F6F8]' : 'bg-slate-50 border-slate-300 text-slate-800 focus:border-purple-600'
             }`}
           >
             <option value="ALL">All Branches</option>
@@ -617,8 +631,8 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                 setBranchFilter('ALL');
                 setSearchQuery('');
               }}
-              className={`p-2 rounded-xl border text-xs font-semibold text-slate-400 hover:text-white transition ${
-                isDark ? 'border-[#242D37] hover:bg-[#1A2027]' : 'border-[#E2E5E9] hover:bg-[#F1F3F5]'
+              className={`p-2 rounded-xl border text-xs font-semibold transition ${
+                isDark ? 'border-[#242D37] text-slate-400 hover:text-white hover:bg-[#1A2027]' : 'border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
               title="Reset all filters"
             >
@@ -632,13 +646,13 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3">
         {filteredUsers.length === 0 ? (
           <div className={`p-12 text-center rounded-3xl border ${
-            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'
+            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'
           }`}>
             <Users className="w-12 h-12 text-[#8A99A8] mx-auto mb-3 opacity-40" />
             <h3 className={`text-base font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
               No Staff Accounts Found
             </h3>
-            <p className="text-xs text-[#8A99A8] mt-1 max-w-sm mx-auto">
+            <p className={`text-xs mt-1 max-w-sm mx-auto ${isDark ? 'text-[#8A99A8]' : 'text-slate-600'}`}>
               No employee accounts match the current filter or search criteria.
             </p>
             {isAuthorized && (
@@ -653,13 +667,13 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
           </div>
         ) : (
           <div className={`rounded-3xl border overflow-hidden ${
-            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9] shadow-xs'
+            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'
           }`}>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className={`border-b text-[11px] font-bold uppercase tracking-wider text-[#8A99A8] ${
-                    isDark ? 'border-[#242D37] bg-[#090B0E]/50' : 'border-[#E2E5E9] bg-slate-50'
+                  <tr className={`border-b text-[11px] font-bold uppercase tracking-wider ${
+                    isDark ? 'border-[#242D37] bg-[#090B0E]/50 text-[#8A99A8]' : 'border-slate-300 bg-slate-100 text-slate-700'
                   }`}>
                     <th className="py-3.5 px-4">Operator / Employee</th>
                     <th className="py-3.5 px-4">Role & Permissions</th>
@@ -669,7 +683,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                     <th className="py-3.5 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#242D37]/40">
+                <tbody className={`divide-y ${isDark ? 'divide-[#242D37]/40' : 'divide-slate-200'}`}>
                   {filteredUsers.map(user => {
                     const badge = getRoleBadge(user.role);
                     const isSelf = user.id === currentUser.id;
@@ -683,7 +697,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                           isDark
                             ? 'hover:bg-[#1A2027]/70'
                             : 'hover:bg-slate-50'
-                        } ${isSelf ? (isDark ? 'bg-purple-950/20' : 'bg-purple-50/50') : ''}`}
+                        } ${isSelf ? (isDark ? 'bg-purple-950/20' : 'bg-purple-50/70') : ''}`}
                       >
                         {/* Avatar & Name */}
                         <td className="py-3 px-4">
@@ -705,7 +719,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                                   </span>
                                 )}
                               </div>
-                              <div className="text-[11px] text-[#8A99A8] font-mono flex items-center gap-2 mt-0.5">
+                              <div className={`text-[11px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-600'} font-mono flex items-center gap-2 mt-0.5`}>
                                 <span>@{user.username}</span>
                                 {user.phone && (
                                   <>
@@ -715,7 +729,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                                 )}
                               </div>
                               {user.enrolledBy && (
-                                <div className="text-[10px] text-slate-500 mt-0.5">
+                                <div className={`text-[10px] ${isDark ? 'text-slate-500' : 'text-slate-500'} mt-0.5`}>
                                   Enrolled by: {user.enrolledBy}
                                 </div>
                               )}
@@ -729,7 +743,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                             <span className={`px-2.5 py-1 rounded-xl text-[11px] font-bold border font-mono ${badge.color}`}>
                               {badge.label}
                             </span>
-                            <span className="text-[10px] text-[#8A99A8]">
+                            <span className={`text-[10px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-500'}`}>
                               ID: {user.id}
                             </span>
                           </div>
@@ -738,8 +752,8 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                         {/* Branch */}
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-1.5 text-xs">
-                            <Store className="w-3.5 h-3.5 text-[#8A99A8] shrink-0" />
-                            <span className={isDark ? 'text-slate-300' : 'text-slate-700'}>
+                            <Store className={`w-3.5 h-3.5 ${isDark ? 'text-[#8A99A8]' : 'text-slate-500'} shrink-0`} />
+                            <span className={isDark ? 'text-slate-300' : 'text-slate-800 font-medium'}>
                               {user.branchName}
                             </span>
                           </div>
@@ -749,7 +763,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-2">
                             <span className={`font-mono text-xs px-2 py-1 rounded-lg border font-bold ${
-                              isDark ? 'bg-[#090B0E] border-[#242D37] text-purple-400' : 'bg-slate-100 border-slate-200 text-purple-700'
+                              isDark ? 'bg-[#090B0E] border-[#242D37] text-purple-400' : 'bg-slate-100 border-slate-300 text-purple-700'
                             }`}>
                               {isPinRevealed ? user.pin || '0000' : '••••'}
                             </span>
@@ -757,7 +771,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                               type="button"
                               onClick={() => togglePinReveal(user.id)}
                               className={`p-1 rounded-lg border transition ${
-                                isDark ? 'border-[#242D37] text-slate-400 hover:text-white' : 'border-slate-200 text-slate-600 hover:text-black'
+                                isDark ? 'border-[#242D37] text-slate-400 hover:text-white' : 'border-slate-300 text-slate-600 hover:text-black hover:bg-slate-100'
                               }`}
                               title={isPinRevealed ? 'Hide PIN' : 'Reveal PIN'}
                             >
@@ -794,7 +808,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                                 className={`px-2.5 py-1.5 rounded-xl border text-[11px] font-bold flex items-center gap-1 transition active:scale-95 ${
                                   isDark
                                     ? 'border-[#242D37] bg-[#1A2027] text-amber-400 hover:border-amber-500'
-                                    : 'border-[#E2E5E9] bg-white text-amber-700 hover:border-amber-400 shadow-2xs'
+                                    : 'border-slate-300 bg-slate-50 text-amber-800 hover:border-amber-500 hover:bg-amber-50 shadow-2xs'
                                 }`}
                                 title="Edit employee details and assign branch"
                               >
@@ -811,7 +825,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                                 className={`px-2.5 py-1.5 rounded-xl border text-[11px] font-bold flex items-center gap-1 transition active:scale-95 ${
                                   isDark
                                     ? 'border-[#242D37] bg-[#1A2027] text-purple-400 hover:border-purple-500'
-                                    : 'border-[#E2E5E9] bg-[#F1F3F5] text-purple-700 hover:border-purple-400'
+                                    : 'border-slate-300 bg-slate-50 text-purple-700 hover:border-purple-500 hover:bg-purple-50 shadow-2xs'
                                 }`}
                                 title={`Sign in as ${user.fullName}`}
                               >
@@ -825,8 +839,8 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                               <button
                                 type="button"
                                 onClick={() => handleDeleteUser(user)}
-                                className={`p-1.5 rounded-xl border transition text-rose-400 hover:bg-rose-500/10 ${
-                                  isDark ? 'border-[#242D37]' : 'border-[#E2E5E9]'
+                                className={`p-1.5 rounded-xl border transition text-rose-500 hover:bg-rose-500/10 ${
+                                  isDark ? 'border-[#242D37]' : 'border-slate-300 hover:bg-rose-50'
                                 }`}
                                 title="Remove staff account"
                               >
@@ -849,11 +863,11 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
       {isEnrollModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
           <div className={`w-full max-w-xl rounded-3xl border shadow-2xl overflow-hidden flex flex-col max-h-[92vh] ${
-            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'
+            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-[#EBEEF2] border-slate-300'
           }`}>
             {/* Modal Header */}
             <div className={`p-4 border-b flex items-center justify-between shrink-0 ${
-              isDark ? 'border-[#242D37] bg-[#090B0E]/60' : 'border-[#E2E5E9] bg-slate-50'
+              isDark ? 'border-[#242D37] bg-[#090B0E]/60' : 'border-slate-300 bg-white'
             }`}>
               <div className="flex items-center gap-2.5">
                 <div className="p-2 rounded-xl bg-purple-500/15 text-purple-400 border border-purple-500/30">
@@ -863,14 +877,16 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                   <h3 className={`font-bold text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>
                     Enroll New Employee Account
                   </h3>
-                  <p className="text-[11px] text-[#8A99A8]">
-                    Authorized by <span className="font-semibold text-purple-400">{currentUser.fullName}</span> ({currentUser.role})
+                  <p className={`text-[11px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-600 font-medium'}`}>
+                    Authorized by <span className="font-semibold text-purple-600 dark:text-purple-400">{currentUser.fullName}</span> ({currentUser.role})
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsEnrollModalOpen(false)}
-                className="p-1.5 rounded-xl border border-transparent text-[#8A99A8] hover:text-white"
+                className={`p-1.5 rounded-xl border border-transparent transition ${
+                  isDark ? 'text-[#8A99A8] hover:text-white' : 'text-slate-500 hover:text-slate-900'
+                }`}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -879,7 +895,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
             {/* Modal Form */}
             <form onSubmit={handleEnrollSubmit} className="flex-1 overflow-y-auto p-5 space-y-4">
               {formError && (
-                <div className="p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
+                <div className="p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-500 text-xs flex items-center gap-2">
                   <ShieldAlert className="w-4 h-4 shrink-0" />
                   <span>{formError}</span>
                 </div>
@@ -888,7 +904,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
               {/* Full Name & Username */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-[#8A99A8] uppercase tracking-wider mb-1.5">
+                  <label className={`block text-[11px] font-bold ${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} uppercase tracking-wider mb-1.5`}>
                     Full Name *
                   </label>
                   <input
@@ -900,13 +916,13 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                     className={`w-full px-3.5 py-2.5 rounded-xl text-xs border outline-none font-medium transition ${
                       isDark
                         ? 'bg-[#090B0E] border-[#242D37] text-white focus:border-purple-500'
-                        : 'bg-[#F8F9FA] border-[#E2E5E9] text-slate-900 focus:border-purple-500'
+                        : 'bg-white border-slate-300 text-slate-900 focus:border-purple-600'
                     }`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-[#8A99A8] uppercase tracking-wider mb-1.5">
+                  <label className={`block text-[11px] font-bold ${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} uppercase tracking-wider mb-1.5`}>
                     System Username *
                   </label>
                   <div className="relative">
@@ -920,7 +936,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                       className={`w-full pl-7 pr-3.5 py-2.5 rounded-xl text-xs border outline-none font-mono font-medium transition ${
                         isDark
                           ? 'bg-[#090B0E] border-[#242D37] text-white focus:border-purple-500'
-                          : 'bg-[#F8F9FA] border-[#E2E5E9] text-slate-900 focus:border-purple-500'
+                          : 'bg-white border-slate-300 text-slate-900 focus:border-purple-600'
                       }`}
                     />
                   </div>
@@ -929,7 +945,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
 
               {/* Role Selection */}
               <div>
-                <label className="block text-[11px] font-bold text-[#8A99A8] uppercase tracking-wider mb-1.5">
+                <label className={`block text-[11px] font-bold ${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} uppercase tracking-wider mb-1.5`}>
                   Assigned Employee Role *
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -952,18 +968,18 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                             ? 'border-purple-500 bg-purple-500/15 shadow-xs ring-1 ring-purple-500/40'
                             : isDark
                             ? 'border-[#242D37] bg-[#090B0E] hover:border-slate-600'
-                            : 'border-[#E2E5E9] bg-[#F8F9FA] hover:border-slate-300'
+                            : 'border-slate-300 bg-white hover:border-purple-400'
                         }`}
                       >
                         <div className="flex items-center justify-between">
                           <span className={`text-xs font-bold ${
-                            isSelected ? 'text-purple-400' : isDark ? 'text-white' : 'text-slate-900'
+                            isSelected ? (isDark ? 'text-purple-400' : 'text-purple-700') : isDark ? 'text-white' : 'text-slate-900'
                           }`}>
                             {r.label}
                           </span>
-                          {isSelected && <BadgeCheck className="w-3.5 h-3.5 text-purple-400" />}
+                          {isSelected && <BadgeCheck className="w-3.5 h-3.5 text-purple-500" />}
                         </div>
-                        <span className="text-[10px] text-[#8A99A8] mt-1 leading-tight">
+                        <span className={`text-[10px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-500'} mt-1 leading-tight`}>
                           {r.desc}
                         </span>
                       </button>
@@ -975,7 +991,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
               {/* Branch Assignment & 4-Digit PIN */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-[#8A99A8] uppercase tracking-wider mb-1.5">
+                  <label className={`block text-[11px] font-bold ${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} uppercase tracking-wider mb-1.5`}>
                     Branch Assignment *
                   </label>
                   <select
@@ -984,7 +1000,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                     className={`w-full px-3.5 py-2.5 rounded-xl text-xs border outline-none font-medium transition ${
                       isDark
                         ? 'bg-[#090B0E] border-[#242D37] text-white focus:border-purple-500'
-                        : 'bg-[#F8F9FA] border-[#E2E5E9] text-slate-900 focus:border-purple-500'
+                        : 'bg-white border-slate-300 text-slate-900 focus:border-purple-600'
                     }`}
                   >
                     {PRESET_BRANCHES.map(b => (
@@ -995,13 +1011,13 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
 
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-[11px] font-bold text-[#8A99A8] uppercase tracking-wider">
+                    <label className={`block text-[11px] font-bold ${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} uppercase tracking-wider`}>
                       4-Digit Operator PIN *
                     </label>
                     <button
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, pin: generateRandomPin() }))}
-                      className="text-[10px] text-purple-400 font-bold hover:underline flex items-center gap-1"
+                      className="text-[10px] text-purple-600 dark:text-purple-400 font-bold hover:underline flex items-center gap-1"
                     >
                       <Sparkles className="w-2.5 h-2.5" />
                       <span>Random PIN</span>
@@ -1022,7 +1038,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                       className={`w-full pl-9 pr-3.5 py-2.5 rounded-xl text-xs border outline-none font-mono font-bold tracking-widest text-center transition ${
                         isDark
                           ? 'bg-[#090B0E] border-[#242D37] text-purple-400 focus:border-purple-500'
-                          : 'bg-[#F8F9FA] border-[#E2E5E9] text-purple-700 focus:border-purple-500'
+                          : 'bg-white border-slate-300 text-purple-700 focus:border-purple-600'
                       }`}
                     />
                   </div>
@@ -1032,7 +1048,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
               {/* Optional Phone & Email */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-[#8A99A8] uppercase tracking-wider mb-1.5">
+                  <label className={`block text-[11px] font-bold ${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} uppercase tracking-wider mb-1.5`}>
                     Phone Number (Optional)
                   </label>
                   <div className="relative">
@@ -1045,14 +1061,14 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                       className={`w-full pl-9 pr-3.5 py-2.5 rounded-xl text-xs border outline-none font-medium transition ${
                         isDark
                           ? 'bg-[#090B0E] border-[#242D37] text-white focus:border-purple-500'
-                          : 'bg-[#F8F9FA] border-[#E2E5E9] text-slate-900 focus:border-purple-500'
+                          : 'bg-white border-slate-300 text-slate-900 focus:border-purple-600'
                       }`}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-[#8A99A8] uppercase tracking-wider mb-1.5">
+                  <label className={`block text-[11px] font-bold ${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} uppercase tracking-wider mb-1.5`}>
                     Email Address (Optional)
                   </label>
                   <div className="relative">
@@ -1065,7 +1081,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                       className={`w-full pl-9 pr-3.5 py-2.5 rounded-xl text-xs border outline-none font-medium transition ${
                         isDark
                           ? 'bg-[#090B0E] border-[#242D37] text-white focus:border-purple-500'
-                          : 'bg-[#F8F9FA] border-[#E2E5E9] text-slate-900 focus:border-purple-500'
+                          : 'bg-white border-slate-300 text-slate-900 focus:border-purple-600'
                       }`}
                     />
                   </div>
@@ -1074,7 +1090,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
 
               {/* Avatar Color Picker */}
               <div>
-                <label className="block text-[11px] font-bold text-[#8A99A8] uppercase tracking-wider mb-1.5">
+                <label className={`block text-[11px] font-bold ${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} uppercase tracking-wider mb-1.5`}>
                   Staff Avatar Color Badge
                 </label>
                 <div className="flex items-center gap-2">
@@ -1098,27 +1114,27 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
 
               {/* Non-Repudiation Audit Notice */}
               <div className={`p-3 rounded-2xl text-[11px] border ${
-                isDark ? 'bg-[#090B0E] border-[#242D37] text-[#8A99A8]' : 'bg-slate-50 border-[#E2E5E9] text-slate-600'
+                isDark ? 'bg-[#090B0E] border-[#242D37] text-[#8A99A8]' : 'bg-white border-slate-300 text-slate-700 shadow-2xs'
               }`}>
-                <div className="flex items-center gap-1.5 font-bold text-purple-400 mb-0.5">
+                <div className="flex items-center gap-1.5 font-bold text-purple-600 dark:text-purple-400 mb-0.5">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   <span>Non-Repudiation Digital Attestation</span>
                 </div>
                 <span>
-                  This account creation will be cryptographically signed by <strong className="text-white">{currentUser.fullName}</strong> ({currentUser.role}). All shift activities under this account will be permanently audited for compliance with Bank of Ghana & GRA guidelines.
+                  This account creation will be cryptographically signed by <strong className={isDark ? 'text-white' : 'text-slate-900'}>{currentUser.fullName}</strong> ({currentUser.role}). All shift activities under this account will be permanently audited for compliance with Bank of Ghana & GRA guidelines.
                 </span>
               </div>
             </form>
 
             {/* Modal Footer */}
             <div className={`p-4 border-t shrink-0 flex items-center justify-between ${
-              isDark ? 'border-[#242D37] bg-[#090B0E]/60' : 'border-[#E2E5E9] bg-slate-50'
+              isDark ? 'border-[#242D37] bg-[#090B0E]/60' : 'border-slate-300 bg-white'
             }`}>
               <button
                 type="button"
                 onClick={() => setIsEnrollModalOpen(false)}
                 className={`px-4 py-2 rounded-xl border text-xs font-semibold transition ${
-                  isDark ? 'border-[#242D37] text-slate-400 hover:text-white' : 'border-slate-300 text-slate-600 hover:text-black'
+                  isDark ? 'border-[#242D37] text-slate-400 hover:text-white' : 'border-slate-300 bg-slate-50 text-slate-700 hover:text-black'
                 }`}
               >
                 Cancel
@@ -1141,21 +1157,21 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
       {isEditModalOpen && editingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
           <div className={`w-full max-w-lg rounded-3xl border shadow-2xl overflow-hidden flex flex-col max-h-[92vh] ${
-            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'
+            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-[#EBEEF2] border-slate-300'
           }`}>
             {/* Modal Header */}
             <div className={`p-4 border-b flex items-center justify-between shrink-0 ${
-              isDark ? 'border-[#242D37] bg-[#090B0E]/60' : 'border-[#E2E5E9] bg-slate-50'
+              isDark ? 'border-[#242D37] bg-[#090B0E]/60' : 'border-slate-300 bg-white'
             }`}>
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                <div className="p-2 rounded-xl bg-amber-500/15 text-amber-500 border border-amber-500/30">
                   <Pencil className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className={`font-bold text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>
                     Edit Employee & Branch Assignment
                   </h3>
-                  <p className="text-[11px] text-[#8A99A8] font-mono">
+                  <p className={`text-[11px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-600'} font-mono`}>
                     Editing profile for @{editingUser.username} ({editingUser.fullName})
                   </p>
                 </div>
@@ -1163,7 +1179,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
 
               <button
                 onClick={() => setIsEditModalOpen(false)}
-                className="text-[#8A99A8] hover:text-white p-1 rounded-lg"
+                className={`p-1 rounded-lg transition ${isDark ? 'text-[#8A99A8] hover:text-white' : 'text-slate-500 hover:text-slate-900'}`}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1172,34 +1188,34 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
             {/* Modal Body */}
             <form onSubmit={handleEditSubmit} className="flex-1 overflow-y-auto p-5 space-y-4 text-xs">
               {editFormError && (
-                <div className="p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 font-semibold flex items-center gap-2">
+                <div className="p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-500 font-semibold flex items-center gap-2">
                   <ShieldAlert className="w-4 h-4 shrink-0" />
                   <span>{editFormError}</span>
                 </div>
               )}
 
               <div>
-                <label className="text-[#8A99A8] block mb-1 font-semibold">Full Name *</label>
+                <label className={`${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} block mb-1 font-semibold`}>Full Name *</label>
                 <input
                   type="text"
                   required
                   value={editFormData.fullName}
                   onChange={e => setEditFormData(prev => ({ ...prev, fullName: e.target.value }))}
                   className={`w-full px-3 py-2.5 rounded-xl border text-xs font-semibold outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-slate-50 border-[#E2E5E9] text-slate-900'
+                    isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-white border-slate-300 text-slate-900'
                   }`}
                 />
               </div>
 
               {/* Branch Assignment Section */}
               <div className={`p-4 rounded-2xl border space-y-2 ${
-                isDark ? 'bg-amber-500/5 border-amber-500/20' : 'bg-amber-50/60 border-amber-200'
+                isDark ? 'bg-amber-500/5 border-amber-500/20' : 'bg-amber-50/80 border-amber-300'
               }`}>
-                <div className="flex items-center gap-2 text-amber-500 font-bold">
+                <div className="flex items-center gap-2 text-amber-600 dark:text-amber-500 font-bold">
                   <Store className="w-4 h-4" />
                   <span>Workstation Branch Allocation</span>
                 </div>
-                <p className="text-[11px] text-[#8A99A8]">
+                <p className={`text-[11px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-600'}`}>
                   Only operators allocated to a branch can log into PCs bound to that branch. Super Admin and General Manager retain roving executive privileges.
                 </p>
 
@@ -1225,7 +1241,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                     }
                   }}
                   className={`w-full px-3 py-2.5 rounded-xl border text-xs font-semibold outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                    isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-white border-slate-300 text-slate-900'
                   }`}
                 >
                   {ENTERPRISE_BRANCHES.map(b => (
@@ -1240,12 +1256,12 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
               {/* Role Selection (Managers or Super Admin) */}
               {isAuthorized && (
                 <div>
-                  <label className="text-[#8A99A8] block mb-1 font-semibold">Staff Role & Permissions</label>
+                  <label className={`${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} block mb-1 font-semibold`}>Staff Role & Permissions</label>
                   <select
                     value={editFormData.role}
                     onChange={e => setEditFormData(prev => ({ ...prev, role: e.target.value as any }))}
                     className={`w-full px-3 py-2.5 rounded-xl border text-xs font-semibold outline-none focus:border-amber-500 ${
-                      isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-slate-50 border-[#E2E5E9] text-slate-900'
+                      isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-white border-slate-300 text-slate-900'
                     }`}
                   >
                     <option value="CASHIER">Cashier / POS Operator</option>
@@ -1260,7 +1276,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
 
               {/* Security PIN */}
               <div>
-                <label className="text-[#8A99A8] block mb-1 font-semibold">4-Digit Security PIN *</label>
+                <label className={`${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} block mb-1 font-semibold`}>4-Digit Security PIN *</label>
                 <div className="relative">
                   <KeyRound className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8A99A8]" />
                   <input
@@ -1270,7 +1286,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                     value={editFormData.pin}
                     onChange={e => setEditFormData(prev => ({ ...prev, pin: e.target.value.replace(/\D/g, '').slice(0, 4) }))}
                     className={`w-full pl-9 pr-3 py-2.5 rounded-xl border text-xs font-mono font-bold outline-none focus:border-amber-500 ${
-                      isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-slate-50 border-[#E2E5E9] text-slate-900'
+                      isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-white border-slate-300 text-slate-900'
                     }`}
                   />
                 </div>
@@ -1279,24 +1295,24 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
               {/* Contact */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[#8A99A8] block mb-1 font-semibold">Phone Number</label>
+                  <label className={`${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} block mb-1 font-semibold`}>Phone Number</label>
                   <input
                     type="tel"
                     value={editFormData.phone}
                     onChange={e => setEditFormData(prev => ({ ...prev, phone: e.target.value }))}
                     placeholder="e.g. 0244123456"
                     className={`w-full px-3 py-2.5 rounded-xl border text-xs outline-none focus:border-amber-500 ${
-                      isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-slate-50 border-[#E2E5E9] text-slate-900'
+                      isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-white border-slate-300 text-slate-900'
                     }`}
                   />
                 </div>
                 <div>
-                  <label className="text-[#8A99A8] block mb-1 font-semibold">Status</label>
+                  <label className={`${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} block mb-1 font-semibold`}>Status</label>
                   <select
                     value={editFormData.status}
                     onChange={e => setEditFormData(prev => ({ ...prev, status: e.target.value as any }))}
                     className={`w-full px-3 py-2.5 rounded-xl border text-xs font-semibold outline-none focus:border-amber-500 ${
-                      isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-slate-50 border-[#E2E5E9] text-slate-900'
+                      isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-white border-slate-300 text-slate-900'
                     }`}
                   >
                     <option value="ACTIVE">ACTIVE (Authorized)</option>
@@ -1308,13 +1324,13 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
 
             {/* Modal Footer */}
             <div className={`p-4 border-t shrink-0 flex items-center justify-between ${
-              isDark ? 'border-[#242D37] bg-[#090B0E]/60' : 'border-[#E2E5E9] bg-slate-50'
+              isDark ? 'border-[#242D37] bg-[#090B0E]/60' : 'border-slate-300 bg-white'
             }`}>
               <button
                 type="button"
                 onClick={() => setIsEditModalOpen(false)}
                 className={`px-4 py-2 rounded-xl border text-xs font-semibold transition ${
-                  isDark ? 'border-[#242D37] text-slate-400 hover:text-white' : 'border-slate-300 text-slate-600 hover:text-black'
+                  isDark ? 'border-[#242D37] text-slate-400 hover:text-white' : 'border-slate-300 bg-slate-50 text-slate-700 hover:text-black'
                 }`}
               >
                 Cancel

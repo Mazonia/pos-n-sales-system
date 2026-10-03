@@ -582,11 +582,11 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
     if (active && payload && payload.length) {
       return (
         <div className={`p-3 rounded-xl border text-xs shadow-xl backdrop-blur-md ${
-          isDark ? 'bg-[#11151A]/95 border-[#242D37] text-white' : 'bg-white/95 border-[#E2E5E9] text-slate-900'
+          isDark ? 'bg-[#11151A]/95 border-[#242D37] text-white' : 'bg-white/95 border-slate-300 text-slate-900 shadow-md'
         }`}>
-          <div className="font-bold border-b border-white/10 pb-1 mb-2 font-mono text-[11px] text-[#8A99A8] flex items-center justify-between gap-4">
+          <div className="font-bold border-b border-black/10 dark:border-white/10 pb-1 mb-2 font-mono text-[11px] text-slate-500 dark:text-[#8A99A8] flex items-center justify-between gap-4">
             <span>{label}</span>
-            <span className="text-[10px] text-emerald-400 font-bold">Click to Drill Down ⚡</span>
+            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">Click to Drill Down ⚡</span>
           </div>
           <div className="space-y-1 font-mono">
             {payload.map((entry: any, index: number) => (
@@ -610,9 +610,9 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
     if (active && payload && payload.length) {
       return (
         <div className={`p-3 rounded-xl border text-xs shadow-xl backdrop-blur-md ${
-          isDark ? 'bg-[#11151A]/95 border-[#242D37] text-white' : 'bg-white/95 border-[#E2E5E9] text-slate-900'
+          isDark ? 'bg-[#11151A]/95 border-[#242D37] text-white' : 'bg-white/95 border-slate-300 text-slate-900 shadow-md'
         }`}>
-          <div className="font-bold border-b border-white/10 pb-1 mb-2 font-mono text-[11px] text-[#8A99A8]">
+          <div className="font-bold border-b border-black/10 dark:border-white/10 pb-1 mb-2 font-mono text-[11px] text-slate-500 dark:text-[#8A99A8]">
             Window: {label}
           </div>
           <div className="space-y-1 font-mono">
@@ -641,17 +641,17 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
       return (
         <div className={`p-3 rounded-xl border text-xs shadow-xl backdrop-blur-md ${
-          isDark ? 'bg-[#11151A]/95 border-[#242D37] text-white' : 'bg-white/95 border-[#E2E5E9] text-slate-900'
+          isDark ? 'bg-[#11151A]/95 border-[#242D37] text-white' : 'bg-white/95 border-slate-300 text-slate-900 shadow-md'
         }`}>
           <div className="font-bold mb-1 flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: data.payload.fill }}></span>
             <span>{data.name}</span>
           </div>
-          <div className="font-mono tabular-nums text-emerald-400 font-bold text-sm">
+          <div className="font-mono tabular-nums text-emerald-600 dark:text-emerald-400 font-bold text-sm">
             {formatGhs(data.value)}
           </div>
-          <div className="text-[10px] text-[#8A99A8] mt-0.5">
-            Contribution: <span className="font-bold text-white">{percent}%</span> of category sales
+          <div className="text-[10px] text-slate-500 dark:text-[#8A99A8] mt-0.5">
+            Contribution: <span className="font-bold text-slate-900 dark:text-white">{percent}%</span> of category sales
           </div>
         </div>
       );
@@ -660,7 +660,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-y-auto select-none">
+    <div className="flex-1 flex flex-col h-full overflow-y-auto select-none bg-[#EBEEF2] dark:bg-[#121316]">
       
       {/* EXPORT TOAST NOTIFICATION */}
       {exportToast && (
@@ -672,7 +672,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
       {/* TOP HEADER WITH EXPORT BUTTONS */}
       <div className={`p-4 border-b flex flex-wrap items-center justify-between gap-3 shrink-0 ${
-        isDark ? 'border-[#242D37] bg-[#11151A]' : 'border-[#E2E5E9] bg-white shadow-2xs'
+        isDark ? 'border-[#242D37] bg-[#11151A]' : 'border-slate-300 bg-white/95 shadow-xs'
       }`}>
         {/* Left Title & Branch Context */}
         <div>
@@ -680,8 +680,8 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
             <TrendingUp className="w-5 h-5 text-emerald-500" />
             <span>Financial Performance & Revenue Trends</span>
           </h2>
-          <p className="text-xs text-[#8A99A8]">
-            Node: <span className="font-semibold text-emerald-400">{branchName}</span> • Real-Time GRA Fiscal Ledger
+          <p className="text-xs text-slate-500 dark:text-[#8A99A8]">
+            Node: <span className="font-semibold text-emerald-600 dark:text-emerald-400">{branchName}</span> • Real-Time GRA Fiscal Ledger
           </p>
         </div>
 
@@ -691,7 +691,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
           <button
             type="button"
             onClick={handleExportCSV}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold border flex items-center gap-2 transition active:scale-95 shadow-sm ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold border flex items-center gap-2 transition active:scale-95 shadow-xs cursor-pointer ${
               isDark
                 ? 'border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400'
                 : 'border-emerald-600/30 bg-emerald-50 hover:bg-emerald-100 text-emerald-800'
@@ -706,7 +706,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
           <button
             type="button"
             onClick={handleOpenPdfPreview}
-            className="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 flex items-center gap-2 shadow-md shadow-emerald-500/20 transition"
+            className="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 flex items-center gap-2 shadow-md shadow-emerald-500/20 transition cursor-pointer"
             title="Generate and print printable PDF executive report"
           >
             <Download className="w-4 h-4 fill-slate-950" />
@@ -717,18 +717,18 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
       {/* ADVANCED MULTI-DIMENSIONAL FILTER TOOLBAR */}
       <div className={`px-4 py-3 border-b flex flex-wrap items-center justify-between gap-3 text-xs shrink-0 ${
-        isDark ? 'bg-[#090B0E]/90 border-[#242D37]' : 'bg-[#F8F9FA] border-[#E2E5E9]'
+        isDark ? 'bg-[#090B0E]/90 border-[#242D37]' : 'bg-slate-100 border-slate-300'
       }`}>
         <div className="flex flex-wrap items-center gap-3">
           
           {/* Filter 1: Timeframe Window */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-mono text-[#8A99A8] flex items-center gap-1">
+            <span className="text-[11px] font-mono text-slate-600 dark:text-[#8A99A8] flex items-center gap-1">
               <Calendar className="w-3.5 h-3.5 text-emerald-500" />
               <span>Range:</span>
             </span>
             <div className={`flex items-center p-0.5 rounded-xl border text-[11px] font-semibold ${
-              isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'
+              isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300'
             }`}>
               {(['7D', '14D', '30D'] as const).map(range => (
                 <button
@@ -737,10 +737,10 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                     setTimeRange(range);
                     setSelectedDrillDay(null);
                   }}
-                  className={`px-2.5 py-1 rounded-lg transition ${
+                  className={`px-2.5 py-1 rounded-lg transition cursor-pointer ${
                     timeRange === range
                       ? 'bg-emerald-500 text-slate-950 font-bold shadow-xs'
-                      : isDark ? 'text-[#8A99A8] hover:text-white' : 'text-[#64748B] hover:text-black'
+                      : isDark ? 'text-[#8A99A8] hover:text-white' : 'text-slate-600 hover:text-black'
                   }`}
                 >
                   {range === '7D' ? '7 Days' : range === '14D' ? '14 Days' : '30 Days'}
@@ -751,7 +751,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
           {/* Filter 2: Payment Tender Channel */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-mono text-[#8A99A8] flex items-center gap-1">
+            <span className="text-[11px] font-mono text-slate-600 dark:text-[#8A99A8] flex items-center gap-1">
               <Smartphone className="w-3.5 h-3.5 text-amber-500" />
               <span>Tender:</span>
             </span>
@@ -759,7 +759,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
               value={tenderChannel}
               onChange={e => setTenderChannel(e.target.value as any)}
               className={`px-2.5 py-1 rounded-xl border text-xs font-semibold outline-none cursor-pointer ${
-                isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-800'
+                isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-slate-300 text-slate-800'
               }`}
             >
               <option value="ALL">All Tender Channels</option>
@@ -771,7 +771,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
           {/* Filter 3: Category Segment Filter */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-mono text-[#8A99A8] flex items-center gap-1">
+            <span className="text-[11px] font-mono text-slate-600 dark:text-[#8A99A8] flex items-center gap-1">
               <Layers className="w-3.5 h-3.5 text-amber-500" />
               <span>Category:</span>
             </span>
@@ -779,7 +779,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
               value={selectedCategory}
               onChange={e => setSelectedCategory(e.target.value)}
               className={`px-2.5 py-1 rounded-xl border text-xs font-semibold outline-none cursor-pointer ${
-                isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-800'
+                isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-slate-300 text-slate-800'
               }`}
             >
               <option value="ALL">All Categories</option>
@@ -794,15 +794,15 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
           {/* Filter 4: Branch Scope */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-mono text-[#8A99A8] flex items-center gap-1">
-              <Building className="w-3.5 h-3.5 text-stone-400" />
+            <span className="text-[11px] font-mono text-slate-600 dark:text-[#8A99A8] flex items-center gap-1">
+              <Building className="w-3.5 h-3.5 text-slate-400" />
               <span>Branch Scope:</span>
             </span>
             <select
               value={selectedBranch}
               onChange={e => setSelectedBranch(e.target.value)}
               className={`px-2.5 py-1 rounded-xl border text-xs font-semibold outline-none cursor-pointer ${
-                isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-800'
+                isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-slate-300 text-slate-800'
               }`}
             >
               <option value="CURRENT">{branchName}</option>
@@ -817,10 +817,10 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
         <button
           type="button"
           onClick={handleResetFilters}
-          className={`px-2.5 py-1 rounded-xl border text-[11px] font-medium flex items-center gap-1 transition ${
+          className={`px-2.5 py-1 rounded-xl border text-[11px] font-medium flex items-center gap-1 transition cursor-pointer ${
             isDark
               ? 'border-[#242D37] text-[#8A99A8] hover:text-white hover:bg-[#1A2027]'
-              : 'border-[#E2E5E9] text-slate-600 hover:text-black hover:bg-slate-100'
+              : 'border-slate-300 text-slate-600 hover:text-black hover:bg-slate-200'
           }`}
           title="Reset all filters to default"
         >
@@ -837,18 +837,18 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
           
           {/* Card 1: Gross Turnover Revenue */}
           <div className={`p-4 rounded-2xl border transition ${
-            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9] shadow-xs'
+            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'
           }`}>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#8A99A8]">Gross Revenue</span>
-              <div className="w-7 h-7 rounded-lg bg-[#00CED1]/15 text-[#00CED1] flex items-center justify-center">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-[#8A99A8]">Gross Revenue</span>
+              <div className="w-7 h-7 rounded-lg bg-teal-500/15 text-[#008285] dark:text-[#00CED1] flex items-center justify-center">
                 <DollarSign className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-lg sm:text-xl font-black font-mono tabular-nums text-[#00CED1]">
+            <div className="text-lg sm:text-xl font-black font-mono tabular-nums text-[#008285] dark:text-[#00CED1]">
               {formatGhs(totalRevenue)}
             </div>
-            <div className="flex items-center gap-1 text-[10px] text-[#00CED1] font-semibold mt-1">
+            <div className="flex items-center gap-1 text-[10px] text-[#008285] dark:text-[#00CED1] font-semibold mt-1">
               <ArrowUpRight className="w-3 h-3" />
               <span>{timeRange} Period • {totalOrders} Tickets</span>
             </div>
@@ -856,54 +856,54 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
           {/* Card 2: Mobile Money (MTN / Telecel) Share */}
           <div className={`p-4 rounded-2xl border transition ${
-            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9] shadow-xs'
+            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'
           }`}>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#8A99A8]">MoMo Digital Push</span>
+              <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-[#8A99A8]">MoMo Digital Push</span>
               <div className="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
                 <Smartphone className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-lg sm:text-xl font-black font-mono tabular-nums text-amber-400">
+            <div className="text-lg sm:text-xl font-black font-mono tabular-nums text-amber-600 dark:text-amber-400">
               {formatGhs(totalMomo)}
             </div>
-            <div className="text-[10px] text-[#8A99A8] font-mono mt-1">
-              <strong className="text-amber-400 font-bold">{momoSharePct}%</strong> tender penetration
+            <div className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono mt-1">
+              <strong className="text-amber-600 dark:text-amber-400 font-bold">{momoSharePct}%</strong> tender penetration
             </div>
           </div>
 
           {/* Card 3: Physical Cash Reconciled */}
           <div className={`p-4 rounded-2xl border transition ${
-            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9] shadow-xs'
+            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'
           }`}>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#8A99A8]">Physical Cash Till</span>
-              <div className="w-7 h-7 rounded-lg bg-stone-500/10 text-stone-300 dark:text-stone-300 flex items-center justify-center">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-[#8A99A8]">Physical Cash Till</span>
+              <div className="w-7 h-7 rounded-lg bg-slate-500/10 text-slate-600 dark:text-stone-300 flex items-center justify-center">
                 <Banknote className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-lg sm:text-xl font-black font-mono tabular-nums text-stone-900 dark:text-stone-100">
+            <div className="text-lg sm:text-xl font-black font-mono tabular-nums text-slate-900 dark:text-stone-100">
               {formatGhs(totalCash)}
             </div>
-            <div className="text-[10px] text-[#8A99A8] font-mono mt-1">
+            <div className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono mt-1">
               Verified in shift Z-reports
             </div>
           </div>
 
           {/* Card 4: GRA Fiscal Tax Liability */}
           <div className={`p-4 rounded-2xl border transition ${
-            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9] shadow-xs'
+            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'
           }`}>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#8A99A8]">GRA Levies & VAT</span>
+              <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-[#8A99A8]">GRA Levies & VAT</span>
               <div className="w-7 h-7 rounded-lg bg-amber-600/10 text-amber-500 flex items-center justify-center">
                 <Landmark className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-lg sm:text-xl font-black font-mono tabular-nums text-amber-500 dark:text-amber-400">
+            <div className="text-lg sm:text-xl font-black font-mono tabular-nums text-amber-600 dark:text-amber-400">
               {formatGhs(totalTax)}
             </div>
-            <div className="text-[10px] text-[#8A99A8] font-mono mt-1">
+            <div className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono mt-1">
               NHIL, GETFund, COVID & VAT
             </div>
           </div>
@@ -915,7 +915,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
           
           {/* LEFT: REVENUE TREND LINE CHART WITH DAILY SUMMARY SECTION (7 Cols) */}
           <div className={`lg:col-span-7 rounded-2xl border p-4 sm:p-5 flex flex-col justify-between transition ${
-            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9] shadow-xs'
+            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'
           }`}>
             <div>
               {/* Header of Chart Card */}
@@ -931,7 +931,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                         : `${timeRange} Revenue Trend & Tender Velocity (GH₵)`}
                     </span>
                   </h3>
-                  <p className="text-[11px] text-[#8A99A8]">
+                  <p className="text-[11px] text-slate-500 dark:text-[#8A99A8]">
                     {selectedDrillDay
                       ? `Inspecting granular hourly trading volume and till shift reconciliations for ${selectedDrillDay.day}`
                       : 'Comparing gross sales against Mobile Money and cash velocities (Click any day to drill down)'}
@@ -943,7 +943,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                   <button
                     type="button"
                     onClick={() => setSelectedDrillDay(null)}
-                    className="px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5 transition active:scale-95"
+                    className="px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     <span>Back to 7-Day Trend</span>
@@ -952,11 +952,11 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                   <div className="hidden sm:flex items-center gap-3 text-xs font-mono">
                     <span className="flex items-center gap-1.5">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span>
-                      <span className="text-[11px] text-[#8A99A8]">Gross Sales</span>
+                      <span className="text-[11px] text-slate-500 dark:text-[#8A99A8]">Gross Sales</span>
                     </span>
                     <span className="flex items-center gap-1.5">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span>
-                      <span className="text-[11px] text-[#8A99A8]">MoMo Push</span>
+                      <span className="text-[11px] text-slate-500 dark:text-[#8A99A8]">MoMo Push</span>
                     </span>
                   </div>
                 )}
@@ -970,62 +970,62 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                 
                 {/* 1. Total Daily Sales */}
                 <div className={`p-3 rounded-xl border flex items-center justify-between transition ${
-                  isDark ? 'bg-[#090B0E]/80 border-[#242D37]' : 'bg-[#F8F9FA] border-[#E2E5E9]'
+                  isDark ? 'bg-[#090B0E]/80 border-[#242D37]' : 'bg-slate-50 border-slate-300'
                 }`}>
                   <div>
-                    <span className="text-[10px] uppercase font-mono tracking-wider text-[#8A99A8] block">
+                    <span className="text-[10px] uppercase font-mono tracking-wider text-slate-500 dark:text-[#8A99A8] block">
                       Total Daily Sales {selectedDrillDay ? `(${selectedDrillDay.day.split(',')[0]})` : '(Today)'}
                     </span>
-                    <div className="text-base font-black font-mono text-emerald-400 mt-0.5">
+                    <div className="text-base font-black font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">
                       {formatGhs(currentDailySales)}
                     </div>
-                    <span className="text-[10px] text-[#8A99A8] font-mono">
+                    <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">
                       {currentDayOrders} completed tickets
                     </span>
                   </div>
-                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                     <DollarSign className="w-4 h-4" />
                   </div>
                 </div>
 
                 {/* 2. Total Refunds */}
                 <div className={`p-3 rounded-xl border flex items-center justify-between transition ${
-                  isDark ? 'bg-[#090B0E]/80 border-[#242D37]' : 'bg-[#F8F9FA] border-[#E2E5E9]'
+                  isDark ? 'bg-[#090B0E]/80 border-[#242D37]' : 'bg-slate-50 border-slate-300'
                 }`}>
                   <div>
-                    <span className="text-[10px] uppercase font-mono tracking-wider text-[#8A99A8] block">
+                    <span className="text-[10px] uppercase font-mono tracking-wider text-slate-500 dark:text-[#8A99A8] block">
                       Total Refunds
                     </span>
-                    <div className="text-base font-black font-mono text-rose-400 mt-0.5">
+                    <div className="text-base font-black font-mono text-rose-600 dark:text-rose-400 mt-0.5">
                       {formatGhs(currentDayRefunds)}
                     </div>
-                    <span className="text-[10px] text-[#8A99A8] font-mono">
+                    <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">
                       {currentDayRefundCount} supervisor refunds
                     </span>
                   </div>
-                  <div className="w-8 h-8 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
                     <ArrowDownLeft className="w-4 h-4" />
                   </div>
                 </div>
 
                 {/* 3. Cashier Net Variance */}
                 <div className={`p-3 rounded-xl border flex items-center justify-between transition ${
-                  isDark ? 'bg-[#090B0E]/80 border-[#242D37]' : 'bg-[#F8F9FA] border-[#E2E5E9]'
+                  isDark ? 'bg-[#090B0E]/80 border-[#242D37]' : 'bg-slate-50 border-slate-300'
                 }`}>
                   <div>
-                    <span className="text-[10px] uppercase font-mono tracking-wider text-[#8A99A8] block">
+                    <span className="text-[10px] uppercase font-mono tracking-wider text-slate-500 dark:text-[#8A99A8] block">
                       Cashier Net Variance
                     </span>
                     <div className={`text-base font-black font-mono mt-0.5 ${
                       currentDayVariance > 0
-                        ? 'text-emerald-400'
+                        ? 'text-emerald-600 dark:text-emerald-400'
                         : currentDayVariance < 0
-                        ? 'text-rose-400'
-                        : 'text-emerald-400'
+                        ? 'text-rose-600 dark:text-rose-400'
+                        : 'text-emerald-600 dark:text-emerald-400'
                     }`}>
                       {currentDayVariance > 0 ? `+${formatGhs(currentDayVariance)}` : formatGhs(currentDayVariance)}
                     </div>
-                    <span className="text-[10px] text-[#8A99A8] font-mono">
+                    <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">
                       {currentDayVariance === 0
                         ? 'Tills 100% Balanced'
                         : currentDayVariance > 0
@@ -1035,8 +1035,8 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                   </div>
                   <div className={`w-8 h-8 rounded-xl border flex items-center justify-center shrink-0 ${
                     currentDayVariance >= 0
-                      ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                      : 'bg-rose-500/10 border-rose-500/20 text-rose-400'
+                      ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                      : 'bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400'
                   }`}>
                     <Scale className="w-4 h-4" />
                   </div>
@@ -1046,7 +1046,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
               {/* Interactive Trend Drill-Down Selector Pills */}
               <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-2">
-                <span className="text-[10px] font-mono text-[#8A99A8] shrink-0">Select Day:</span>
+                <span className="text-[10px] font-mono text-slate-500 dark:text-[#8A99A8] shrink-0">Select Day:</span>
                 {activeDataset.map(dayRow => {
                   const isSelected = selectedDrillDay?.dateKey === dayRow.dateKey;
                   return (
@@ -1054,18 +1054,18 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                       key={dayRow.dateKey}
                       type="button"
                       onClick={() => handleSelectDrillDay(dayRow)}
-                      className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold transition shrink-0 flex items-center gap-1 ${
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold transition shrink-0 flex items-center gap-1 cursor-pointer ${
                         isSelected
                           ? 'bg-amber-500 text-slate-950 font-bold shadow-xs'
                           : isDark
                           ? 'bg-[#090B0E] border border-[#242D37] text-slate-300 hover:border-amber-500/50'
-                          : 'bg-white border border-[#E2E5E9] text-slate-700 hover:border-amber-500'
+                          : 'bg-white border border-slate-300 text-slate-700 hover:border-amber-500 shadow-2xs'
                       }`}
                       title={`Click to drill down into ${dayRow.day}`}
                     >
                       <span>{dayRow.day.split(',')[0]}</span>
                       {dayRow.cashierVariance !== 0 && (
-                        <span className={`w-1.5 h-1.5 rounded-full ${dayRow.cashierVariance > 0 ? 'bg-emerald-400' : 'bg-rose-400'}`}></span>
+                        <span className={`w-1.5 h-1.5 rounded-full ${dayRow.cashierVariance > 0 ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
                       )}
                     </button>
                   );
@@ -1084,18 +1084,18 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                   >
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      stroke={isDark ? '#242D37' : '#E2E5E9'}
+                      stroke={isDark ? '#242D37' : '#CBD5E1'}
                       vertical={false}
                     />
                     <XAxis
                       dataKey="hour"
-                      stroke={isDark ? '#8A99A8' : '#64748B'}
+                      stroke={isDark ? '#8A99A8' : '#475569'}
                       fontSize={10}
                       tickLine={false}
-                      axisLine={{ stroke: isDark ? '#242D37' : '#E2E5E9' }}
+                      axisLine={{ stroke: isDark ? '#242D37' : '#CBD5E1' }}
                     />
                     <YAxis
-                      stroke={isDark ? '#8A99A8' : '#64748B'}
+                      stroke={isDark ? '#8A99A8' : '#475569'}
                       fontSize={10}
                       tickLine={false}
                       axisLine={false}
@@ -1134,19 +1134,19 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                   >
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      stroke={isDark ? '#242D37' : '#E2E5E9'}
+                      stroke={isDark ? '#242D37' : '#CBD5E1'}
                       vertical={false}
                     />
                     <XAxis
                       dataKey="day"
-                      stroke={isDark ? '#8A99A8' : '#64748B'}
+                      stroke={isDark ? '#8A99A8' : '#475569'}
                       fontSize={10}
                       tickLine={false}
-                      axisLine={{ stroke: isDark ? '#242D37' : '#E2E5E9' }}
+                      axisLine={{ stroke: isDark ? '#242D37' : '#CBD5E1' }}
                       tickFormatter={(val: string) => val.split(',')[0]}
                     />
                     <YAxis
-                      stroke={isDark ? '#8A99A8' : '#64748B'}
+                      stroke={isDark ? '#8A99A8' : '#475569'}
                       fontSize={10}
                       tickLine={false}
                       axisLine={false}
@@ -1200,14 +1200,14 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
             {/* DRILL-DOWN SUB-PANELS: Cashier Shifts Reconciliation & Top Products on that Day */}
             {selectedDrillDay ? (
-              <div className="mt-3 pt-3 border-t border-[#242D37]/50 space-y-2">
+              <div className="mt-3 pt-3 border-t border-slate-200 dark:border-[#242D37]/50 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold flex items-center gap-1.5 text-amber-400">
+                  <span className="font-bold flex items-center gap-1.5 text-amber-500">
                     <UserCheck className="w-3.5 h-3.5" />
                     <span>Cashier Shifts Audited on {selectedDrillDay.day}</span>
                   </span>
-                  <span className="font-mono text-[10px] text-[#8A99A8]">
-                    Net Variance: <strong className={selectedDrillDay.cashierVariance >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
+                  <span className="font-mono text-[10px] text-slate-500 dark:text-[#8A99A8]">
+                    Net Variance: <strong className={selectedDrillDay.cashierVariance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}>
                       {selectedDrillDay.cashierVariance >= 0 ? `+${formatGhs(selectedDrillDay.cashierVariance)}` : formatGhs(selectedDrillDay.cashierVariance)}
                     </strong>
                   </span>
@@ -1218,24 +1218,24 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                     <div
                       key={shift.shiftNumber}
                       className={`p-2 rounded-xl border flex items-center justify-between ${
-                        isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-[#F8F9FA] border-[#E2E5E9]'
+                        isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-slate-50 border-slate-300'
                       }`}
                     >
                       <div>
-                        <div className="font-bold font-sans text-white">{shift.cashierName}</div>
-                        <div className="text-[10px] text-[#8A99A8]">
+                        <div className="font-bold font-sans text-slate-900 dark:text-white">{shift.cashierName}</div>
+                        <div className="text-[10px] text-slate-500 dark:text-[#8A99A8]">
                           {shift.shiftNumber} • Float: {formatGhs(shift.openingFloat)}
                         </div>
                       </div>
 
                       <div className="text-right">
-                        <div className="font-bold text-emerald-400">{formatGhs(shift.cashSales + shift.momoSales)}</div>
+                        <div className="font-bold text-emerald-600 dark:text-emerald-400">{formatGhs(shift.cashSales + shift.momoSales)}</div>
                         <span className={`text-[10px] px-1.5 py-0.2 rounded font-bold ${
                           shift.variance === 0
-                            ? 'bg-emerald-500/20 text-emerald-400'
+                            ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
                             : shift.variance > 0
-                            ? 'bg-emerald-500/20 text-emerald-400'
-                            : 'bg-rose-500/20 text-rose-400'
+                            ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                            : 'bg-rose-500/20 text-rose-600 dark:text-rose-400'
                         }`}>
                           {shift.variance === 0 ? 'Balanced' : shift.variance > 0 ? `+${formatGhs(shift.variance)}` : formatGhs(shift.variance)}
                         </span>
@@ -1246,13 +1246,13 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
               </div>
             ) : (
               <div className={`mt-3 pt-3 border-t flex items-center justify-between text-xs ${
-                isDark ? 'border-[#242D37]/50 text-[#8A99A8]' : 'border-[#E2E5E9] text-slate-500'
+                isDark ? 'border-[#242D37]/50 text-[#8A99A8]' : 'border-slate-200 text-slate-600'
               }`}>
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span>Average Daily Revenue: <strong>{formatGhs(totalRevenue / activeDataset.length)}</strong></span>
+                  <span>Average Daily Revenue: <strong className="text-slate-900 dark:text-white">{formatGhs(totalRevenue / activeDataset.length)}</strong></span>
                 </div>
-                <span className="font-mono text-[11px] text-amber-400 font-semibold cursor-pointer">
+                <span className="font-mono text-[11px] text-amber-600 dark:text-amber-400 font-semibold cursor-pointer">
                   Click point on chart to drill down ⚡
                 </span>
               </div>
@@ -1261,7 +1261,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
           {/* RIGHT: SALES DISTRIBUTION BY CATEGORY PIE CHART (5 Cols) */}
           <div className={`lg:col-span-5 rounded-2xl border p-4 sm:p-5 flex flex-col justify-between transition ${
-            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9] shadow-xs'
+            isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-slate-300 shadow-xs'
           }`}>
             <div>
               <div className="flex items-center justify-between mb-2">
@@ -1271,11 +1271,11 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                   <PieIcon className="w-4 h-4 text-amber-500" />
                   <span>Sales by Category</span>
                 </h3>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-bold border border-amber-500/20">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 dark:text-amber-400 font-bold border border-amber-500/20">
                   {activeCategoryData.length} Active Segments
                 </span>
               </div>
-              <p className="text-[11px] text-[#8A99A8] mb-3">
+              <p className="text-[11px] text-slate-500 dark:text-[#8A99A8] mb-3">
                 {selectedDrillDay
                   ? `Category contribution for ${selectedDrillDay.day}`
                   : 'Distribution across FMCG, provisions, and cold-store goods'}
@@ -1310,8 +1310,8 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
               {/* Center Donut Label */}
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-[10px] text-[#8A99A8] font-mono uppercase tracking-wider">Top Share</span>
-                <span className="text-xs font-black text-emerald-400 font-mono">
+                <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono uppercase tracking-wider">Top Share</span>
+                <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 font-mono">
                   {activeCategoryData[0]?.name ? activeCategoryData[0].name.split(' ')[0] : 'Provisions'}
                 </span>
               </div>
@@ -1331,17 +1331,17 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                     className={`flex items-center justify-between p-1.5 rounded-xl text-xs transition cursor-pointer ${
                       selectedCategory === item.name
                         ? isDark ? 'bg-amber-500/15 border border-amber-500/30' : 'bg-amber-50 border border-amber-300'
-                        : isDark ? 'hover:bg-[#1A2027]' : 'hover:bg-slate-50'
+                        : isDark ? 'hover:bg-[#1A2027]' : 'hover:bg-slate-100 border border-slate-200'
                     }`}
                   >
                     <div className="flex items-center gap-2 truncate">
                       <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: color }}></span>
-                      <span className="truncate font-medium">{item.name}</span>
+                      <span className="truncate font-medium text-slate-900 dark:text-slate-200">{item.name}</span>
                     </div>
 
                     <div className="flex items-center gap-2 font-mono shrink-0">
-                      <span className="font-bold">{formatGhs(item.value)}</span>
-                      <span className="text-[10px] text-[#8A99A8] w-10 text-right">{pct}%</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{formatGhs(item.value)}</span>
+                      <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] w-10 text-right">{pct}%</span>
                     </div>
                   </div>
                 );
@@ -1353,7 +1353,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
         {/* Row 3: Bottom Summary Banner with Quick Actions */}
         <div className={`p-4 rounded-2xl border text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-          isDark ? 'bg-[#11151A] border-[#242D37] text-[#8A99A8]' : 'bg-white border-[#E2E5E9] text-slate-600'
+          isDark ? 'bg-[#11151A] border-[#242D37] text-[#8A99A8]' : 'bg-white border-slate-300 text-slate-700 shadow-xs'
         }`}>
           <div className="flex items-center gap-2">
             <Landmark className="w-4 h-4 text-emerald-500 shrink-0" />
@@ -1366,7 +1366,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
             <button
               type="button"
               onClick={handleExportCSV}
-              className="px-3 py-1.5 rounded-xl border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 font-semibold flex items-center gap-1.5 transition text-xs"
+              className="px-3 py-1.5 rounded-xl border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 font-semibold flex items-center gap-1.5 transition text-xs cursor-pointer"
             >
               <FileSpreadsheet className="w-3.5 h-3.5" />
               <span>CSV Data</span>
@@ -1374,7 +1374,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
             <button
               type="button"
               onClick={handleOpenPdfPreview}
-              className="px-3.5 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-bold hover:bg-emerald-400 flex items-center gap-1.5 transition text-xs"
+              className="px-3.5 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-bold hover:bg-emerald-400 flex items-center gap-1.5 transition text-xs cursor-pointer shadow-xs"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print Executive Summary</span>
@@ -1388,18 +1388,18 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
       {showPdfPreviewModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-6 overflow-y-auto">
           <div className={`w-full max-w-3xl rounded-3xl border shadow-2xl flex flex-col max-h-[92vh] overflow-hidden transition ${
-            isDark ? 'bg-[#11151A] border-[#242D37] text-[#F4F6F8]' : 'bg-white border-[#E2E5E9] text-[#0F172A]'
+            isDark ? 'bg-[#11151A] border-[#242D37] text-[#F4F6F8]' : 'bg-[#EBEEF2] border-slate-300 text-slate-900'
           }`}>
             
             {/* Modal Header */}
             <div className={`p-4 border-b flex items-center justify-between shrink-0 ${
-              isDark ? 'border-[#242D37] bg-[#1A2027]' : 'border-[#E2E5E9] bg-slate-50'
+              isDark ? 'border-[#242D37] bg-[#1A2027]' : 'border-slate-300 bg-white'
             }`}>
               <div className="flex items-center gap-2.5">
                 <FileText className="w-5 h-5 text-emerald-500" />
                 <div>
-                  <h3 className="font-extrabold text-sm sm:text-base">Executive Financial Summary & GRA Audit PDF</h3>
-                  <p className="text-[11px] text-[#8A99A8]">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">Executive Financial Summary & GRA Audit PDF</h3>
+                  <p className="text-[11px] text-slate-500 dark:text-[#8A99A8]">
                     Generated for {selectedBranch === 'ALL_BRANCHES' ? 'Consolidated Network' : branchName} • {selectedDrillDay ? `Drill-Down: ${selectedDrillDay.day}` : `Period: ${timeRange}`}
                   </p>
                 </div>
@@ -1409,7 +1409,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                 <button
                   type="button"
                   onClick={handlePrintPdf}
-                  className="px-4 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 active:scale-95 transition shadow-sm"
+                  className="px-4 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 active:scale-95 transition shadow-sm cursor-pointer"
                 >
                   <Printer className="w-3.5 h-3.5" />
                   <span>Print / Save as PDF</span>
@@ -1417,8 +1417,8 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowPdfPreviewModal(false)}
-                  className={`p-1.5 rounded-xl border transition ${
-                    isDark ? 'border-[#242D37] text-slate-400 hover:text-white' : 'border-[#E2E5E9] text-slate-600'
+                  className={`p-1.5 rounded-xl border transition cursor-pointer ${
+                    isDark ? 'border-[#242D37] text-slate-400 hover:text-white' : 'border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                   }`}
                 >
                   <X className="w-4 h-4" />
@@ -1430,23 +1430,23 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
             <div className="flex-1 overflow-y-auto p-6 space-y-6 text-xs font-sans print:p-0">
               
               {/* Document Letterhead */}
-              <div className="border-b border-[#242D37]/60 pb-4 flex items-start justify-between">
+              <div className="border-b border-slate-300 dark:border-[#242D37]/60 pb-4 flex items-start justify-between">
                 <div>
-                  <h1 className="text-xl font-black tracking-tight text-emerald-500">
+                  <h1 className="text-xl font-black tracking-tight text-emerald-600 dark:text-emerald-500 font-serif">
                     AKWAABA RETAIL OS • FINANCIAL AUDIT
                   </h1>
-                  <p className="text-[#8A99A8] mt-0.5 font-mono text-[11px]">
+                  <p className="text-slate-600 dark:text-[#8A99A8] mt-0.5 font-mono text-[11px]">
                     Ghana Revenue Authority (GRA) E-VAT Certified & Bank of Ghana MoMo Reconciliation
                   </p>
-                  <div className="mt-2 text-[11px] text-[#8A99A8]">
+                  <div className="mt-2 text-[11px] text-slate-600 dark:text-[#8A99A8]">
                     <span>Store: <strong>{branchName}</strong></span> • <span>Node ID: <strong>ACC-STORE-01</strong></span>
                   </div>
                 </div>
 
-                <div className="text-right text-[11px] font-mono text-[#8A99A8]">
+                <div className="text-right text-[11px] font-mono text-slate-600 dark:text-[#8A99A8]">
                   <div>Date: <strong>{new Date().toLocaleDateString('en-GB')}</strong></div>
                   <div>Report Ref: <strong>AUD-{Date.now().toString().slice(-6)}</strong></div>
-                  <div className="mt-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold inline-block">
+                  <div className="mt-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-bold inline-block">
                     COMPLIANT
                   </div>
                 </div>
@@ -1454,36 +1454,36 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
               {/* Daily Summary Strip in Document */}
               <div className="grid grid-cols-3 gap-3">
-                <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-[#F8F9FA] border-[#E2E5E9]'}`}>
-                  <span className="text-[10px] text-[#8A99A8] uppercase block">Total Daily Sales ({activeDayTarget.day})</span>
-                  <div className="text-base font-black font-mono text-emerald-400">{formatGhs(currentDailySales)}</div>
-                  <span className="text-[10px] text-[#8A99A8] font-mono">{currentDayOrders} transactions</span>
+                <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-white border-slate-300 shadow-2xs'}`}>
+                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] uppercase block">Total Daily Sales ({activeDayTarget.day})</span>
+                  <div className="text-base font-black font-mono text-emerald-600 dark:text-emerald-400">{formatGhs(currentDailySales)}</div>
+                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">{currentDayOrders} transactions</span>
                 </div>
-                <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-[#F8F9FA] border-[#E2E5E9]'}`}>
-                  <span className="text-[10px] text-[#8A99A8] uppercase block">Total Refunds</span>
-                  <div className="text-base font-black font-mono text-rose-400">{formatGhs(currentDayRefunds)}</div>
-                  <span className="text-[10px] text-[#8A99A8] font-mono">{currentDayRefundCount} authorized tickets</span>
+                <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-white border-slate-300 shadow-2xs'}`}>
+                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] uppercase block">Total Refunds</span>
+                  <div className="text-base font-black font-mono text-rose-600 dark:text-rose-400">{formatGhs(currentDayRefunds)}</div>
+                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">{currentDayRefundCount} authorized tickets</span>
                 </div>
-                <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-[#F8F9FA] border-[#E2E5E9]'}`}>
-                  <span className="text-[10px] text-[#8A99A8] uppercase block">Cashier Net Variance</span>
-                  <div className={`text-base font-black font-mono ${currentDayVariance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-white border-slate-300 shadow-2xs'}`}>
+                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] uppercase block">Cashier Net Variance</span>
+                  <div className={`text-base font-black font-mono ${currentDayVariance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                     {currentDayVariance >= 0 ? `+${formatGhs(currentDayVariance)}` : formatGhs(currentDayVariance)}
                   </div>
-                  <span className="text-[10px] text-[#8A99A8] font-mono">{currentDayVariance >= 0 ? 'Audited Surplus' : 'Audited Shortage'}</span>
+                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">{currentDayVariance >= 0 ? 'Audited Surplus' : 'Audited Shortage'}</span>
                 </div>
               </div>
 
               {/* Daily Periodic Breakdown Table */}
               <div>
-                <h4 className="font-bold text-xs uppercase font-mono tracking-wider mb-2 text-[#8A99A8]">
+                <h4 className="font-bold text-xs uppercase font-mono tracking-wider mb-2 text-slate-600 dark:text-[#8A99A8]">
                   Daily Periodic Revenue Audit Table
                 </h4>
                 <div className={`rounded-xl border overflow-hidden ${
-                  isDark ? 'border-[#242D37]' : 'border-[#E2E5E9]'
+                  isDark ? 'border-[#242D37]' : 'border-slate-300'
                 }`}>
                   <table className="w-full text-left text-xs">
                     <thead className={`text-[10px] font-mono uppercase border-b ${
-                      isDark ? 'bg-white/[0.02] text-[#8A99A8] border-[#242D37]' : 'bg-slate-50 text-[#64748B] border-[#E2E5E9]'
+                      isDark ? 'bg-white/[0.02] text-[#8A99A8] border-[#242D37]' : 'bg-slate-100 text-slate-700 border-slate-300 font-bold'
                     }`}>
                       <tr>
                         <th className="p-2.5">Date / Period</th>
@@ -1495,18 +1495,20 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                         <th className="p-2.5 text-center">Tickets</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#242D37]/30 font-mono text-[11px]">
+                    <tbody className={`font-mono text-[11px] ${
+                      isDark ? 'divide-y divide-[#242D37]/30' : 'divide-y divide-slate-200'
+                    }`}>
                       {activeDataset.map(row => (
-                        <tr key={row.day} className="hover:bg-white/[0.01]">
-                          <td className="p-2.5 font-bold font-sans">{row.day}</td>
-                          <td className="p-2.5 text-right font-bold text-amber-500">{formatGhs(row.revenue)}</td>
-                          <td className="p-2.5 text-right text-amber-400">{formatGhs(row.momoMtn + row.momoTelecel)}</td>
-                          <td className="p-2.5 text-right font-mono text-stone-700 dark:text-stone-300">{formatGhs(row.cash)}</td>
-                          <td className="p-2.5 text-right text-rose-400">{formatGhs(row.refunds)}</td>
-                          <td className={`p-2.5 text-right font-bold ${row.cashierVariance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        <tr key={row.day} className={isDark ? 'hover:bg-white/[0.01]' : 'hover:bg-slate-50'}>
+                          <td className="p-2.5 font-bold font-sans text-slate-900 dark:text-white">{row.day}</td>
+                          <td className="p-2.5 text-right font-bold text-amber-600 dark:text-amber-500">{formatGhs(row.revenue)}</td>
+                          <td className="p-2.5 text-right text-amber-600 dark:text-amber-400">{formatGhs(row.momoMtn + row.momoTelecel)}</td>
+                          <td className="p-2.5 text-right font-mono text-slate-800 dark:text-stone-300">{formatGhs(row.cash)}</td>
+                          <td className="p-2.5 text-right text-rose-600 dark:text-rose-400">{formatGhs(row.refunds)}</td>
+                          <td className={`p-2.5 text-right font-bold ${row.cashierVariance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                             {row.cashierVariance >= 0 ? `+${formatGhs(row.cashierVariance)}` : formatGhs(row.cashierVariance)}
                           </td>
-                          <td className="p-2.5 text-center">{row.orders}</td>
+                          <td className="p-2.5 text-center text-slate-700 dark:text-slate-300">{row.orders}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -1515,16 +1517,16 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
               </div>
 
               {/* Signoff & Certification Lines */}
-              <div className="pt-4 border-t border-[#242D37]/60 grid grid-cols-2 gap-8 text-[11px]">
+              <div className="pt-4 border-t border-slate-300 dark:border-[#242D37]/60 grid grid-cols-2 gap-8 text-[11px]">
                 <div>
-                  <span className="text-[#8A99A8] block mb-6">Prepared by / Branch Manager Sign-Off:</span>
-                  <div className="border-b border-[#242D37] w-48"></div>
-                  <span className="text-[10px] text-[#8A99A8] font-mono mt-1 block">Abena Osei • ID: USR-MGR-02</span>
+                  <span className="text-slate-600 dark:text-[#8A99A8] block mb-6">Prepared by / Branch Manager Sign-Off:</span>
+                  <div className="border-b border-slate-400 dark:border-[#242D37] w-48"></div>
+                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono mt-1 block">Abena Osei • ID: USR-MGR-02</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-[#8A99A8] block mb-6">Internal Auditor / GRA Tax Inspector:</span>
-                  <div className="border-b border-[#242D37] w-48 ml-auto"></div>
-                  <span className="text-[10px] text-[#8A99A8] font-mono mt-1 block">Akosua Addo • Cert #GRA-2026-901</span>
+                  <span className="text-slate-600 dark:text-[#8A99A8] block mb-6">Internal Auditor / GRA Tax Inspector:</span>
+                  <div className="border-b border-slate-400 dark:border-[#242D37] w-48 ml-auto"></div>
+                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono mt-1 block">Akosua Addo • Cert #GRA-2026-901</span>
                 </div>
               </div>
 
@@ -1532,13 +1534,13 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
             {/* Modal Footer Controls */}
             <div className={`p-4 border-t flex items-center justify-between shrink-0 ${
-              isDark ? 'border-[#242D37] bg-[#1A2027]' : 'border-[#E2E5E9] bg-slate-50'
+              isDark ? 'border-[#242D37] bg-[#1A2027]' : 'border-slate-300 bg-white'
             }`}>
               <button
                 type="button"
                 onClick={handleExportCSV}
-                className={`px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition ${
-                  isDark ? 'border-[#242D37] text-emerald-400 hover:bg-[#242D37]' : 'border-[#E2E5E9] text-emerald-700 hover:bg-slate-100'
+                className={`px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition cursor-pointer ${
+                  isDark ? 'border-[#242D37] text-emerald-400 hover:bg-[#242D37]' : 'border-slate-300 text-emerald-800 hover:bg-slate-100'
                 }`}
               >
                 <FileSpreadsheet className="w-3.5 h-3.5" />
@@ -1549,8 +1551,8 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowPdfPreviewModal(false)}
-                  className={`px-4 py-2 rounded-xl border text-xs font-semibold ${
-                    isDark ? 'border-[#242D37] text-[#8A99A8]' : 'border-[#E2E5E9] text-slate-600'
+                  className={`px-4 py-2 rounded-xl border text-xs font-semibold cursor-pointer ${
+                    isDark ? 'border-[#242D37] text-[#8A99A8]' : 'border-slate-300 text-slate-600 hover:bg-slate-100'
                   }`}
                 >
                   Close Preview
@@ -1558,7 +1560,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                 <button
                   type="button"
                   onClick={handlePrintPdf}
-                  className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition"
+                  className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition cursor-pointer"
                 >
                   <Printer className="w-3.5 h-3.5" />
                   <span>Print / Save as PDF</span>

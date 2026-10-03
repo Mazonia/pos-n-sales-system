@@ -362,14 +362,14 @@ export default function App() {
 
   return (
     <div className={`flex flex-col h-screen w-screen overflow-hidden select-none transition-colors duration-200 ${
-      isDark ? 'bg-[#121316] text-[#F4F4F6]' : 'bg-[#F5F5F7] text-stone-900'
+      isDark ? 'bg-[#121316] text-[#F4F4F6]' : 'bg-[#EBEEF2] text-[#0F172A]'
     }`}>
       
       {/* ═══ REDESIGNED PREMIUM RETAIL OS TOP NAVIGATION BAR ═══ */}
       <header className={`h-16 border-b flex items-center justify-between px-3 sm:px-6 shrink-0 z-40 transition-colors backdrop-blur-md ${
         isDark 
           ? 'border-[#282B34] bg-[#16181F]/95' 
-          : 'border-stone-200/90 bg-white/95 shadow-xs'
+          : 'border-slate-300 bg-white/95 shadow-xs'
       }`}>
         
         {/* Left: Brand Identity & Location */}
@@ -379,7 +379,7 @@ export default function App() {
             className={`lg:hidden p-2 rounded-xl border transition-all active:scale-95 cursor-pointer ${
               isDark 
                 ? 'border-[#282B34] text-stone-300 hover:text-white hover:bg-[#20232B]' 
-                : 'border-stone-200 text-stone-600 hover:text-stone-950 hover:bg-stone-100'
+                : 'border-slate-300 text-slate-700 hover:text-slate-950 hover:bg-slate-100'
             }`}
             title="Open Menu"
           >
@@ -395,14 +395,14 @@ export default function App() {
             <div className="flex items-center gap-2">
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="font-black text-sm sm:text-[15px] tracking-tight text-stone-900 dark:text-stone-100">
+                  <span className="font-black text-sm sm:text-[15px] tracking-tight text-slate-900 dark:text-stone-100">
                     AKWAABA
                   </span>
                   <span className="px-1.5 py-0.5 rounded text-[9.5px] font-black tracking-wider uppercase bg-[#FF4500]/10 text-[#FF4500] dark:bg-[#FF4500]/20 dark:text-[#FF5722] border border-[#FF4500]/25">
                     POS
                   </span>
                 </div>
-                <div className="text-[11px] text-stone-400 font-medium truncate max-w-[130px] sm:max-w-[200px]">
+                <div className="text-[11px] text-slate-500 dark:text-stone-400 font-semibold truncate max-w-[130px] sm:max-w-[200px]">
                   {branchName}
                 </div>
               </div>
@@ -414,7 +414,7 @@ export default function App() {
         <nav className={`hidden lg:flex items-center gap-1 p-1 rounded-2xl border ${
           isDark 
             ? 'bg-[#12141A] border-[#282B34]' 
-            : 'bg-stone-100/90 border-stone-200/80 shadow-2xs'
+            : 'bg-slate-200/90 border-slate-300 shadow-2xs'
         }`}>
           {navTabs.map(tab => {
             const Icon = tab.icon;
@@ -428,7 +428,7 @@ export default function App() {
                     ? 'bg-[#FF4500] text-white font-bold shadow-[0_2px_10px_rgba(255,69,0,0.35)]'
                     : isDark
                     ? 'text-stone-400 hover:text-stone-100 hover:bg-[#1C2028]'
-                    : 'text-stone-600 hover:text-stone-950 hover:bg-white/80'
+                    : 'text-slate-700 hover:text-slate-950 hover:bg-white'
                 }`}
               >
                 <Icon className="w-4 h-4" strokeWidth={isActive ? 2.2 : 1.8} />
@@ -455,7 +455,7 @@ export default function App() {
               className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all active:scale-95 cursor-pointer ${
                 isDark
                   ? 'border-[#00CED1]/30 bg-[#00CED1]/10 text-[#00CED1] hover:bg-[#00CED1]/15 shadow-[0_0_12px_rgba(0,206,209,0.15)]'
-                  : 'border-[#00CED1]/40 bg-[#00CED1]/10 text-[#008B8B] hover:bg-[#00CED1]/20'
+                  : 'border-[#00CED1]/60 bg-[#00CED1]/15 text-[#007A7C] font-bold hover:bg-[#00CED1]/25'
               }`}
               title="Till status, float balance & cash drops"
             >
@@ -483,7 +483,7 @@ export default function App() {
             className={`p-2.5 rounded-xl border transition-all duration-200 active:scale-90 cursor-pointer ${
               isDark
                 ? 'border-[#282B34] text-stone-300 hover:text-[#FF5722] hover:bg-[#20232B]'
-                : 'border-stone-200 text-stone-600 hover:bg-stone-100 hover:text-[#FF4500]'
+                : 'border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-[#FF4500]'
             }`}
             title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
           >
@@ -497,7 +497,7 @@ export default function App() {
               className={`flex items-center gap-2 p-1 sm:pr-2.5 sm:pl-1 rounded-xl border transition-all active:scale-95 cursor-pointer ${
                 isDark
                   ? 'border-[#282B34] bg-[#16181F] text-stone-200 hover:border-[#FF4500]/50'
-                  : 'border-stone-200 bg-white text-stone-800 hover:border-[#FF4500]/50 shadow-2xs'
+                  : 'border-slate-300 bg-white text-slate-900 hover:border-[#FF4500]/50 shadow-2xs'
               }`}
             >
               <div
@@ -506,10 +506,10 @@ export default function App() {
                 {currentUser.fullName.split(' ').map(n => n[0]).join('')}
               </div>
               <div className="hidden sm:block text-left leading-tight">
-                <span className="font-bold text-xs block max-w-[90px] truncate text-stone-900 dark:text-stone-100">
+                <span className="font-bold text-xs block max-w-[90px] truncate text-slate-900 dark:text-stone-100">
                   {currentUser.fullName.split(' ')[0]}
                 </span>
-                <span className="text-[10px] text-stone-400 font-medium block">
+                <span className="text-[10px] text-slate-500 dark:text-stone-400 font-semibold block">
                   {currentUser.role.split('_')[0]}
                 </span>
               </div>
@@ -521,10 +521,10 @@ export default function App() {
               <div className={`absolute right-0 top-full mt-2 w-72 rounded-2xl p-3 z-50 text-xs border shadow-2xl animate-expand-in ${
                 isDark 
                   ? 'bg-[#16181F] border-[#282B34] text-stone-200' 
-                  : 'bg-white border-stone-200 text-stone-800'
+                  : 'bg-white border-slate-300 text-slate-900 shadow-xl'
               }`}>
                 {/* User Identity Info */}
-                <div className={`p-3 rounded-xl mb-2.5 ${isDark ? 'bg-[#121316]' : 'bg-stone-50'}`}>
+                <div className={`p-3 rounded-xl mb-2.5 ${isDark ? 'bg-[#121316]' : 'bg-slate-100 border border-slate-200'}`}>
                   <div className="font-bold text-sm flex items-center gap-2">
                     <span>{currentUser.fullName}</span>
                     <ShieldCheck className="w-4 h-4 text-[#FF4500]" />
@@ -532,8 +532,8 @@ export default function App() {
                   <div className="text-[11px] text-[#FF4500] dark:text-[#FF5722] font-semibold mt-0.5">
                     {currentUser.role}
                   </div>
-                  <div className="text-[10px] text-stone-400 mt-1 flex items-center gap-1.5">
-                    <span className={`w-2 h-2 rounded-full ${isOnline ? 'bg-emerald-500' : 'bg-stone-500'}`} />
+                  <div className="text-[10px] text-slate-500 mt-1 flex items-center gap-1.5 font-medium">
+                    <span className={`w-2 h-2 rounded-full ${isOnline ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                     <span>{isOnline ? 'Connected (Cloud Synced)' : 'Offline (Local Dexie Mode)'}</span>
                   </div>
                 </div>
@@ -564,7 +564,7 @@ export default function App() {
 
                 {/* Switch User Helper */}
                 <div className="space-y-1 mb-2.5">
-                  <div className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 text-stone-400">
+                  <div className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 text-slate-500 dark:text-stone-400">
                     Switch Active Cashier:
                   </div>
                   {systemUsersList.filter(u => u.id !== currentUser.id).slice(0, 5).map(u => (
@@ -576,11 +576,11 @@ export default function App() {
                         setUserMenuOpen(false);
                       }}
                       className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between transition-all ${
-                        isDark ? 'hover:bg-[#20232B] text-stone-300' : 'hover:bg-stone-100 text-stone-700'
+                        isDark ? 'hover:bg-[#20232B] text-stone-300' : 'hover:bg-slate-100 text-slate-800'
                       }`}
                     >
                       <span className="truncate">{u.fullName}</span>
-                      <span className="text-[10px] text-stone-400">{u.role.split('_')[0]}</span>
+                      <span className="text-[10px] text-slate-500 dark:text-stone-400">{u.role.split('_')[0]}</span>
                     </button>
                   ))}
                 </div>
@@ -589,7 +589,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className={`w-full py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
+                  className={`w-full py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer ${
                     isDark 
                       ? 'bg-rose-950/30 hover:bg-rose-900/40 text-rose-400 border border-rose-900/40' 
                       : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'
@@ -610,7 +610,7 @@ export default function App() {
         <div className={`lg:hidden p-3 border-b space-y-1 animate-slide-in-top z-40 ${
           isDark 
             ? 'bg-[#16181F]/95 backdrop-blur-md border-[#282B34]' 
-            : 'bg-white/95 backdrop-blur-md border-stone-200 shadow-md'
+            : 'bg-white/98 backdrop-blur-md border-slate-300 shadow-md'
         }`}>
           {navTabs.map((item) => {
             const Icon = item.icon;
@@ -627,7 +627,7 @@ export default function App() {
                     ? 'bg-[#FF4500] text-white font-bold shadow-[0_2px_10px_rgba(255,69,0,0.3)]'
                     : isDark
                     ? 'text-stone-300 hover:text-white hover:bg-[#20232B]'
-                    : 'text-stone-700 hover:text-stone-950 hover:bg-stone-100'
+                    : 'text-slate-800 hover:text-slate-950 hover:bg-slate-100 border border-transparent hover:border-slate-200'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
