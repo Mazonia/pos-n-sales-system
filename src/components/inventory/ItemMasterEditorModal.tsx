@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LocalProduct, db } from '../../utils/dexieSync';
 import { formatGhs } from '../../utils/ghanaTaxEngine';
 import { triggerHaptic } from '../../utils/haptics';
+import { stripEmojis } from '../../utils/emojiSanitizer';
 import {
   Package,
   X,
@@ -244,22 +245,22 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-150">
-      <div className={`w-full max-w-2xl rounded-3xl border shadow-2xl flex flex-col max-h-[92vh] overflow-hidden ${
-        isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'
+      <div className={`w-full max-w-2xl rounded-3xl border shadow-2xl flex flex-col max-h-[92vh] overflow-hidden font-serif ${
+        isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-stone-200'
       }`}>
         {/* Modal Header */}
         <div className={`p-4 border-b flex items-center justify-between shrink-0 ${
-          isDark ? 'border-[#242D37] bg-[#090B0E]/60' : 'border-[#E2E5E9] bg-slate-50'
+          isDark ? 'border-[#282B34] bg-[#121316]' : 'border-stone-200 bg-stone-50'
         }`}>
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-amber-500/15 text-amber-400 border border-amber-500/30">
+            <div className="p-2 rounded-xl bg-[#00CED1]/15 text-[#00CED1] border border-[#00CED1]/30">
               <Package className="w-5 h-5" />
             </div>
             <div>
-              <h3 className={`font-bold text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <h3 className={`font-serif font-bold text-sm ${isDark ? 'text-stone-100' : 'text-stone-900'}`}>
                 {isNew ? 'Create New Inventory Item' : `Edit Item: ${product?.name}`}
               </h3>
-              <p className="text-[11px] text-[#8A99A8] font-mono">
+              <p className="text-[11px] text-stone-400 font-mono">
                 Full item master modification authorized for {currentUser.fullName} ({currentUser.role})
               </p>
             </div>
@@ -270,14 +271,14 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
               triggerHaptic('tap');
               onClose();
             }}
-            className="p-1.5 rounded-xl text-[#8A99A8] hover:text-white hover:bg-white/5 transition"
+            className="p-1.5 rounded-xl text-stone-400 hover:text-stone-100 hover:bg-white/5 transition"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Modal Form */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 space-y-4 text-xs">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 space-y-4 text-xs font-serif">
           {errorMsg && (
             <div className="p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 font-semibold flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 shrink-0" />
@@ -287,54 +288,54 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
 
           {/* Section 1: Item Identification */}
           <div className={`p-4 rounded-2xl border space-y-3 ${
-            isDark ? 'bg-[#090B0E]/50 border-[#242D37]' : 'bg-slate-50 border-[#E2E5E9]'
+            isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-stone-50 border-stone-200'
           }`}>
-            <h4 className="font-bold text-[11px] uppercase tracking-wider text-[#8A99A8] flex items-center gap-1.5">
-              <Tag className="w-3.5 h-3.5 text-amber-500" />
+            <h4 className="font-serif font-bold text-[11px] uppercase tracking-wider text-stone-400 flex items-center gap-1.5">
+              <Tag className="w-3.5 h-3.5 text-[#00CED1]" />
               <span>Item Identification & Taxonomy</span>
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="sm:col-span-2">
-                <label className="text-[11px] text-[#8A99A8] block mb-1 font-semibold">
+                <label className="text-[11px] text-stone-500 dark:text-stone-400 block mb-1 font-serif font-semibold">
                   Official Item Name *
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.name}
-                  onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, name: stripEmojis(e.target.value) }))}
                   placeholder="e.g. Royal Feast Jasmine Perfume Rice (50kg)"
-                  className={`w-full px-3 py-2 rounded-xl border text-xs font-semibold outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                  className={`w-full px-3 py-2 rounded-xl border text-xs font-serif font-semibold outline-none focus:border-[#00CED1] ${
+                    isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
                   }`}
                 />
               </div>
 
               <div>
-                <label className="text-[11px] text-[#8A99A8] block mb-1 font-semibold">
+                <label className="text-[11px] text-stone-500 dark:text-stone-400 block mb-1 font-serif font-semibold">
                   Local / Akan Designation (Optional)
                 </label>
                 <input
                   type="text"
                   value={formData.localName}
-                  onChange={e => setFormData(prev => ({ ...prev, localName: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, localName: stripEmojis(e.target.value) }))}
                   placeholder="e.g. Emo, Nsuo, Banku flour"
-                  className={`w-full px-3 py-2 rounded-xl border text-xs outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                  className={`w-full px-3 py-2 rounded-xl border text-xs font-serif outline-none focus:border-[#00CED1] ${
+                    isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
                   }`}
                 />
               </div>
 
               <div>
-                <label className="text-[11px] text-[#8A99A8] block mb-1 font-semibold">
+                <label className="text-[11px] text-stone-500 dark:text-stone-400 block mb-1 font-serif font-semibold">
                   Category *
                 </label>
                 <select
                   value={formData.category}
                   onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                  className={`w-full px-3 py-2 rounded-xl border text-xs outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                  className={`w-full px-3 py-2 rounded-xl border text-xs font-serif outline-none focus:border-[#00CED1] ${
+                    isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
                   }`}
                 >
                   {categories.map(c => (
@@ -347,54 +348,54 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                     type="text"
                     placeholder="Enter custom category name"
                     value={customCategory}
-                    onChange={e => setCustomCategory(e.target.value)}
-                    className={`mt-2 w-full px-3 py-2 rounded-xl border text-xs outline-none focus:border-amber-500 ${
-                      isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                    onChange={e => setCustomCategory(stripEmojis(e.target.value))}
+                    className={`mt-2 w-full px-3 py-2 rounded-xl border text-xs font-serif outline-none focus:border-[#00CED1] ${
+                      isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
                     }`}
                   />
                 )}
               </div>
 
               <div>
-                <label className="text-[11px] text-[#8A99A8] block mb-1 font-semibold">
+                <label className="text-[11px] text-stone-500 dark:text-stone-400 block mb-1 font-serif font-semibold">
                   SKU / Stock Code *
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.sku}
-                  onChange={e => setFormData(prev => ({ ...prev, sku: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, sku: stripEmojis(e.target.value) }))}
                   placeholder="e.g. RCE-JAS-50KG"
-                  className={`w-full px-3 py-2 rounded-xl border text-xs font-mono font-bold uppercase outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                  className={`w-full px-3 py-2 rounded-xl border text-xs font-mono font-bold uppercase outline-none focus:border-[#00CED1] ${
+                    isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
                   }`}
                 />
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-[11px] text-[#8A99A8] font-semibold">
+                  <label className="text-[11px] text-stone-500 dark:text-stone-400 font-serif font-semibold">
                     Barcode / EAN-13 *
                   </label>
                   <button
                     type="button"
                     onClick={handleGenerateBarcode}
-                    className="text-[10px] text-amber-500 hover:text-amber-400 font-mono font-bold flex items-center gap-1 active:scale-95"
+                    className="text-[10px] text-[#00CED1] hover:text-[#00CED1]/80 font-mono font-bold flex items-center gap-1 active:scale-95"
                   >
                     <Sparkles className="w-3 h-3" />
                     <span>Auto-Generate</span>
                   </button>
                 </div>
                 <div className="relative">
-                  <Barcode className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#8A99A8]" />
+                  <Barcode className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
                   <input
                     type="text"
                     required
                     value={formData.barcode}
-                    onChange={e => setFormData(prev => ({ ...prev, barcode: e.target.value }))}
+                    onChange={e => setFormData(prev => ({ ...prev, barcode: stripEmojis(e.target.value) }))}
                     placeholder="e.g. 603001889012"
-                    className={`w-full pl-8 pr-3 py-2 rounded-xl border text-xs font-mono font-bold outline-none focus:border-amber-500 ${
-                      isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                    className={`w-full pl-8 pr-3 py-2 rounded-xl border text-xs font-mono font-bold outline-none focus:border-[#00CED1] ${
+                      isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
                     }`}
                   />
                 </div>
@@ -404,18 +405,18 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
 
           {/* Section: Product Image & Packaging Photo */}
           <div className={`p-4 rounded-2xl border space-y-3 ${
-            isDark ? 'bg-[#090B0E]/50 border-[#242D37]' : 'bg-slate-50 border-[#E2E5E9]'
+            isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-stone-50 border-stone-200'
           }`}>
             <div className="flex items-center justify-between">
-              <h4 className="font-bold text-[11px] uppercase tracking-wider text-[#8A99A8] flex items-center gap-1.5">
-                <ImageIcon className="w-3.5 h-3.5 text-amber-500" />
+              <h4 className="font-serif font-bold text-[11px] uppercase tracking-wider text-stone-400 flex items-center gap-1.5">
+                <ImageIcon className="w-3.5 h-3.5 text-[#00CED1]" />
                 <span>Product Image & Packaging Photo</span>
               </h4>
               {formData.imageUrl && (
                 <button
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, imageUrl: '' }))}
-                  className="text-[10px] text-rose-500 hover:text-rose-400 font-bold flex items-center gap-1 cursor-pointer"
+                  className="text-[10px] text-rose-500 hover:text-rose-400 font-bold font-serif flex items-center gap-1 cursor-pointer"
                 >
                   <Trash2 className="w-3 h-3" />
                   <span>Remove Photo</span>
@@ -425,7 +426,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
 
             <div className="flex flex-col sm:flex-row items-start gap-4">
               {/* Image Preview / Placeholder */}
-              <div className="w-24 h-24 rounded-2xl border shrink-0 overflow-hidden flex items-center justify-center bg-stone-100 dark:bg-[#11151A] border-stone-200 dark:border-[#242D37] shadow-inner relative group">
+              <div className="w-24 h-24 rounded-2xl border shrink-0 overflow-hidden flex items-center justify-center bg-stone-100 dark:bg-[#16181F] border-stone-200 dark:border-[#282B34] shadow-inner relative group">
                 {formData.imageUrl ? (
                   <img
                     src={formData.imageUrl}
@@ -437,9 +438,9 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                     }}
                   />
                 ) : (
-                  <div className="flex flex-col items-center justify-center text-stone-400 dark:text-stone-600 gap-1 p-2 text-center">
+                  <div className="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 gap-1 p-2 text-center">
                     <ImageIcon className="w-6 h-6" />
-                    <span className="text-[9px] font-bold">No Image</span>
+                    <span className="text-[9px] font-bold font-serif">No Image</span>
                   </div>
                 )}
               </div>
@@ -447,7 +448,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
               {/* Upload Controls & URL input */}
               <div className="flex-1 space-y-2.5 w-full">
                 <div className="flex flex-wrap items-center gap-2">
-                  <label className="cursor-pointer px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs inline-flex items-center gap-1.5 active:scale-95 transition shadow-sm">
+                  <label className="cursor-pointer px-3 py-1.5 rounded-xl bg-[#00CED1] hover:bg-[#00B4B7] text-slate-950 font-bold font-serif text-xs inline-flex items-center gap-1.5 active:scale-95 transition shadow-sm">
                     <Upload className="w-3.5 h-3.5" />
                     <span>Upload Image File</span>
                     <input
@@ -457,7 +458,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                       className="hidden"
                     />
                   </label>
-                  <span className="text-[11px] text-[#8A99A8]">or enter direct image URL below</span>
+                  <span className="text-[11px] text-stone-400 font-serif">or enter direct image URL below</span>
                 </div>
 
                 <input
@@ -465,26 +466,26 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                   value={formData.imageUrl}
                   onChange={e => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
                   placeholder="https://images.unsplash.com/... or paste image URL"
-                  className={`w-full px-3 py-2 rounded-xl border text-xs outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                  className={`w-full px-3 py-2 rounded-xl border text-xs outline-none focus:border-[#00CED1] ${
+                    isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
                   }`}
                 />
 
                 {/* Quick Presets Gallery */}
                 <div className="space-y-1">
-                  <span className="text-[10px] text-[#8A99A8] font-bold block">Quick Retail Packaging Presets:</span>
+                  <span className="text-[10px] text-stone-400 font-bold font-serif block">Quick Retail Packaging Presets:</span>
                   <div className="flex flex-wrap gap-1.5">
                     {GHANA_PRODUCT_IMAGE_PRESETS.map(preset => (
                       <button
                         key={preset.name}
                         type="button"
                         onClick={() => setFormData(prev => ({ ...prev, imageUrl: preset.url }))}
-                        className={`text-[10.5px] px-2 py-0.5 rounded-lg border transition cursor-pointer ${
+                        className={`text-[10.5px] px-2 py-0.5 rounded-lg border font-serif transition cursor-pointer ${
                           formData.imageUrl === preset.url
-                            ? 'bg-amber-500 text-stone-950 font-bold border-amber-500'
+                            ? 'bg-[#00CED1] text-slate-950 font-bold border-[#00CED1]'
                             : isDark
-                            ? 'bg-[#1A1C22] border-[#282B34] text-stone-300 hover:border-amber-500/50'
-                            : 'bg-white border-stone-200 text-stone-700 hover:border-amber-500/50'
+                            ? 'bg-[#1A1C22] border-[#282B34] text-stone-300 hover:border-[#00CED1]/60 hover:text-[#00CED1]'
+                            : 'bg-white border-stone-200 text-stone-700 hover:border-[#00CED1]/60 hover:text-[#00CED1]'
                         }`}
                       >
                         {preset.name}
@@ -498,36 +499,39 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
 
           {/* Section 2: Pricing, Cost & Profit Margins */}
           <div className={`p-4 rounded-2xl border space-y-3 ${
-            isDark ? 'bg-[#090B0E]/50 border-[#242D37]' : 'bg-slate-50 border-[#E2E5E9]'
+            isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-stone-50 border-stone-200'
           }`}>
-            <h4 className="font-bold text-[11px] uppercase tracking-wider text-[#8A99A8] flex items-center gap-1.5">
-              <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
+            <h4 className="font-serif font-bold text-[11px] uppercase tracking-wider text-stone-400 flex items-center gap-1.5">
+              <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
               <span>Cost, Retail Shelf Price & Profit Metrics</span>
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-[11px] text-[#8A99A8] block mb-1 font-semibold">
+                <label className="text-[11px] text-stone-500 dark:text-stone-400 block mb-1 font-serif font-semibold">
                   Cost Price (GH₵) *
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono font-bold text-[#8A99A8]">GH₵</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono font-bold text-stone-400">GH₵</span>
                   <input
                     type="number"
                     step="0.01"
                     min="0"
                     required
                     value={formData.costPrice}
+                    onKeyDown={e => {
+                      if (['e', 'E', '+', '-'].includes(e.key)) e.preventDefault();
+                    }}
                     onChange={e => setFormData(prev => ({ ...prev, costPrice: parseFloat(e.target.value) || 0 }))}
-                    className={`w-full pl-12 pr-3 py-2 rounded-xl border text-xs font-mono font-bold outline-none focus:border-emerald-500 ${
-                      isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                    className={`w-full pl-12 pr-3 py-2 rounded-xl border text-xs font-mono tabular-nums font-bold outline-none focus:border-[#00CED1] ${
+                      isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
                     }`}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-[11px] text-[#8A99A8] block mb-1 font-semibold">
+                <label className="text-[11px] text-stone-500 dark:text-stone-400 block mb-1 font-serif font-semibold">
                   Retail Shelf Price (GH₵) *
                 </label>
                 <div className="relative">
@@ -538,9 +542,12 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                     min="0"
                     required
                     value={formData.retailPrice}
+                    onKeyDown={e => {
+                      if (['e', 'E', '+', '-'].includes(e.key)) e.preventDefault();
+                    }}
                     onChange={e => setFormData(prev => ({ ...prev, retailPrice: parseFloat(e.target.value) || 0 }))}
-                    className={`w-full pl-12 pr-3 py-2 rounded-xl border text-xs font-mono font-extrabold text-emerald-500 outline-none focus:border-emerald-500 ${
-                      isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'
+                    className={`w-full pl-12 pr-3 py-2 rounded-xl border text-xs font-mono tabular-nums font-extrabold text-emerald-500 outline-none focus:border-[#00CED1] ${
+                      isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-stone-200'
                     }`}
                   />
                 </div>
@@ -548,11 +555,11 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
             </div>
 
             {/* Real-time Profit Margin Indicator */}
-            <div className={`p-3 rounded-xl border flex items-center justify-between text-xs font-mono ${
-              isDark ? 'bg-[#11151A] border-[#242D37]' : 'bg-white border-[#E2E5E9]'
+            <div className={`p-3 rounded-xl border flex items-center justify-between text-xs font-mono tabular-nums ${
+              isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-stone-200 shadow-2xs'
             }`}>
               <div className="flex items-center gap-2">
-                <span className="text-[#8A99A8]">Unit Margin:</span>
+                <span className="text-stone-400">Unit Margin:</span>
                 <strong className={profitMarginPesewas >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
                   {formatGhs(profitMarginPesewas)}
                 </strong>
@@ -561,9 +568,9 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                 <span>
                   Gross Margin: <strong className="text-emerald-400">{marginPct}%</strong>
                 </span>
-                <span>•</span>
+                <span className="text-stone-400">•</span>
                 <span>
-                  Markup: <strong className="text-amber-400">{markupPct}%</strong>
+                  Markup: <strong className="text-[#00CED1]">{markupPct}%</strong>
                 </span>
               </div>
             </div>
@@ -576,15 +583,15 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                   id="taxExemptToggle"
                   checked={formData.isTaxExempt}
                   onChange={e => setFormData(prev => ({ ...prev, isTaxExempt: e.target.checked }))}
-                  className="rounded w-4 h-4 accent-amber-500 cursor-pointer"
+                  className="rounded w-4 h-4 accent-[#FF4500] cursor-pointer"
                 />
-                <label htmlFor="taxExemptToggle" className="text-xs cursor-pointer select-none">
+                <label htmlFor="taxExemptToggle" className="text-xs cursor-pointer select-none font-serif text-stone-700 dark:text-stone-300">
                   GRA Tax-Exempt Status (e.g. Unprocessed agricultural produce, educational items)
                 </label>
               </div>
-              <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
+              <span className={`text-[10px] font-mono tabular-nums px-2 py-0.5 rounded-full ${
                 formData.isTaxExempt
-                  ? 'bg-amber-500/20 text-amber-400 font-bold'
+                  ? 'bg-orange-500/20 text-[#FF5722] font-bold'
                   : 'bg-emerald-500/10 text-emerald-400'
               }`}>
                 {formData.isTaxExempt ? 'EXEMPT (0% VAT)' : 'GRA TAXABLE'}
@@ -594,23 +601,23 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
 
           {/* Section 3: Stock Levels & Units */}
           <div className={`p-4 rounded-2xl border space-y-3 ${
-            isDark ? 'bg-[#090B0E]/50 border-[#242D37]' : 'bg-slate-50 border-[#E2E5E9]'
+            isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-stone-50 border-stone-200'
           }`}>
-            <h4 className="font-bold text-[11px] uppercase tracking-wider text-[#8A99A8] flex items-center gap-1.5">
+            <h4 className="font-serif font-bold text-[11px] uppercase tracking-wider text-stone-400 flex items-center gap-1.5">
               <Layers className="w-3.5 h-3.5 text-purple-400" />
               <span>Stock Quantities, Safety Thresholds & Unit of Measure</span>
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
               <div>
-                <label className="text-[11px] text-[#8A99A8] block mb-1 font-semibold">
+                <label className="text-[11px] text-stone-500 dark:text-stone-400 block mb-1 font-serif font-semibold">
                   Base Unit
                 </label>
                 <select
                   value={formData.baseUnit}
                   onChange={e => setFormData(prev => ({ ...prev, baseUnit: e.target.value }))}
-                  className={`w-full px-3 py-2 rounded-xl border text-xs font-mono font-bold outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                  className={`w-full px-3 py-2 rounded-xl border text-xs font-mono font-bold outline-none focus:border-[#00CED1] ${
+                    isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
                   }`}
                 >
                   {COMMON_UNITS.map(u => (
@@ -620,7 +627,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
               </div>
 
               <div>
-                <label className="text-[11px] text-[#8A99A8] block mb-1 font-semibold">
+                <label className="text-[11px] text-stone-500 dark:text-stone-400 block mb-1 font-serif font-semibold">
                   Physical Stock
                 </label>
                 <input
@@ -628,15 +635,18 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                   min="0"
                   required
                   value={formData.currentStock}
+                  onKeyDown={e => {
+                    if (['e', 'E', '+', '-'].includes(e.key)) e.preventDefault();
+                  }}
                   onChange={e => setFormData(prev => ({ ...prev, currentStock: parseInt(e.target.value) || 0 }))}
-                  className={`w-full px-3 py-2 rounded-xl border text-xs font-mono font-bold outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                  className={`w-full px-3 py-2 rounded-xl border text-xs font-mono tabular-nums font-bold outline-none focus:border-[#00CED1] ${
+                    isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
                   }`}
                 />
               </div>
 
               <div>
-                <label className="text-[11px] text-[#8A99A8] block mb-1 font-semibold text-amber-500">
+                <label className="text-[11px] text-[#FF4500] block mb-1 font-serif font-semibold">
                   Safety Threshold *
                 </label>
                 <input
@@ -644,15 +654,18 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                   min="0"
                   required
                   value={formData.safetyThreshold}
+                  onKeyDown={e => {
+                    if (['e', 'E', '+', '-'].includes(e.key)) e.preventDefault();
+                  }}
                   onChange={e => setFormData(prev => ({ ...prev, safetyThreshold: parseInt(e.target.value) || 0 }))}
-                  className={`w-full px-3 py-2 rounded-xl border text-xs font-mono font-bold outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-[#11151A] border-[#242D37] text-amber-400' : 'bg-white border-[#E2E5E9] text-amber-700'
+                  className={`w-full px-3 py-2 rounded-xl border text-xs font-mono tabular-nums font-bold outline-none focus:border-[#FF4500] ${
+                    isDark ? 'bg-[#16181F] border-[#282B34] text-[#FF5722]' : 'bg-white border-stone-200 text-[#FF4500]'
                   }`}
                 />
               </div>
 
               <div>
-                <label className="text-[11px] text-[#8A99A8] block mb-1 font-semibold">
+                <label className="text-[11px] text-stone-500 dark:text-stone-400 block mb-1 font-serif font-semibold">
                   Reorder Level
                 </label>
                 <input
@@ -660,9 +673,12 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                   min="0"
                   required
                   value={formData.reorderLevel}
+                  onKeyDown={e => {
+                    if (['e', 'E', '+', '-'].includes(e.key)) e.preventDefault();
+                  }}
                   onChange={e => setFormData(prev => ({ ...prev, reorderLevel: parseInt(e.target.value) || 0 }))}
-                  className={`w-full px-3 py-2 rounded-xl border text-xs font-mono font-bold outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                  className={`w-full px-3 py-2 rounded-xl border text-xs font-mono tabular-nums font-bold outline-none focus:border-[#00CED1] ${
+                    isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
                   }`}
                 />
               </div>
@@ -671,54 +687,54 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
 
           {/* Section 4: Supplier, Batch & Expiry Date */}
           <div className={`p-4 rounded-2xl border space-y-3 ${
-            isDark ? 'bg-[#090B0E]/50 border-[#242D37]' : 'bg-slate-50 border-[#E2E5E9]'
+            isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-stone-50 border-stone-200'
           }`}>
-            <h4 className="font-bold text-[11px] uppercase tracking-wider text-[#8A99A8] flex items-center gap-1.5">
-              <Truck className="w-3.5 h-3.5 text-amber-400" />
+            <h4 className="font-serif font-bold text-[11px] uppercase tracking-wider text-stone-400 flex items-center gap-1.5">
+              <Truck className="w-3.5 h-3.5 text-[#00CED1]" />
               <span>Supplier, Lot & Expiry Batch Data</span>
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="text-[11px] text-[#8A99A8] block mb-1 font-semibold">
+                <label className="text-[11px] text-stone-500 dark:text-stone-400 block mb-1 font-serif font-semibold">
                   Supplier / Vendor Name
                 </label>
                 <input
                   type="text"
                   value={formData.supplierName}
-                  onChange={e => setFormData(prev => ({ ...prev, supplierName: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, supplierName: stripEmojis(e.target.value) }))}
                   placeholder="e.g. Finatrade Ghana Ltd"
-                  className={`w-full px-3 py-2 rounded-xl border text-xs outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                  className={`w-full px-3 py-2 rounded-xl border text-xs font-serif outline-none focus:border-[#00CED1] ${
+                    isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
                   }`}
                 />
               </div>
 
               <div>
-                <label className="text-[11px] text-[#8A99A8] block mb-1 font-semibold">
+                <label className="text-[11px] text-stone-500 dark:text-stone-400 block mb-1 font-serif font-semibold">
                   Batch / Lot Code
                 </label>
                 <input
                   type="text"
                   value={formData.batchNumber}
-                  onChange={e => setFormData(prev => ({ ...prev, batchNumber: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, batchNumber: stripEmojis(e.target.value) }))}
                   placeholder="e.g. BAT-2026-891"
-                  className={`w-full px-3 py-2 rounded-xl border text-xs font-mono outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                  className={`w-full px-3 py-2 rounded-xl border text-xs font-mono outline-none focus:border-[#00CED1] ${
+                    isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
                   }`}
                 />
               </div>
 
               <div>
-                <label className="text-[11px] text-[#8A99A8] block mb-1 font-semibold">
+                <label className="text-[11px] text-stone-500 dark:text-stone-400 block mb-1 font-serif font-semibold">
                   Expiry Date
                 </label>
                 <input
                   type="date"
                   value={formData.expiryDate}
                   onChange={e => setFormData(prev => ({ ...prev, expiryDate: e.target.value }))}
-                  className={`w-full px-3 py-2 rounded-xl border text-xs font-mono outline-none focus:border-amber-500 ${
-                    isDark ? 'bg-[#11151A] border-[#242D37] text-white' : 'bg-white border-[#E2E5E9] text-slate-900'
+                  className={`w-full px-3 py-2 rounded-xl border text-xs font-mono outline-none focus:border-[#00CED1] ${
+                    isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
                   }`}
                 />
               </div>
@@ -728,10 +744,10 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
 
         {/* Modal Footer Actions */}
         <div className={`p-4 border-t flex items-center justify-between shrink-0 ${
-          isDark ? 'border-[#242D37] bg-[#090B0E]/60' : 'border-[#E2E5E9] bg-slate-50'
+          isDark ? 'border-[#282B34] bg-[#121316]' : 'border-stone-200 bg-stone-50'
         }`}>
-          <div className="flex items-center gap-1.5 text-[11px] text-[#8A99A8]">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+          <div className="flex items-center gap-1.5 text-[11px] text-stone-400 font-serif">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span>Audit log automatically recorded for non-repudiation</span>
           </div>
 
@@ -742,7 +758,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                 triggerHaptic('tap');
                 onClose();
               }}
-              className="px-4 py-2 rounded-xl border border-[#242D37] text-[#8A99A8] hover:text-white font-semibold transition active:scale-95"
+              className="px-4 py-2 rounded-xl border border-stone-300 dark:border-[#282B34] text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white font-serif font-semibold transition active:scale-95"
             >
               Cancel
             </button>
@@ -750,7 +766,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
               type="button"
               disabled={isSubmitting}
               onClick={handleSubmit}
-              className="px-5 py-2 bg-amber-500 hover:bg-amber-400 active:scale-95 disabled:opacity-40 text-slate-950 font-bold rounded-xl transition flex items-center gap-1.5 shadow-md"
+              className="px-5 py-2 bg-[#FF4500] hover:bg-[#E03E00] active:scale-95 disabled:opacity-40 text-white font-serif font-bold rounded-xl transition flex items-center gap-1.5 shadow-[0_2px_12px_rgba(255,69,0,0.3)]"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>{isNew ? 'Create & Save Item' : 'Save Item Changes'}</span>

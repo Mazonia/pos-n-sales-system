@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@theme {
+  --font-serif: 'Lora', Georgia, -apple-system, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Inter', -apple-system, BlinkMacSystemFont, monospace, sans-serif;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
@@ -13,10 +19,12 @@
   --pos-text-subtle: #A1A1AA;
   --pos-accent: #FF4500;
   --pos-accent-hover: #E03E00;
+  --pos-cyan: #00CED1;
+  --pos-cyan-hover: #00B4B7;
 }
 
 .theme-dark, .dark {
-  /* Dark Theme: Pure Ashy Charcoal & Fiery Red-Orange (#FF4500) */
+  /* Dark Theme: Pure Ashy Charcoal & Fiery Red-Orange (#FF4500) & Radiant Cyan (#00CED1) */
   --pos-canvas: #121316;
   --pos-card: #1A1C22;
   --pos-card-border: #282B34;
@@ -26,6 +34,8 @@
   --pos-text-subtle: #6B7280;
   --pos-accent: #FF4500;
   --pos-accent-hover: #FF5722;
+  --pos-cyan: #00CED1;
+  --pos-cyan-hover: #26E5E8;
 }
 
 @layer base {
@@ -72,19 +82,53 @@
     color: inherit;
   }
 
+  /* ════ CUSTOM SITE-WIDE SCROLLBARS WITH #00CED1 ACCENTS ════ */
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+    scrollbar-color: #CBD5E1 transparent;
+  }
+
+  .dark * {
+    scrollbar-color: #282B34 transparent;
   }
 
   ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: rgba(156, 163, 175, 0.3);
+    background-color: #D1D5DB;
     border-radius: 9999px;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #00CED1;
+    box-shadow: 0 0 6px rgba(0, 206, 209, 0.4);
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background-color: #282B34;
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background-color: #00CED1;
+    box-shadow: 0 0 8px rgba(0, 206, 209, 0.6);
+  }
+
+  /* Remove default browser spinners on number inputs */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
   }
 }
 

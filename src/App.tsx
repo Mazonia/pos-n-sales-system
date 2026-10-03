@@ -454,14 +454,14 @@ export default function App() {
               onClick={() => setShowShiftModal(true)}
               className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all active:scale-95 cursor-pointer ${
                 isDark
-                  ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15'
-                  : 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
+                  ? 'border-[#00CED1]/30 bg-[#00CED1]/10 text-[#00CED1] hover:bg-[#00CED1]/15 shadow-[0_0_12px_rgba(0,206,209,0.15)]'
+                  : 'border-[#00CED1]/40 bg-[#00CED1]/10 text-[#008B8B] hover:bg-[#00CED1]/20'
               }`}
               title="Till status, float balance & cash drops"
             >
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00CED1] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00CED1]"></span>
               </span>
               <span className="hidden sm:inline">Till Active</span>
             </button>

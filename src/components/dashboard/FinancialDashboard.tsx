@@ -841,14 +841,14 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
           }`}>
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[11px] font-mono uppercase tracking-wider text-[#8A99A8]">Gross Revenue</span>
-              <div className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-[#00CED1]/15 text-[#00CED1] flex items-center justify-center">
                 <DollarSign className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-lg sm:text-xl font-black font-mono tabular-nums text-emerald-400">
+            <div className="text-lg sm:text-xl font-black font-mono tabular-nums text-[#00CED1]">
               {formatGhs(totalRevenue)}
             </div>
-            <div className="flex items-center gap-1 text-[10px] text-emerald-400 font-semibold mt-1">
+            <div className="flex items-center gap-1 text-[10px] text-[#00CED1] font-semibold mt-1">
               <ArrowUpRight className="w-3 h-3" />
               <span>{timeRange} Period • {totalOrders} Tickets</span>
             </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LocalCustomer, LocalOrderPayment } from '../../utils/dexieSync';
 import { formatGhs, roundToPesewas } from '../../utils/ghanaTaxEngine';
 import { triggerHaptic } from '../../utils/haptics';
+import { stripEmojis } from '../../utils/emojiSanitizer';
 import {
   Banknote,
   Smartphone,
@@ -319,16 +320,52 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   </span>
                   <input
                     type="number"
-                    step="0.1"
+                    step="1"
+                    min="0"
                     value={cashTendered || ''}
-                    onChange={e => setCashTendered(parseFloat(e.target.value) || 0)}
-                    className={`w-full pl-16 pr-4 py-3 rounded-xl text-xl font-mono tabular-nums font-bold border outline-none transition focus:ring-2 focus:ring-[#FF4500]/30 ${
+                    onKeyDown={(e) => {
+                      if (['e', 'E', '+', '-'].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
+                    onChange={e => {
+                      const val = parseFloat(e.target.value);
+                      setCashTendered(isNaN(val) ? 0 : Math.max(0, val));
+                    }}
+                    className={`w-full pl-16 pr-20 py-3 rounded-xl text-xl font-mono tabular-nums font-bold border outline-none transition focus:ring-2 focus:ring-[#00CED1]/30 ${
                       isDark
-                        ? 'bg-[#1A1C22] border-[#282B34] text-white focus:border-[#FF4500]'
-                        : 'bg-white border-stone-200 text-stone-900 focus:border-[#FF4500]'
+                        ? 'bg-[#1A1C22] border-[#282B34] text-white focus:border-[#00CED1]'
+                        : 'bg-white border-stone-200 text-stone-900 focus:border-[#00CED1]'
                     }`}
                     placeholder="0.00"
                   />
+                  {/* Custom Modern Stepper Controls (Replaces default browser spinbutton) */}
+                  <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setCashTendered(prev => Math.max(0, roundToPesewas(prev - 1)))}
+                      className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs border transition active:scale-95 cursor-pointer ${
+                        isDark
+                          ? 'bg-[#141519] border-[#282B34] text-stone-300 hover:text-[#00CED1] hover:border-[#00CED1]/50'
+                          : 'bg-stone-100 border-stone-200 text-stone-700 hover:text-[#00CED1] hover:border-[#00CED1]'
+                      }`}
+                      title="Decrease amount (-1)"
+                    >
+                      -
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCashTendered(prev => roundToPesewas(prev + 1))}
+                      className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs border transition active:scale-95 cursor-pointer ${
+                        isDark
+                          ? 'bg-[#141519] border-[#282B34] text-stone-300 hover:text-[#00CED1] hover:border-[#00CED1]/50'
+                          : 'bg-stone-100 border-stone-200 text-stone-700 hover:text-[#00CED1] hover:border-[#00CED1]'
+                      }`}
+                      title="Increase amount (+1)"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
 
                 {/* Tactile Cash Shortcut Chips */}
@@ -342,8 +379,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                         onClick={() => addCashPreset(d)}
                         className={`py-2 rounded-xl border text-xs font-mono font-bold tabular-nums transition active:scale-95 cursor-pointer ${
                           isDark
-                            ? 'bg-[#20232B] border-[#282B34] hover:border-[#FF4500] hover:text-[#FF5722] text-stone-100'
-                            : 'bg-white border-stone-200 hover:border-[#FF4500] hover:text-[#FF4500] text-stone-900'
+                            ? 'bg-[#20232B] border-[#282B34] hover:border-[#00CED1] hover:text-[#00CED1] text-stone-100'
+                            : 'bg-white border-stone-200 hover:border-[#00CED1] hover:text-[#00CED1] text-stone-900'
                         }`}
                       >
                         +₵{d}
@@ -354,8 +391,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       onClick={setExactCash}
                       className={`py-2 rounded-xl border text-xs font-semibold transition active:scale-95 cursor-pointer ${
                         isDark
-                          ? 'bg-[#20232B] border-[#282B34] text-[#FF5722] hover:border-[#FF4500]'
-                          : 'bg-white border-stone-200 text-[#FF4500] hover:border-[#FF4500]'
+                          ? 'bg-[#20232B] border-[#282B34] text-[#00CED1] hover:border-[#00CED1] hover:bg-[#00CED1]/10'
+                          : 'bg-white border-stone-200 text-[#00CED1] hover:border-[#00CED1] hover:bg-[#00CED1]/10'
                       }`}
                     >
                       Exact
@@ -840,11 +877,16 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                               min={1}
                               max={maxRedeemablePointsForBill}
                               value={loyaltyPointsToRedeem || ''}
+                              onKeyDown={(e) => {
+                                if (['e', 'E', '+', '-'].includes(e.key)) {
+                                  e.preventDefault();
+                                }
+                              }}
                               onChange={e => {
                                 const val = parseInt(e.target.value) || 0;
                                 setLoyaltyPointsToRedeem(Math.min(val, maxRedeemablePointsForBill));
                               }}
-                              className={`w-full px-3 py-2 rounded-xl text-base font-mono font-bold border outline-none focus:border-[#FF4500] ${
+                              className={`w-full px-3 py-2 rounded-xl text-base font-mono font-bold border outline-none focus:border-[#00CED1] focus:ring-2 focus:ring-[#00CED1]/30 ${
                                 isDark ? 'bg-[#1A1C22] border-[#282B34] text-white' : 'bg-white border-stone-200 text-stone-900'
                               }`}
                               placeholder="Enter points..."

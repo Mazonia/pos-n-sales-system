@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LocalProduct, LocalPurchaseOrder, LocalPurchaseOrderItem, db } from '../../utils/dexieSync';
 import { formatGhs, roundToPesewas } from '../../utils/ghanaTaxEngine';
+import { stripEmojis } from '../../utils/emojiSanitizer';
 import {
   FileText,
   Printer,
@@ -136,32 +137,32 @@ export const PurchaseOrderModal: React.FC<PurchaseOrderModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-6 overflow-y-auto">
-      <div className={`w-full max-w-3xl rounded-3xl border shadow-2xl flex flex-col max-h-[92vh] overflow-hidden transition ${
-        isDark ? 'bg-[#11151A] border-[#242D37] text-[#F4F6F8]' : 'bg-white border-[#E2E5E9] text-[#0F172A]'
+      <div className={`w-full max-w-3xl rounded-3xl border shadow-2xl flex flex-col max-h-[92vh] overflow-hidden font-serif transition ${
+        isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-stone-200 text-stone-900'
       }`}>
         
         {/* Modal Header */}
         <div className={`p-4 sm:p-5 border-b flex items-center justify-between shrink-0 ${
-          isDark ? 'border-[#242D37] bg-[#1A2027]/50' : 'border-[#E2E5E9] bg-slate-50'
+          isDark ? 'border-[#282B34] bg-[#121316]' : 'border-stone-200 bg-stone-50'
         }`}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500">
+            <div className="w-10 h-10 rounded-2xl bg-[#FF4500]/15 border border-[#FF4500]/30 flex items-center justify-center text-[#FF4500]">
               <FileText className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-extrabold text-base tracking-tight">Purchase Order Draft</h3>
-                <span className="font-mono text-xs px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-500 font-bold border border-amber-500/30">
+                <h3 className="font-serif font-extrabold text-base tracking-tight">Purchase Order Draft</h3>
+                <span className="font-mono text-xs px-2 py-0.5 rounded-full bg-[#00CED1]/15 text-[#00CED1] font-bold border border-[#00CED1]/30">
                   {poNumber}
                 </span>
                 {isSaved && (
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold flex items-center gap-1">
+                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold flex items-center gap-1 font-mono">
                     <CheckCircle2 className="w-3 h-3" />
                     <span>Issued</span>
                   </span>
                 )}
               </div>
-              <p className="text-xs text-[#8A99A8] font-mono">
+              <p className="text-xs text-stone-500 dark:text-stone-400 font-serif">
                 Auto-compiled from {lowStockProducts.length} items below defined Safety Threshold
               </p>
             </div>
@@ -169,9 +170,7 @@ export const PurchaseOrderModal: React.FC<PurchaseOrderModalProps> = ({
 
           <button
             onClick={onClose}
-            className={`p-2 rounded-xl border transition ${
-              isDark ? 'border-[#242D37] text-slate-400 hover:text-white' : 'border-[#E2E5E9] text-slate-500 hover:text-black'
-            }`}
+            className="p-2 rounded-xl border border-stone-200 dark:border-[#282B34] text-stone-400 hover:text-stone-900 dark:hover:text-white transition"
           >
             <X className="w-4 h-4" />
           </button>
@@ -182,63 +181,63 @@ export const PurchaseOrderModal: React.FC<PurchaseOrderModalProps> = ({
           
           {/* Metadata Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-            <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-[#F8F9FA] border-[#E2E5E9]'}`}>
-              <div className="text-[10px] text-[#8A99A8] uppercase tracking-wider font-mono mb-1 flex items-center gap-1">
-                <Building className="w-3 h-3 text-amber-500" />
+            <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-stone-50 border-stone-200'}`}>
+              <div className="text-[10px] text-stone-400 uppercase tracking-wider font-mono mb-1 flex items-center gap-1">
+                <Building className="w-3 h-3 text-[#FF4500]" />
                 <span>Destination Branch</span>
               </div>
-              <div className="font-bold truncate">{branchName}</div>
-              <div className="text-[11px] text-[#8A99A8]">Accra Receiving Bay</div>
+              <div className="font-serif font-bold truncate text-stone-900 dark:text-stone-100">{branchName}</div>
+              <div className="text-[11px] text-stone-400 font-serif">Accra Receiving Bay</div>
             </div>
 
-            <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-[#F8F9FA] border-[#E2E5E9]'}`}>
-              <div className="text-[10px] text-[#8A99A8] uppercase tracking-wider font-mono mb-1 flex items-center gap-1">
+            <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-stone-50 border-stone-200'}`}>
+              <div className="text-[10px] text-stone-400 uppercase tracking-wider font-mono mb-1 flex items-center gap-1">
                 <UserCheck className="w-3 h-3 text-emerald-500" />
                 <span>Authorized Operator</span>
               </div>
-              <div className="font-bold truncate">{currentUser.fullName}</div>
+              <div className="font-serif font-bold truncate text-stone-900 dark:text-stone-100">{currentUser.fullName}</div>
               <div className="text-[11px] text-emerald-500 font-mono font-medium">{currentUser.role}</div>
             </div>
 
-            <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-[#F8F9FA] border-[#E2E5E9]'}`}>
-              <div className="text-[10px] text-[#8A99A8] uppercase tracking-wider font-mono mb-1 flex items-center gap-1">
-                <Calendar className="w-3 h-3 text-amber-500" />
+            <div className={`p-3 rounded-2xl border ${isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-stone-50 border-stone-200'}`}>
+              <div className="text-[10px] text-stone-400 uppercase tracking-wider font-mono mb-1 flex items-center gap-1">
+                <Calendar className="w-3 h-3 text-[#00CED1]" />
                 <span>Order Date & Status</span>
               </div>
-              <div className="font-bold font-mono">{new Date().toLocaleDateString('en-GB')}</div>
-              <div className="text-[11px] text-amber-400 font-semibold font-mono">Safety Stock Replenishment</div>
+              <div className="font-serif font-bold font-mono">{new Date().toLocaleDateString('en-GB')}</div>
+              <div className="text-[11px] text-[#00CED1] font-semibold font-serif">Safety Stock Replenishment</div>
             </div>
           </div>
 
           {/* Supplier Input */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#8A99A8] block">Primary Supplier / Distributor:</label>
+            <label className="text-xs font-serif font-semibold text-stone-500 dark:text-stone-400 block">Primary Supplier / Distributor:</label>
             <input
               type="text"
               value={supplierName}
-              onChange={e => setSupplierName(e.target.value)}
+              onChange={e => setSupplierName(stripEmojis(e.target.value))}
               placeholder="e.g. Wilmar Africa Ltd, Nestlé Ghana, Cocoa Processing Co."
-              className={`w-full px-3.5 py-2 rounded-xl text-xs font-medium outline-none border focus:border-amber-500 ${
-                isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-[#F8F9FA] border-[#E2E5E9] text-slate-900'
+              className={`w-full px-3.5 py-2 rounded-xl text-xs font-serif outline-none border focus:border-[#00CED1] ${
+                isDark ? 'bg-[#121316] border-[#282B34] text-stone-100' : 'bg-stone-50 border-stone-200 text-stone-900'
               }`}
             />
           </div>
 
           {/* Items Table */}
           <div className={`rounded-2xl border overflow-hidden ${
-            isDark ? 'border-[#242D37] bg-[#090B0E]' : 'border-[#E2E5E9] bg-white'
+            isDark ? 'border-[#282B34] bg-[#16181F]' : 'border-stone-200 bg-white shadow-xs'
           }`}>
-            <div className={`px-4 py-2.5 border-b flex items-center justify-between text-xs font-bold ${
-              isDark ? 'border-[#242D37] bg-[#1A2027]' : 'border-[#E2E5E9] bg-slate-100'
+            <div className={`px-4 py-2.5 border-b flex items-center justify-between text-xs font-bold font-serif ${
+              isDark ? 'border-[#282B34] bg-[#121316]' : 'border-stone-200 bg-stone-100'
             }`}>
               <span>Replenishment Line Items ({orderItems.length})</span>
-              <span className="text-[11px] text-amber-500 font-mono">Safety Thresholds Highlighted</span>
+              <span className="text-[11px] text-[#FF4500] font-mono">Safety Thresholds Highlighted</span>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs min-w-[560px]">
                 <thead className={`text-[10px] uppercase font-mono border-b ${
-                  isDark ? 'bg-white/[0.02] text-[#8A99A8] border-[#242D37]' : 'bg-slate-50 text-slate-500 border-[#E2E5E9]'
+                  isDark ? 'bg-white/[0.02] text-stone-400 border-[#282B34]' : 'bg-stone-50 text-stone-500 border-stone-200'
                 }`}>
                   <tr>
                     <th className="p-3">Product Name & SKU</th>
@@ -249,21 +248,21 @@ export const PurchaseOrderModal: React.FC<PurchaseOrderModalProps> = ({
                     <th className="p-3 text-right">Line Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#242D37]/40 font-mono">
+                <tbody className="divide-y divide-stone-200 dark:divide-[#282B34]">
                   {orderItems.map(item => (
-                    <tr key={item.productId} className="hover:bg-amber-500/[0.03] transition">
-                      <td className="p-3 font-sans">
-                        <div className="font-bold">{item.productName}</div>
-                        <div className="text-[10px] text-[#8A99A8] font-mono">{item.sku} • {item.unit}</div>
+                    <tr key={item.productId} className="hover:bg-white/[0.02] dark:hover:bg-white/[0.03] transition">
+                      <td className="p-3 font-serif">
+                        <div className="font-serif font-bold text-stone-900 dark:text-stone-100">{item.productName}</div>
+                        <div className="text-[10px] text-stone-400 font-mono">{item.sku} • {item.unit}</div>
                       </td>
 
                       <td className="p-3 text-center">
-                        <span className="px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 font-bold border border-rose-500/20">
+                        <span className="px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 font-bold border border-rose-500/20 font-mono tabular-nums">
                           {item.currentStock} {item.unit}
                         </span>
                       </td>
 
-                      <td className="p-3 text-center text-amber-500 font-semibold">
+                      <td className="p-3 text-center text-[#FF4500] font-semibold font-mono tabular-nums">
                         {item.safetyThreshold} {item.unit}
                       </td>
 
@@ -273,19 +272,22 @@ export const PurchaseOrderModal: React.FC<PurchaseOrderModalProps> = ({
                             type="number"
                             min="1"
                             value={item.recommendedOrder}
+                            onKeyDown={e => {
+                              if (['e', 'E', '+', '-'].includes(e.key)) e.preventDefault();
+                            }}
                             onChange={e => handleQuantityChange(item.productId, parseInt(e.target.value) || 1)}
-                            className={`w-16 px-2 py-1 rounded-lg text-center font-bold font-mono outline-none border focus:border-amber-500 ${
-                              isDark ? 'bg-[#1A2027] border-[#242D37] text-amber-400' : 'bg-amber-50/50 border-amber-300 text-slate-900'
+                            className={`w-16 px-2 py-1 rounded-lg text-center font-bold font-mono tabular-nums outline-none border focus:border-[#00CED1] ${
+                              isDark ? 'bg-[#121316] border-[#282B34] text-[#00CED1]' : 'bg-cyan-50/50 border-cyan-300 text-stone-900'
                             }`}
                           />
                         </div>
                       </td>
 
-                      <td className="p-3 text-right text-[#8A99A8]">
+                      <td className="p-3 text-right font-mono tabular-nums text-stone-400">
                         {formatGhs(item.unitCost)}
                       </td>
 
-                      <td className="p-3 text-right font-bold text-emerald-500">
+                      <td className="p-3 text-right font-mono tabular-nums font-bold text-emerald-500 dark:text-emerald-400">
                         {formatGhs(item.totalCost)}
                       </td>
                     </tr>
@@ -295,17 +297,17 @@ export const PurchaseOrderModal: React.FC<PurchaseOrderModalProps> = ({
             </div>
 
             {/* Total Row */}
-            <div className={`p-4 border-t flex items-center justify-between ${
-              isDark ? 'border-[#242D37] bg-[#11151A]' : 'border-[#E2E5E9] bg-slate-50'
+            <div className={`p-4 border-t flex items-center justify-between border-stone-200 dark:border-[#282B34] ${
+              isDark ? 'bg-[#121316]' : 'bg-stone-50'
             }`}>
-              <div className="text-xs text-[#8A99A8]">
+              <div className="text-xs text-stone-400 font-serif">
                 <span>Total Items: </span>
-                <strong className="text-white">{orderItems.length}</strong>
+                <strong className="text-stone-900 dark:text-stone-100 font-mono tabular-nums">{orderItems.length}</strong>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-xs text-[#8A99A8]">Total Estimated PO Value:</span>
-                <span className="text-base sm:text-lg font-black font-mono tabular-nums text-emerald-500">
+                <span className="text-xs text-stone-400 font-serif">Total Estimated PO Value:</span>
+                <span className="text-base sm:text-lg font-black font-mono tabular-nums text-emerald-500 dark:text-emerald-400">
                   {formatGhs(grandTotalCost)}
                 </span>
               </div>
@@ -314,30 +316,30 @@ export const PurchaseOrderModal: React.FC<PurchaseOrderModalProps> = ({
 
           {/* Notes */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-[#8A99A8] block">Supplier Delivery & PO Instructions:</label>
+            <label className="text-xs font-serif font-semibold text-stone-500 dark:text-stone-400 block">Supplier Delivery & PO Instructions:</label>
             <textarea
               rows={2}
               value={notes}
-              onChange={e => setNotes(e.target.value)}
-              className={`w-full px-3.5 py-2 rounded-xl text-xs outline-none border focus:border-amber-500 resize-none ${
-                isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-[#F8F9FA] border-[#E2E5E9] text-slate-900'
+              onChange={e => setNotes(stripEmojis(e.target.value))}
+              className={`w-full px-3.5 py-2 rounded-xl text-xs font-serif outline-none border focus:border-[#00CED1] resize-none ${
+                isDark ? 'bg-[#121316] border-[#282B34] text-stone-100' : 'bg-stone-50 border-stone-200 text-slate-900'
               }`}
             />
           </div>
 
           {/* Success Banner if Issued */}
           {isSaved && (
-            <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center justify-between">
+            <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center justify-between font-serif">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                 <span>
-                  Purchase Order <strong>{poNumber}</strong> successfully stored in local records with operator cryptographic stamp!
+                  Purchase Order <strong className="font-mono">{poNumber}</strong> successfully stored in local records with operator cryptographic stamp!
                 </span>
               </div>
               <button
                 type="button"
                 onClick={handlePrint}
-                className="px-3 py-1 bg-emerald-500 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1"
+                className="px-3 py-1 bg-[#00CED1] hover:bg-[#00B4B7] text-slate-950 font-bold font-serif rounded-xl text-xs flex items-center gap-1 transition"
               >
                 <Printer className="w-3.5 h-3.5" />
                 <span>Print Copy</span>
@@ -348,15 +350,15 @@ export const PurchaseOrderModal: React.FC<PurchaseOrderModalProps> = ({
         </div>
 
         {/* Modal Footer Controls */}
-        <div className={`p-4 border-t flex flex-wrap items-center justify-between gap-3 shrink-0 ${
-          isDark ? 'border-[#242D37] bg-[#1A2027]/50' : 'border-[#E2E5E9] bg-slate-50'
+        <div className={`p-4 border-t flex flex-wrap items-center justify-between gap-3 shrink-0 border-stone-200 dark:border-[#282B34] ${
+          isDark ? 'bg-[#121316]' : 'bg-stone-50'
         }`}>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handlePrint}
-              className={`px-3.5 py-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition ${
-                isDark ? 'border-[#242D37] text-[#8A99A8] hover:text-white' : 'border-[#E2E5E9] text-slate-600 hover:text-black'
+              className={`px-3.5 py-2 rounded-xl border text-xs font-serif font-semibold flex items-center gap-1.5 transition ${
+                isDark ? 'border-[#282B34] text-stone-300 hover:text-white' : 'border-stone-300 text-stone-700 hover:text-black'
               }`}
             >
               <Printer className="w-3.5 h-3.5" />
@@ -368,8 +370,8 @@ export const PurchaseOrderModal: React.FC<PurchaseOrderModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className={`px-4 py-2 rounded-xl border text-xs font-semibold transition ${
-                isDark ? 'border-[#242D37] text-[#8A99A8]' : 'border-[#E2E5E9] text-slate-600'
+              className={`px-4 py-2 rounded-xl border text-xs font-serif font-semibold transition ${
+                isDark ? 'border-[#282B34] text-stone-400 hover:text-white' : 'border-stone-300 text-stone-600'
               }`}
             >
               {isSaved ? 'Done' : 'Discard Draft'}
@@ -380,7 +382,7 @@ export const PurchaseOrderModal: React.FC<PurchaseOrderModalProps> = ({
                 type="button"
                 onClick={handleSaveAndIssuePO}
                 disabled={isSubmitting || orderItems.length === 0}
-                className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 flex items-center gap-1.5 active:scale-95 transition"
+                className="px-5 py-2 rounded-xl bg-[#FF4500] hover:bg-[#E03E00] text-white font-bold font-serif text-xs shadow-[0_2px_12px_rgba(255,69,0,0.3)] flex items-center gap-1.5 active:scale-95 transition disabled:opacity-40"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>Approve & Issue PO</span>

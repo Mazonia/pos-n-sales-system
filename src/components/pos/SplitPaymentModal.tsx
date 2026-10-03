@@ -267,15 +267,43 @@ export const SplitPaymentModal: React.FC<SplitPaymentModalProps> = ({
                 </div>
 
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-extrabold text-amber-500 text-lg">GH₵</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 font-extrabold text-[#FF4500] font-mono text-lg">GH₵</span>
                   <input
                     type="number"
-                    step="0.1"
+                    step="1"
+                    min="0"
                     value={cashTendered || ''}
-                    onChange={e => setCashTendered(parseFloat(e.target.value) || 0)}
-                    className="w-full pl-14 pr-4 py-3 bg-black/40 border border-white/10 rounded-xl text-xl font-mono text-white focus:outline-none focus:border-amber-400"
+                    onKeyDown={(e) => {
+                      if (['e', 'E', '+', '-'].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
+                    onChange={e => {
+                      const val = parseFloat(e.target.value);
+                      setCashTendered(isNaN(val) ? 0 : Math.max(0, val));
+                    }}
+                    className="w-full pl-16 pr-20 py-3 bg-black/40 border border-white/10 rounded-xl text-xl font-mono text-white focus:outline-none focus:border-[#00CED1] focus:ring-2 focus:ring-[#00CED1]/30"
                     placeholder="0.00"
                   />
+                  {/* Custom Modern Stepper Controls (Replaces default browser spinbutton) */}
+                  <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setCashTendered(prev => Math.max(0, roundToPesewas(prev - 1)))}
+                      className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs border border-white/10 bg-white/5 text-stone-300 hover:text-[#00CED1] hover:border-[#00CED1]/50 transition active:scale-95 cursor-pointer"
+                      title="Decrease amount (-1)"
+                    >
+                      -
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCashTendered(prev => roundToPesewas(prev + 1))}
+                      className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs border border-white/10 bg-white/5 text-stone-300 hover:text-[#00CED1] hover:border-[#00CED1]/50 transition active:scale-95 cursor-pointer"
+                      title="Increase amount (+1)"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
 
                 {/* Quick Note Buttons */}
@@ -287,7 +315,7 @@ export const SplitPaymentModal: React.FC<SplitPaymentModalProps> = ({
                         key={d}
                         type="button"
                         onClick={() => addCashPreset(d)}
-                        className="py-2 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-amber-500/20 hover:border-amber-500 text-xs font-mono font-bold text-slate-200 transition"
+                        className="py-2 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-[#00CED1]/15 hover:border-[#00CED1] hover:text-[#00CED1] text-xs font-mono font-bold text-slate-200 transition cursor-pointer"
                       >
                         +₵{d}
                       </button>

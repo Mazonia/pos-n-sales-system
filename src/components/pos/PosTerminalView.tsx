@@ -19,6 +19,7 @@ import {
 import { performSmartSearch, SmartSearchResult } from '../../utils/smartSearch';
 import { updateShiftWithSale } from '../../utils/shiftManager';
 import { triggerHaptic } from '../../utils/haptics';
+import { stripEmojis } from '../../utils/emojiSanitizer';
 import { ProductCard } from './ProductCard';
 import { CartLedger } from './CartLedger';
 import { PaymentModal } from './PaymentModal';
@@ -216,6 +217,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
     }
     if (e.key === 'Enter') {
       e.preventDefault();
+      // 1. If user explicitly highlighted a suggestion using Arrow keys:
       if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < allSuggestions.length) {
         addToCart(allSuggestions[selectedSuggestionIndex].product);
         setSearchQuery('');
@@ -223,23 +225,24 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
         return;
       }
 
-      // Check exact barcode or SKU first
-      const exactMatch = products.find(
-        p => p.barcode === searchQuery.trim() || p.sku.toLowerCase() === searchQuery.toLowerCase().trim()
-      );
-      if (exactMatch) {
-        addToCart(exactMatch);
-        setSearchQuery('');
-        setIsSearchFocused(false);
-        return;
+      // 2. Exact barcode scanner match (8-14 numeric digits)
+      const trimmed = searchQuery.trim();
+      const isBarcodeDigits = /^\d{8,14}$/.test(trimmed);
+      if (isBarcodeDigits) {
+        const barcodeMatch = products.find(p => p.barcode === trimmed);
+        if (barcodeMatch) {
+          addToCart(barcodeMatch);
+          setSearchQuery('');
+          setIsSearchFocused(false);
+          return;
+        }
       }
 
-      // Add top available suggestion if present
-      if (allSuggestions.length > 0) {
-        addToCart(allSuggestions[0].product);
-        setSearchQuery('');
-        setIsSearchFocused(false);
-      }
+      // 3. User pressed Enter to search products with that name:
+      // Keep searchQuery active, dismiss the popover dropdown, and blur input
+      // so the catalog grid below displays all products matching the search query!
+      setIsSearchFocused(false);
+      searchInputRef.current?.blur();
     }
   };
 
@@ -532,7 +535,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                 value={searchQuery}
                 onFocus={() => setIsSearchFocused(true)}
                 onChange={e => {
-                  setSearchQuery(e.target.value);
+                  setSearchQuery(stripEmojis(e.target.value));
                   setIsSearchFocused(true);
                 }}
                 onKeyDown={handleSearchKeyDown}
@@ -794,10 +797,14 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
             </button>
 
             {/* Scanner Status */}
-            <div className={`hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold shrink-0 ${
-              isDark ? 'border-[#282B34] bg-[#1A1C22] text-stone-300' : 'border-stone-200 bg-stone-50 text-stone-700'
+            <div className={`hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold shrink-0 transition-all ${
+              isDark ? 'border-[#00CED1]/30 bg-[#00CED1]/10 text-[#00CED1]' : 'border-[#00CED1]/40 bg-[#00CED1]/10 text-[#008B8B]'
             }`}>
-              <Barcode className="w-4 h-4 text-[#FF4500] dark:text-[#FF5722]" />
+              <Barcode className="w-4 h-4 text-[#00CED1]" />
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00CED1] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00CED1]"></span>
+              </span>
               <span>Scanner Ready</span>
             </div>
           </div>
@@ -827,8 +834,8 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                     isActive
                       ? 'bg-black/20 text-white font-bold'
                       : isDark
-                      ? 'bg-[#121316] text-stone-400'
-                      : 'bg-stone-100 text-stone-500'
+                      ? 'bg-[#121316] text-[#00CED1]'
+                      : 'bg-stone-100 text-stone-600'
                   }`}>
                     {count}
                   </span>
@@ -840,6 +847,27 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
 
         {/* Product Grid: Auto-fills cleanly with minmax(210px, 1fr) and auto-rows-max so prices are never cut off */}
         <div className="flex-1 p-3.5 sm:p-4 md:p-5 overflow-y-auto grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] auto-rows-max gap-3 sm:gap-3.5 content-start pb-24 md:pb-6 bg-[#F5F5F7] dark:bg-[#121316]">
+          {searchQuery.trim().length > 0 && (
+            <div className="col-span-full mb-1 p-3 rounded-2xl border flex items-center justify-between text-xs bg-white dark:bg-[#16181F] border-stone-200 dark:border-[#282B34] shadow-xs animate-in fade-in duration-100">
+              <div className="flex items-center gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-[#00CED1] animate-pulse" />
+                <span className="text-stone-600 dark:text-stone-300 font-medium font-sans">
+                  Showing all products matching <strong className="text-[#00CED1] font-bold">"{searchQuery}"</strong>:
+                </span>
+                <span className="font-mono font-bold text-xs text-stone-900 dark:text-white px-2 py-0.5 rounded-lg bg-stone-100 dark:bg-[#20232B] border border-stone-200 dark:border-[#282B34]">
+                  {smartSearchResult.allRanked.length} items
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setSearchQuery(''); setSelectedCategory('ALL'); }}
+                className="text-xs text-[#FF4500] dark:text-[#FF5722] hover:underline font-bold flex items-center gap-1.5 cursor-pointer px-2.5 py-1 rounded-lg hover:bg-[#FF4500]/10 transition font-sans"
+              >
+                <span>Clear Search</span>
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
           {smartSearchResult.allRanked.length === 0 ? (
             <div className="col-span-full py-16 text-center text-stone-400 space-y-2">
               <p className="text-sm font-bold">No products found</p>

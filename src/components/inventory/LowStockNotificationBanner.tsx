@@ -89,28 +89,28 @@ export const LowStockNotificationBanner: React.FC<LowStockNotificationBannerProp
   };
 
   return (
-    <div className={`p-3.5 sm:p-4 rounded-2xl border transition-all duration-200 select-none ${
+    <div className={`p-3.5 sm:p-4 rounded-2xl border transition-all duration-200 select-none font-serif ${
       isDark
-        ? 'bg-[#F59E0B]/10 border-[#F59E0B]/30 text-[#F59E0B]'
-        : 'bg-[#FEF3C7] border-[#F59E0B]/40 text-[#92400E] shadow-sm'
+        ? 'bg-[#FF4500]/10 border-[#FF4500]/30 text-[#FF4500]'
+        : 'bg-[#FFF5F2] border-[#FF4500]/30 text-[#C23600] shadow-sm'
     }`}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         
-        {/* Left: Amber Warning Icon & Summary */}
+        {/* Left: Fire Warning Icon & Summary */}
         <div className="flex items-start sm:items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30 flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-[#FF4500]/20 text-[#FF4500] border border-[#FF4500]/30 flex items-center justify-center shrink-0">
             <Boxes className="w-4 h-4 animate-pulse" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-xs sm:text-sm tracking-tight text-white dark:text-white">
+              <span className={`font-bold text-xs sm:text-sm tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 Safety Stock Threshold Alert:
               </span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#F59E0B] text-slate-950">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#FF4500] text-white">
                 {lowStockItems.length} Critical Items
               </span>
             </div>
-            <p className="text-[11px] text-[#F59E0B]/90 mt-0.5">
+            <p className="text-[11px] opacity-90 mt-0.5">
               Inventory fell below safety stock limits. Replenish immediately to avoid lost retail sales.
             </p>
           </div>
@@ -121,7 +121,7 @@ export const LowStockNotificationBanner: React.FC<LowStockNotificationBannerProp
           <button
             type="button"
             onClick={handleOneClickGeneratePO}
-            className="px-3.5 py-2 bg-[#F59E0B] hover:bg-[#D97706] active:scale-95 text-slate-950 font-black rounded-xl text-xs flex items-center gap-1.5 shadow-md transition cursor-pointer"
+            className="px-3.5 py-2 bg-[#FF4500] hover:bg-[#FF5722] active:scale-95 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-[#FF4500]/20 transition cursor-pointer"
           >
             <FilePlus className="w-3.5 h-3.5" />
             <span>1-Click Draft PO</span>
@@ -130,8 +130,8 @@ export const LowStockNotificationBanner: React.FC<LowStockNotificationBannerProp
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            className={`p-1.5 rounded-xl border text-xs transition ${
-              isDark ? 'border-[#F59E0B]/30 hover:bg-[#F59E0B]/20' : 'border-[#F59E0B]/40 hover:bg-[#FDE68A]'
+            className={`p-1.5 rounded-xl border text-xs transition cursor-pointer ${
+              isDark ? 'border-[#FF4500]/30 hover:bg-[#FF4500]/20 text-white' : 'border-[#FF4500]/30 hover:bg-[#FF4500]/10 text-slate-800'
             }`}
             title="Expand low stock items"
           >
@@ -141,8 +141,8 @@ export const LowStockNotificationBanner: React.FC<LowStockNotificationBannerProp
           <button
             type="button"
             onClick={() => setIsDismissed(true)}
-            className={`p-1.5 rounded-xl border transition ${
-              isDark ? 'border-[#F59E0B]/30 hover:bg-[#F59E0B]/20' : 'border-[#F59E0B]/40 hover:bg-[#FDE68A]'
+            className={`p-1.5 rounded-xl border transition cursor-pointer ${
+              isDark ? 'border-[#FF4500]/30 hover:bg-[#FF4500]/20 text-white' : 'border-[#FF4500]/30 hover:bg-[#FF4500]/10 text-slate-800'
             }`}
             title="Dismiss notice"
           >
@@ -154,26 +154,26 @@ export const LowStockNotificationBanner: React.FC<LowStockNotificationBannerProp
 
       {/* Expanded Items Drawer */}
       {isExpanded && (
-        <div className={`mt-3 pt-3 border-t border-[#F59E0B]/20 space-y-2 text-xs`}>
+        <div className={`mt-3 pt-3 border-t border-[#FF4500]/20 space-y-2 text-xs`}>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
             {lowStockItems.map(item => {
               const threshold = item.safetyThreshold ?? item.reorderLevel;
               return (
                 <div
                   key={item.id}
-                  className={`p-2.5 rounded-xl border flex items-center justify-between font-mono text-[11px] ${
-                    isDark ? 'bg-black/30 border-[#F59E0B]/20 text-white' : 'bg-white/80 border-[#F59E0B]/30 text-slate-900'
+                  className={`p-2.5 rounded-xl border flex items-center justify-between text-[11px] ${
+                    isDark ? 'bg-[#121316] border-[#282B34] text-white' : 'bg-white border-slate-200 text-slate-900 shadow-xs'
                   }`}
                 >
                   <div className="truncate pr-2">
-                    <span className="font-sans font-bold block truncate">{item.name}</span>
+                    <span className="font-bold block truncate font-serif">{item.name}</span>
                     <span className="text-[10px] text-[#8A99A8]">Supplier: {item.supplierName}</span>
                   </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-rose-500 font-extrabold block">
+                  <div className="text-right shrink-0 font-mono tabular-nums">
+                    <span className="text-[#FF4500] font-extrabold block">
                       {item.currentStock} {item.baseUnit} left
                     </span>
-                    <span className="text-[10px] text-amber-500">
+                    <span className="text-[10px] text-[#00CED1]">
                       Safety: {threshold}
                     </span>
                   </div>

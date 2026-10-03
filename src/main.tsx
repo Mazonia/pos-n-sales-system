@@ -2,8 +2,10 @@ import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import { registerSW } from 'virtual:pwa-register';
+import { initGlobalEmojiSanitizer } from './utils/emojiSanitizer';
 
-// Register PWA Service Worker for zero-internet offline caching
+// Initialize global emoji sanitization for all input fields across the POS application
+initGlobalEmojiSanitizer();
 if ('serviceWorker' in navigator) {
   registerSW({
     immediate: true,
