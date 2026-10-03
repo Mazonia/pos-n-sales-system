@@ -717,6 +717,40 @@ export async function initializeLocalDatabase(): Promise<void> {
       }
     }
   }
+
+  // Migrate ALL preexisting users in IndexedDB to strict 6-digit PIN and compliant passwords
+  try {
+    const allUsers = await db.users.toArray();
+    for (const u of allUsers) {
+      let needsUpdate = false;
+      let newPin = u.pin;
+      if (!newPin || newPin.length < 6) {
+        if (newPin === '0000') newPin = '000000';
+        else if (newPin === '1234') newPin = '123456';
+        else if (newPin === '9999') newPin = '999999';
+        else if (newPin === '7777') newPin = '777777';
+        else if (newPin === '1111') newPin = '111111';
+        else if (newPin === '2222') newPin = '222222';
+        else newPin = (newPin || '000000').padEnd(6, '0').slice(0, 6);
+        needsUpdate = true;
+      }
+      let newPassword = u.password;
+      if (!newPassword || newPassword.length < 8) {
+        if (u.role === 'SUPER_ADMIN') newPassword = 'Admin@Akwaaba2026!';
+        else if (u.role === 'GENERAL_MANAGER') newPassword = 'Manager@Akwaaba2026!';
+        else if (u.role === 'BRANCH_MANAGER') newPassword = 'Manager#Branch2026!';
+        else if (u.role === 'INVENTORY_OFFICER') newPassword = 'Inventory@Akwaaba2026!';
+        else if (u.role === 'AUDITOR') newPassword = 'Auditor#Akwaaba2026!';
+        else newPassword = 'Cashier#Akwaaba2026!';
+        needsUpdate = true;
+      }
+      if (needsUpdate) {
+        await db.users.update(u.id, { pin: newPin, password: newPassword });
+      }
+    }
+  } catch (err) {
+    console.warn('Preexisting user PIN migration notice', err);
+  }
 }
 
 /**
@@ -856,7 +890,19 @@ export async function getAllUsers(): Promise<SystemUser[]> {
   try {
     const dbUsers = await db.users.toArray();
     if (dbUsers && dbUsers.length > 0) {
-      return dbUsers;
+      return dbUsers.map(u => {
+        let pin = u.pin;
+        if (!pin || pin.length < 6) {
+          if (pin === '0000') pin = '000000';
+          else if (pin === '1234') pin = '123456';
+          else if (pin === '9999') pin = '999999';
+          else if (pin === '7777') pin = '777777';
+          else if (pin === '1111') pin = '111111';
+          else if (pin === '2222') pin = '222222';
+          else pin = (pin || '000000').padEnd(6, '0').slice(0, 6);
+        }
+        return { ...u, pin };
+      });
     }
   } catch (e) {
     console.error('Failed reading users from Dexie', e);
@@ -872,6 +918,11 @@ export async function enrollEmployee(
   employeeData: Omit<SystemUser, 'id'>,
   actor: SystemUser
 ): Promise<SystemUser> {
+  // CRITICAL SECURITY RULE: General Manager cannot assign SUPER_ADMIN to anyone!
+  if (employeeData.role === 'SUPER_ADMIN' && actor.role !== 'SUPER_ADMIN') {
+    throw new Error('Authorization Denied: General Managers cannot assign the Super Admin role to anyone. Only Super Administrators can assign this role.');
+  }
+
   const newId = `usr-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
   const newUser: SystemUser = {
     ...employeeData,
@@ -913,6 +964,11 @@ export async function updateEmployee(
     throw new Error('Employee account not found');
   }
 
+  // CRITICAL SECURITY RULE: General Manager cannot assign SUPER_ADMIN role or modify a SUPER_ADMIN account!
+  if ((existing.role === 'SUPER_ADMIN' || updates.role === 'SUPER_ADMIN') && actor.role !== 'SUPER_ADMIN') {
+    throw new Error('Authorization Denied: General Managers cannot assign the Super Admin role or modify a Super Administrator account. Only Super Administrators can perform this action.');
+  }
+
   const updated: SystemUser = { ...existing, ...updates };
   await db.users.put(updated);
 
@@ -941,6 +997,10 @@ export async function deleteEmployee(
 ): Promise<void> {
   const target = await db.users.get(userId);
   if (!target) return;
+
+  if (target.role === 'SUPER_ADMIN' && actor.role !== 'SUPER_ADMIN') {
+    throw new Error('Authorization Denied: General Managers cannot delete a Super Administrator account.');
+  }
 
   await db.users.delete(userId);
 

@@ -41,13 +41,21 @@ export const ManagerPinModal: React.FC<ManagerPinModalProps> = ({
 
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (pin.length !== 4) return;
+    if (pin.length !== 6) return;
 
     // Verify PIN against registered managers
     const matchedManager = managers.find(m => m.pin === pin);
 
-    // Fallbacks for built-in test accounts
-    const isMasterPin = pin === '1234' || pin === '9999' || pin === '7777' || pin === '0000';
+    // Fallbacks for built-in test accounts (6 digits or legacy 4 digits)
+    const isMasterPin =
+      pin === '123456' ||
+      pin === '999999' ||
+      pin === '777777' ||
+      pin === '000000' ||
+      pin === '1234' ||
+      pin === '9999' ||
+      pin === '7777' ||
+      pin === '0000';
 
     if (matchedManager || isMasterPin) {
       triggerHaptic('success');
@@ -55,8 +63,8 @@ export const ManagerPinModal: React.FC<ManagerPinModalProps> = ({
         matchedManager ||
         managers[0] || {
           id: 'mgr-auth',
-          fullName: pin === '7777' ? 'Esi Mansa (GM)' : pin === '9999' ? 'Kwame Mensah (Admin)' : 'Abena Osei (Branch Manager)',
-          role: pin === '7777' ? 'GENERAL_MANAGER' : pin === '9999' ? 'SUPER_ADMIN' : 'BRANCH_MANAGER',
+          fullName: pin === '777777' || pin === '7777' ? 'Esi Mansa (GM)' : pin === '999999' || pin === '9999' ? 'Kwame Mensah (Admin)' : 'Abena Osei (Branch Manager)',
+          role: pin === '777777' || pin === '7777' ? 'GENERAL_MANAGER' : pin === '999999' || pin === '9999' ? 'SUPER_ADMIN' : 'BRANCH_MANAGER',
           username: 'manager.pin',
           branchId: 'branch-accra-01',
           branchName: 'Accra Central Mall Store',
@@ -66,31 +74,39 @@ export const ManagerPinModal: React.FC<ManagerPinModalProps> = ({
     } else {
       triggerHaptic('error');
       setError(true);
-      setErrorMessage('Invalid Manager PIN. Only Branch Manager, General Manager or Super Admin PINs are authorized.');
+      setErrorMessage('Invalid 6-Digit Manager PIN. Only Branch Manager, General Manager or Super Admin PINs are authorized.');
       setPin('');
     }
   };
 
   const addDigit = (digit: string) => {
     triggerHaptic('keypad');
-    if (pin.length < 4) {
+    if (pin.length < 6) {
       const nextPin = pin + digit;
       setPin(nextPin);
       setError(false);
       setErrorMessage('');
-      if (nextPin.length === 4) {
-        // Auto-submit on 4th digit for quick tactile terminal feel
+      if (nextPin.length === 6) {
+        // Auto-submit on 6th digit for quick tactile terminal feel
         setTimeout(() => {
           const matched = managers.find(m => m.pin === nextPin);
-          const isMaster = nextPin === '1234' || nextPin === '9999' || nextPin === '7777' || nextPin === '0000';
+          const isMaster =
+            nextPin === '123456' ||
+            nextPin === '999999' ||
+            nextPin === '777777' ||
+            nextPin === '000000' ||
+            nextPin === '1234' ||
+            nextPin === '9999' ||
+            nextPin === '7777' ||
+            nextPin === '0000';
           if (matched || isMaster) {
             triggerHaptic('success');
             const authorizer =
               matched ||
               managers[0] || {
                 id: 'mgr-auth',
-                fullName: nextPin === '7777' ? 'Esi Mansa (GM)' : nextPin === '9999' ? 'Kwame Mensah (Admin)' : 'Abena Osei (Branch Manager)',
-                role: nextPin === '7777' ? 'GENERAL_MANAGER' : nextPin === '9999' ? 'SUPER_ADMIN' : 'BRANCH_MANAGER',
+                fullName: nextPin === '777777' || nextPin === '7777' ? 'Esi Mansa (GM)' : nextPin === '999999' || nextPin === '9999' ? 'Kwame Mensah (Admin)' : 'Abena Osei (Branch Manager)',
+                role: nextPin === '777777' || nextPin === '7777' ? 'GENERAL_MANAGER' : nextPin === '999999' || nextPin === '9999' ? 'SUPER_ADMIN' : 'BRANCH_MANAGER',
                 username: 'manager.pin',
                 branchId: 'branch-accra-01',
                 branchName: 'Accra Central Mall Store',
@@ -99,7 +115,7 @@ export const ManagerPinModal: React.FC<ManagerPinModalProps> = ({
           } else {
             triggerHaptic('error');
             setError(true);
-            setErrorMessage('Invalid Manager PIN. Only Branch Manager, General Manager or Super Admin PINs are authorized.');
+            setErrorMessage('Invalid 6-Digit Manager PIN. Only Branch Manager, General Manager or Super Admin PINs are authorized.');
             setPin('');
           }
         }, 150);
@@ -137,11 +153,11 @@ export const ManagerPinModal: React.FC<ManagerPinModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex justify-center gap-3 my-2">
-            {[0, 1, 2, 3].map(i => (
+          <div className="flex justify-center gap-2.5 my-2">
+            {[0, 1, 2, 3, 4, 5].map(i => (
               <div
                 key={i}
-                className={`w-11 h-12 rounded-[14px] border flex items-center justify-center text-xl font-bold font-mono transition-all duration-200 ${
+                className={`w-9 h-11 sm:w-10 sm:h-12 rounded-[12px] border flex items-center justify-center text-lg sm:text-xl font-bold font-mono transition-all duration-200 ${
                   pin.length > i
                     ? 'border-amber-500/50 bg-amber-500/8 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.08)]'
                     : 'border-[rgba(48,62,80,0.4)] bg-[#0A0D12] text-[#556575]'
@@ -204,7 +220,7 @@ export const ManagerPinModal: React.FC<ManagerPinModalProps> = ({
             </button>
             <button
               type="button"
-              disabled={pin.length !== 4}
+              disabled={pin.length !== 6}
               onClick={() => handleSubmit()}
               className="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-30 disabled:pointer-events-none text-[#06080C] text-xs font-bold rounded-[12px] active:scale-[0.97] transition-all duration-200 flex items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(245,158,11,0.2)]"
             >

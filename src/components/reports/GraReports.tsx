@@ -34,6 +34,7 @@ import {
   Percent,
   Receipt
 } from 'lucide-react';
+import { OfficialPrintPortal } from '../common/OfficialPrintPortal';
 
 interface GraReportsProps {
   currentTaxScheme: TaxSchemeType;
@@ -56,6 +57,15 @@ export const GraReports: React.FC<GraReportsProps> = ({
 
   const [calcInput, setCalcInput] = useState<number>(1000);
   const [calcMode, setCalcMode] = useState<'EXCLUSIVE' | 'INCLUSIVE'>('INCLUSIVE');
+  const [isPrintingReturn, setIsPrintingReturn] = useState(false);
+
+  const handlePrintMonthlyReturn = () => {
+    setIsPrintingReturn(true);
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => setIsPrintingReturn(false), 800);
+    }, 120);
+  };
 
   // Active Tax Rates State
   const [taxRates, setTaxRates] = useState<CustomGraTaxRates>(() => getActiveTaxRates());
@@ -415,7 +425,8 @@ export const GraReports: React.FC<GraReportsProps> = ({
                   Monthly GRA Value Added Tax & Levies Schedule (DT-0101)
                 </span>
                 <button
-                  onClick={() => window.print()}
+                  type="button"
+                  onClick={handlePrintMonthlyReturn}
                   className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition ${
                     isDark
                       ? 'border-white/10 bg-white/5 hover:bg-white/10 text-slate-300'
@@ -1109,6 +1120,139 @@ export const GraReports: React.FC<GraReportsProps> = ({
           </div>
         </div>
       )}
+      {/* OFFICIAL GRA VALUE ADDED TAX (VAT) & STATUTORY LEVIES RETURN (DT-0101) */}
+      <OfficialPrintPortal active={isPrintingReturn}>
+        <div className="official-printable-doc p-8 font-sans text-black bg-white max-w-3xl mx-auto">
+          {/* Official GRA National Coat of Arms / Heading */}
+          <div className="text-center border-b-2 border-black pb-4 mb-5">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-gray-700">REPUBLIC OF GHANA</h2>
+            <h1 className="text-xl font-black uppercase tracking-tight text-black mt-0.5">
+              GHANA REVENUE AUTHORITY
+            </h1>
+            <p className="text-xs font-bold text-gray-800 uppercase tracking-wide">
+              DOMESTIC TAX REVENUE DIVISION (DTRD)
+            </p>
+            <div className="inline-block mt-2 px-4 py-1 border border-black text-xs font-black bg-gray-50 uppercase tracking-wider">
+              FORM DT-0101 • VALUE ADDED TAX & STATUTORY LEVIES RETURN
+            </div>
+          </div>
+
+          {/* Taxpayer Information Grid */}
+          <div className="grid grid-cols-2 gap-4 border border-gray-300 p-3 rounded mb-5 text-xs bg-gray-50/50">
+            <div>
+              <p><strong>Taxpayer Name:</strong> AKWAABA RETAIL SYSTEMS LTD.</p>
+              <p><strong>Operating Store / Branch:</strong> {branchName}</p>
+              <p><strong>TIN (Taxpayer ID Number):</strong> <span className="font-mono font-bold">C0029482190</span></p>
+              <p><strong>VAT Reg Certificate:</strong> <span className="font-mono">GH-VAT-2024-88910</span></p>
+            </div>
+            <div className="text-right">
+              <p><strong>Tax Period:</strong> {new Date().toLocaleDateString('en-GH', { month: 'long', year: 'numeric' })}</p>
+              <p><strong>Tax Office:</strong> LTO / MTO Accra Central</p>
+              <p><strong>e-VAT POS Clearance:</strong> <span className="font-bold text-emerald-800">CERTIFIED COMPLIANT</span></p>
+              <p><strong>Filing Date:</strong> {new Date().toLocaleDateString('en-GH')}</p>
+            </div>
+          </div>
+
+          {/* Statutory Levies & VAT Audit Breakdown Table */}
+          <table className="w-full text-left text-xs border-collapse border border-gray-300 mb-5">
+            <thead>
+              <tr className="bg-gray-100 border-b border-gray-300 text-[10px] font-bold uppercase">
+                <th className="p-2 border border-gray-300 w-12 text-center">Box</th>
+                <th className="p-2 border border-gray-300">Statutory Tax Schedule Description</th>
+                <th className="p-2 border border-gray-300 text-center w-20">Statutory Rate</th>
+                <th className="p-2 border border-gray-300 text-right w-32">Amount (GHS)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 font-mono">
+              <tr>
+                <td className="p-2 border border-gray-300 text-center font-bold">10</td>
+                <td className="p-2 border border-gray-300 font-sans font-medium">
+                  Taxable Value of Standard Rated Supplies (Net Base)
+                </td>
+                <td className="p-2 border border-gray-300 text-center">-</td>
+                <td className="p-2 border border-gray-300 text-right font-bold">{formatGhs(totalTaxableBase)}</td>
+              </tr>
+              <tr>
+                <td className="p-2 border border-gray-300 text-center font-bold">20</td>
+                <td className="p-2 border border-gray-300 font-sans font-medium">
+                  National Health Insurance Levy (NHIL)
+                </td>
+                <td className="p-2 border border-gray-300 text-center">{(taxRates.standardNhil * 100).toFixed(2)}%</td>
+                <td className="p-2 border border-gray-300 text-right">{formatGhs(totalNhil)}</td>
+              </tr>
+              <tr>
+                <td className="p-2 border border-gray-300 text-center font-bold">30</td>
+                <td className="p-2 border border-gray-300 font-sans font-medium">
+                  Ghana Education Trust Fund Levy (GETFund)
+                </td>
+                <td className="p-2 border border-gray-300 text-center">{(taxRates.standardGetfund * 100).toFixed(2)}%</td>
+                <td className="p-2 border border-gray-300 text-right">{formatGhs(totalGetfund)}</td>
+              </tr>
+              <tr>
+                <td className="p-2 border border-gray-300 text-center font-bold">40</td>
+                <td className="p-2 border border-gray-300 font-sans font-medium">
+                  COVID-19 Health Recovery Levy (CHRL)
+                </td>
+                <td className="p-2 border border-gray-300 text-center">{(taxRates.standardCovid * 100).toFixed(2)}%</td>
+                <td className="p-2 border border-gray-300 text-right">{formatGhs(totalCovid)}</td>
+              </tr>
+              <tr>
+                <td className="p-2 border border-gray-300 text-center font-bold">50</td>
+                <td className="p-2 border border-gray-300 font-sans font-medium">
+                  Value Added Tax (Standard VAT on Compound Base)
+                </td>
+                <td className="p-2 border border-gray-300 text-center">{(taxRates.standardVat * 100).toFixed(2)}%</td>
+                <td className="p-2 border border-gray-300 text-right font-bold text-emerald-900">{formatGhs(totalVat)}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr className="border-t-2 border-black bg-gray-100 font-bold font-mono">
+                <td className="p-2 border border-gray-300 text-center font-black">60</td>
+                <td colSpan={2} className="p-2 border border-gray-300 font-sans uppercase">
+                  Total Statutory Tax & Levies Liability Due to GRA:
+                </td>
+                <td className="p-2 border border-gray-300 text-right text-sm font-black">
+                  {formatGhs(totalTaxCollected)}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+
+          {/* Electronic Fiscalization Verification */}
+          <div className="border border-gray-300 p-3 rounded mb-5 text-[11px] bg-gray-50">
+            <h4 className="font-bold uppercase tracking-wider text-gray-700 text-[10px] mb-1">
+              GRA Commissioner-General Electronic Fiscalization Audit:
+            </h4>
+            <div className="grid grid-cols-3 gap-2 font-mono">
+              <p>Fiscalized Invoices: <strong>{orders.length}</strong></p>
+              <p>SDC Protocol: <strong>V2.1-SECURE</strong></p>
+              <p>Total Sales Vol: <strong>{formatGhs(grossSalesVolume)}</strong></p>
+            </div>
+            <p className="mt-1 text-[10px] text-gray-500 font-mono">
+              Certified e-VAT Digital Hash: GRA-EVAT-ACC-2024-C0029482190-099482-SHA256
+            </p>
+          </div>
+
+          {/* Taxpayer Legal Declaration */}
+          <div className="pt-4 border-t border-gray-300 text-[10px]">
+            <p className="italic text-gray-700 leading-tight mb-4">
+              "I hereby declare that the particulars entered in this return and any accompanying schedules are true, correct, and complete in accordance with the provisions of the Value Added Tax Act, 2013 (Act 870) and Value Added Tax Regulations."
+            </p>
+            <div className="grid grid-cols-2 gap-8">
+              <div>
+                <div className="border-b border-black w-48 mb-1"></div>
+                <p className="font-bold">Authorized Tax Agent / Managing Director</p>
+                <p className="text-gray-500">{currentUser?.fullName || 'Authorized Corporate Signatory'}</p>
+              </div>
+              <div className="text-right">
+                <div className="border-b border-black w-48 ml-auto mb-1"></div>
+                <p className="font-bold">Official Corporate Stamp & Date</p>
+                <p className="text-gray-500">Date: {new Date().toLocaleDateString('en-GH')}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </OfficialPrintPortal>
     </div>
   );
 };

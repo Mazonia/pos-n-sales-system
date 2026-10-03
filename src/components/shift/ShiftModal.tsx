@@ -19,6 +19,7 @@ import {
   Lock,
   Flame
 } from 'lucide-react';
+import { OfficialPrintPortal } from '../common/OfficialPrintPortal';
 
 interface ShiftModalProps {
   shift: LocalShift;
@@ -97,8 +98,9 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-5 overflow-y-auto">
-      <div className="glass-panel-dark border border-white/10 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
+    <>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-5 overflow-y-auto no-print">
+        <div className="glass-panel-dark border border-white/10 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="p-4 sm:p-5 bg-white/[0.02] border-b border-white/[0.08] flex items-center justify-between">
@@ -480,5 +482,271 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
 
       </div>
     </div>
+
+    {/* OFFICIAL PRINTABLE MID-DAY X-REPORT (A4 / SLIP VECTOR DOCUMENT) */}
+    {activeTab === 'X_REPORT' && xReport && (
+      <OfficialPrintPortal active={true}>
+        <div className="official-printable-doc p-8 font-sans text-black bg-white max-w-2xl mx-auto">
+          {/* Corporate Header */}
+          <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-5">
+            <div>
+              <h1 className="text-xl font-black uppercase tracking-tight text-black">
+                AKWAABA RETAIL SYSTEMS LTD.
+              </h1>
+              <p className="text-xs text-gray-700 font-medium">Accra Central Mall Branch • Store Terminal #01</p>
+              <p className="text-xs text-gray-700">Digital Address: GA-183-9022, Accra Central, Ghana</p>
+              <p className="text-xs text-gray-700 font-mono font-bold">GRA TIN: C0029482190 | e-VAT POS COMPLIANT</p>
+            </div>
+            <div className="text-right">
+              <div className="inline-block border-2 border-black px-3 py-1 bg-gray-50 text-center">
+                <span className="block text-[9px] uppercase font-bold tracking-wider text-gray-600">AUDIT DOCUMENT</span>
+                <span className="text-sm font-black text-black">INTERIM X-REPORT</span>
+              </div>
+              <p className="text-xs font-mono mt-1 text-gray-700">
+                Printed: {new Date().toLocaleString('en-GH')}
+              </p>
+            </div>
+          </div>
+
+          {/* Shift Context Box */}
+          <div className="grid grid-cols-2 gap-4 p-3 bg-gray-50 border border-gray-300 rounded mb-5 text-xs">
+            <div>
+              <p><strong>Shift Number:</strong> <span className="font-mono">{xReport.shiftNumber}</span></p>
+              <p><strong>Cashier / Attendant:</strong> {xReport.cashierName}</p>
+              <p><strong>Opened At:</strong> {new Date(shift.openedAt).toLocaleString('en-GH')}</p>
+            </div>
+            <div className="text-right">
+              <p><strong>Audit Mode:</strong> Mid-Day Unfinalized Inspection</p>
+              <p><strong>Completed Orders:</strong> <span className="font-bold font-mono">{xReport.totalOrders}</span></p>
+              <p><strong>Status:</strong> Active Register</p>
+            </div>
+          </div>
+
+          {/* Revenue Breakdown Table */}
+          <table className="w-full text-left text-xs border-collapse border border-gray-300 mb-5">
+            <thead>
+              <tr className="bg-gray-100 border-b border-gray-300 font-bold uppercase text-[10px]">
+                <th className="p-2 border border-gray-300">Revenue Channel / Till Category</th>
+                <th className="p-2 border border-gray-300 text-right">Amount (GHS)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 font-mono">
+              <tr>
+                <td className="p-2 font-sans font-medium">Opening Cash Float</td>
+                <td className="p-2 text-right">{formatGhs(xReport.openingFloat)}</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-sans font-medium">Cash Collected at Till</td>
+                <td className="p-2 text-right font-bold">{formatGhs(xReport.cashSales)}</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-sans font-medium">Mobile Money (MTN / Telecel / AT MoMo)</td>
+                <td className="p-2 text-right">{formatGhs(xReport.momoSales)}</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-sans font-medium">Card / Bank POS Payments</td>
+                <td className="p-2 text-right">{formatGhs(xReport.cardSales)}</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-sans font-medium">Bisa Customer Credit (Ledger Debt)</td>
+                <td className="p-2 text-right">{formatGhs(xReport.debtSales)}</td>
+              </tr>
+              {xReport.totalPaidIn > 0 && (
+                <tr>
+                  <td className="p-2 font-sans font-medium text-emerald-800">Add: Additional Cash Paid-In</td>
+                  <td className="p-2 text-right text-emerald-800">+{formatGhs(xReport.totalPaidIn)}</td>
+                </tr>
+              )}
+              {xReport.totalPaidOut > 0 && (
+                <tr>
+                  <td className="p-2 font-sans font-medium text-rose-800">Less: Cash Drops / Expense Paid-Out</td>
+                  <td className="p-2 text-right text-rose-800">-{formatGhs(xReport.totalPaidOut)}</td>
+                </tr>
+              )}
+            </tbody>
+            <tfoot>
+              <tr className="border-t-2 border-black bg-gray-50 font-bold font-mono">
+                <td className="p-2 font-sans uppercase">Expected Physical Cash In Drawer</td>
+                <td className="p-2 text-right text-sm font-black">{formatGhs(xReport.expectedCashInTill)}</td>
+              </tr>
+            </tfoot>
+          </table>
+
+          {/* Verification Sign-offs */}
+          <div className="grid grid-cols-2 gap-8 pt-6 border-t border-gray-300 text-[10px] mt-8">
+            <div>
+              <div className="border-b border-black w-48 mb-1"></div>
+              <p className="font-bold">Attendant / Cashier Signature</p>
+              <p className="text-gray-500">{xReport.cashierName}</p>
+            </div>
+            <div className="text-right">
+              <div className="border-b border-black w-48 ml-auto mb-1"></div>
+              <p className="font-bold">Supervisor / Manager Signature</p>
+              <p className="text-gray-500">Official Store Audit Inspection</p>
+            </div>
+          </div>
+        </div>
+      </OfficialPrintPortal>
+    )}
+
+    {/* OFFICIAL PRINTABLE END-OF-DAY Z-REPORT (A4 VECTOR AUDIT DOCUMENT) */}
+    {activeTab === 'Z_CLOSE' && zReportResult && (
+      <OfficialPrintPortal active={true}>
+        <div className="official-printable-doc p-8 font-sans text-black bg-white max-w-2xl mx-auto">
+          {/* Corporate Header */}
+          <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-5">
+            <div>
+              <h1 className="text-xl font-black uppercase tracking-tight text-black">
+                AKWAABA RETAIL SYSTEMS LTD.
+              </h1>
+              <p className="text-xs text-gray-700 font-medium">Accra Central Mall Branch • Store Terminal #01</p>
+              <p className="text-xs text-gray-700">Digital Address: GA-183-9022, Accra Central, Ghana</p>
+              <p className="text-xs text-gray-700 font-mono font-bold">GRA TIN: C0029482190 | BANK OF GHANA RECONCILED</p>
+            </div>
+            <div className="text-right">
+              <div className="inline-block border-2 border-black px-3 py-1 bg-gray-50 text-center">
+                <span className="block text-[9px] uppercase font-bold tracking-wider text-rose-700">FINAL CLOSURE</span>
+                <span className="text-sm font-black text-black">DAILY Z-REPORT</span>
+              </div>
+              <p className="text-xs font-mono mt-1 font-bold">
+                Z-No: {zReportResult.zReportNumber}
+              </p>
+            </div>
+          </div>
+
+          {/* Audit Metadata */}
+          <div className="grid grid-cols-2 gap-4 p-3 bg-gray-50 border border-gray-300 rounded mb-5 text-xs">
+            <div>
+              <p><strong>Shift Number:</strong> <span className="font-mono">{zReportResult.shiftNumber}</span></p>
+              <p><strong>Cashier:</strong> {zReportResult.cashierName}</p>
+              <p><strong>Opened:</strong> {new Date(zReportResult.openedAt).toLocaleString('en-GH')}</p>
+              <p><strong>Closed:</strong> {new Date(zReportResult.closedAt).toLocaleString('en-GH')}</p>
+            </div>
+            <div className="text-right">
+              <p><strong>Total Gross Sales:</strong> <span className="font-bold font-mono">{formatGhs(zReportResult.totalGrossSales)}</span></p>
+              <p><strong>Audit Variance Status:</strong> <span className="font-bold uppercase font-mono">{zReportResult.varianceStatus}</span></p>
+              <p><strong>Total Orders Processed:</strong> <span className="font-bold font-mono">{zReportResult.totalOrders}</span></p>
+            </div>
+          </div>
+
+          {/* Revenue Breakdown */}
+          <table className="w-full text-left text-xs border-collapse border border-gray-300 mb-5">
+            <thead>
+              <tr className="bg-gray-100 border-b border-gray-300 font-bold uppercase text-[10px]">
+                <th className="p-2 border border-gray-300">Revenue & Till Reconciliation Item</th>
+                <th className="p-2 border border-gray-300 text-right">Amount (GHS)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 font-mono">
+              <tr>
+                <td className="p-2 font-sans font-medium">Opening Float In Till</td>
+                <td className="p-2 text-right">{formatGhs(zReportResult.openingFloat)}</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-sans font-medium">Cash Sales Received</td>
+                <td className="p-2 text-right font-bold">{formatGhs(zReportResult.cashSales)}</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-sans font-medium">MoMo Received (MTN/Telecel/AT)</td>
+                <td className="p-2 text-right">{formatGhs(zReportResult.momoSales)}</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-sans font-medium">Card / Bank Terminal Payments</td>
+                <td className="p-2 text-right">{formatGhs(zReportResult.cardSales)}</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-sans font-medium">Bisa Customer Credit (Ledger Outstanding)</td>
+                <td className="p-2 text-right">{formatGhs(zReportResult.debtSales)}</td>
+              </tr>
+              {zReportResult.totalPaidIn > 0 && (
+                <tr>
+                  <td className="p-2 font-sans font-medium text-emerald-800">Add: Additional Cash Paid-In</td>
+                  <td className="p-2 text-right text-emerald-800">+{formatGhs(zReportResult.totalPaidIn)}</td>
+                </tr>
+              )}
+              {zReportResult.totalPaidOut > 0 && (
+                <tr>
+                  <td className="p-2 font-sans font-medium text-rose-800">Less: Cash Drops / Emergency Expenses</td>
+                  <td className="p-2 text-right text-rose-800">-{formatGhs(zReportResult.totalPaidOut)}</td>
+                </tr>
+              )}
+              <tr className="border-t border-gray-400 bg-gray-50 font-bold">
+                <td className="p-2 font-sans uppercase">Expected Cash In Till</td>
+                <td className="p-2 text-right">{formatGhs(zReportResult.expectedCashInTill)}</td>
+              </tr>
+              <tr className="bg-gray-50 font-bold">
+                <td className="p-2 font-sans uppercase">Actual Physical Cash Counted</td>
+                <td className="p-2 text-right">{formatGhs(zReportResult.countedCashPhysical || 0)}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr className={`border-t-2 border-black font-bold font-mono text-sm ${
+                (zReportResult.cashVariance || 0) < 0 ? 'text-rose-900 bg-rose-50' : 'text-emerald-900 bg-emerald-50'
+              }`}>
+                <td className="p-2 font-sans uppercase">
+                  Cash Reconciliation Variance ({zReportResult.varianceStatus}):
+                </td>
+                <td className="p-2 text-right font-black">
+                  {(zReportResult.cashVariance || 0) >= 0 ? '+' : ''}{formatGhs(zReportResult.cashVariance || 0)}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+
+          {/* Physical Denominations Audit Grid */}
+          <div className="border border-gray-300 p-3 rounded mb-5 bg-gray-50/50">
+            <h4 className="text-[10px] font-bold uppercase tracking-wider text-gray-700 mb-2">
+              Physical Cash Denomination Count Audit:
+            </h4>
+            <div className="grid grid-cols-4 gap-2 text-[10px] font-mono">
+              <div className="p-1 border border-gray-200 bg-white rounded">
+                <span>GH₵ 200: <strong>{denoms.note200 || 0}</strong> ({formatGhs((denoms.note200 || 0) * 200)})</span>
+              </div>
+              <div className="p-1 border border-gray-200 bg-white rounded">
+                <span>GH₵ 100: <strong>{denoms.note100 || 0}</strong> ({formatGhs((denoms.note100 || 0) * 100)})</span>
+              </div>
+              <div className="p-1 border border-gray-200 bg-white rounded">
+                <span>GH₵ 50: <strong>{denoms.note50 || 0}</strong> ({formatGhs((denoms.note50 || 0) * 50)})</span>
+              </div>
+              <div className="p-1 border border-gray-200 bg-white rounded">
+                <span>GH₵ 20: <strong>{denoms.note20 || 0}</strong> ({formatGhs((denoms.note20 || 0) * 20)})</span>
+              </div>
+              <div className="p-1 border border-gray-200 bg-white rounded">
+                <span>GH₵ 10: <strong>{denoms.note10 || 0}</strong> ({formatGhs((denoms.note10 || 0) * 10)})</span>
+              </div>
+              <div className="p-1 border border-gray-200 bg-white rounded">
+                <span>GH₵ 5: <strong>{denoms.note5 || 0}</strong> ({formatGhs((denoms.note5 || 0) * 5)})</span>
+              </div>
+              <div className="p-1 border border-gray-200 bg-white rounded">
+                <span>GH₵ 2 / 1: <strong>{(denoms.note2 || 0) * 2 + (denoms.note1 || 0)}</strong></span>
+              </div>
+              <div className="p-1 border border-gray-200 bg-white rounded">
+                <span>Coins: <strong>{formatGhs(denoms.coinsPesewas || 0)}</strong></span>
+              </div>
+            </div>
+            {zReportResult.closingNotes && (
+              <p className="mt-2 text-[10px] text-gray-700 italic border-t border-gray-200 pt-1">
+                Closing Notes: {zReportResult.closingNotes}
+              </p>
+            )}
+          </div>
+
+          {/* Official Sign-offs */}
+          <div className="grid grid-cols-2 gap-8 pt-6 border-t border-gray-300 text-[10px]">
+            <div>
+              <div className="border-b border-black w-48 mb-1"></div>
+              <p className="font-bold">Cashier Final Handover Signature</p>
+              <p className="text-gray-500">{zReportResult.cashierName}</p>
+            </div>
+            <div className="text-right">
+              <div className="border-b border-black w-48 ml-auto mb-1"></div>
+              <p className="font-bold">General Manager / Supervisor Sign-off</p>
+              <p className="text-gray-500">Official Store Audit Verification</p>
+            </div>
+          </div>
+        </div>
+      </OfficialPrintPortal>
+    )}
+  </>
   );
 };

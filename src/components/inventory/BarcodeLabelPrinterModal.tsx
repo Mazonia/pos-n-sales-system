@@ -19,6 +19,7 @@ import {
   Calendar,
   AlertCircle
 } from 'lucide-react';
+import { OfficialPrintPortal } from '../common/OfficialPrintPortal';
 
 export interface BarcodeLabelPrinterModalProps {
   isOpen: boolean;
@@ -144,8 +145,9 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
   const totalLabelsCount = flattenedLabels.length;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-5 overflow-y-auto">
-      <div className={`w-full max-w-5xl rounded-3xl border shadow-2xl flex flex-col max-h-[92vh] overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-150 font-serif ${
+    <>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-5 overflow-y-auto no-print">
+        <div className={`w-full max-w-5xl rounded-3xl border shadow-2xl flex flex-col max-h-[92vh] overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-150 font-serif ${
         isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-[#EBEEF2] border-slate-300'
       }`}>
         
@@ -595,5 +597,163 @@ export const BarcodeLabelPrinterModal: React.FC<BarcodeLabelPrinterModalProps> =
 
       </div>
     </div>
+
+    {/* OFFICIAL PRINTABLE VECTOR LABELS SHEET */}
+    <OfficialPrintPortal active={true}>
+      <div className="official-printable-doc bg-white text-black p-4 font-sans">
+        <div
+          className={`w-full transition-all ${
+            template === 'A4_SHEET_30UP'
+              ? 'grid grid-cols-3 gap-2.5 max-w-2xl mx-auto bg-white p-2 text-black'
+              : template === 'PROMO_TALKER_80x50'
+              ? 'grid grid-cols-2 gap-4 max-w-2xl mx-auto'
+              : template === 'ITEM_STICKER_40x25'
+              ? 'grid grid-cols-3 gap-3 max-w-xl mx-auto'
+              : 'grid grid-cols-2 gap-3 max-w-2xl mx-auto'
+          }`}
+        >
+          {flattenedLabels.map((prod, index) => {
+            const barcodeValue = prod.barcode || prod.sku;
+
+            if (template === 'SHELF_EDGE_60x40') {
+              return (
+                <div
+                  key={index}
+                  className="bg-white text-black font-sans border-2 border-black p-2.5 rounded-lg shadow-none flex flex-col justify-between"
+                  style={{ width: '100%', minHeight: '140px' }}
+                >
+                  {showStoreName && (
+                    <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-wider border-b border-black pb-1 text-slate-800">
+                      <span className="truncate max-w-[170px]">{branchName}</span>
+                      <span className="font-mono text-emerald-800">AUTHENTIC</span>
+                    </div>
+                  )}
+
+                  <div className="py-1">
+                    <h4 className="font-black text-xs leading-snug line-clamp-2 text-black">
+                      {prod.name}
+                    </h4>
+                    {showLocalName && prod.localName && (
+                      <span className="text-[10px] text-slate-700 italic block">
+                        ({prod.localName})
+                      </span>
+                    )}
+                  </div>
+
+                  {showPrice && (
+                    <div className="flex items-baseline justify-between bg-slate-100 p-1.5 rounded border border-slate-300 my-1">
+                      <span className="text-[9px] font-bold text-slate-600">RETAIL PRICE:</span>
+                      <span className="font-mono font-black text-base text-black">
+                        {formatGhs(prod.retailPrice)}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="text-center pt-1 border-t border-dotted border-gray-300">
+                    {renderSvgBarcode(barcodeValue, 32)}
+                    <div className="flex justify-between items-center text-[8px] font-mono text-slate-700 px-1 pt-0.5">
+                      <span>{showSku ? prod.sku : ''}</span>
+                      <span className="font-bold tracking-widest">{barcodeValue}</span>
+                      <span>{prod.baseUnit}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            if (template === 'ITEM_STICKER_40x25') {
+              return (
+                <div
+                  key={index}
+                  className="bg-white text-black font-sans border border-black p-2 rounded flex flex-col justify-between"
+                  style={{ width: '100%', minHeight: '95px' }}
+                >
+                  <div className="flex justify-between items-baseline leading-none">
+                    <span className="font-bold text-[10px] truncate max-w-[120px]">{prod.name}</span>
+                    {showPrice && (
+                      <span className="font-mono font-black text-xs text-black ml-1">
+                        {formatGhs(prod.retailPrice)}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-center py-1">
+                    {renderSvgBarcode(barcodeValue, 24)}
+                    <div className="text-[8px] font-mono tracking-wider font-semibold text-slate-800">
+                      {barcodeValue}
+                    </div>
+                  </div>
+                  <div className="flex justify-between text-[7px] text-slate-600 font-mono">
+                    <span>{prod.sku}</span>
+                    <span>{prod.baseUnit}</span>
+                  </div>
+                </div>
+              );
+            }
+
+            if (template === 'PROMO_TALKER_80x50') {
+              return (
+                <div
+                  key={index}
+                  className="bg-white text-black font-sans border-3 border-[#FF4500] rounded-xl overflow-hidden flex flex-col justify-between"
+                  style={{ width: '100%', minHeight: '175px' }}
+                >
+                  <div className="bg-[#FF4500] text-white px-2 py-1 flex items-center justify-between text-[10px] font-black uppercase tracking-wider">
+                    <span>★ SPECIAL RETAIL OFFER</span>
+                    <span>{branchName.split(' ')[0]}</span>
+                  </div>
+                  <div className="p-2.5 flex-1 flex flex-col justify-between space-y-1">
+                    <div>
+                      <h4 className="font-black text-sm text-black line-clamp-2 leading-tight">
+                        {prod.name}
+                      </h4>
+                      {showLocalName && prod.localName && (
+                        <p className="text-[10px] font-medium text-slate-600">({prod.localName})</p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between bg-emerald-50 border border-emerald-300 p-2 rounded-lg">
+                      <span className="text-[10px] font-bold text-emerald-900 uppercase">OUR PRICE:</span>
+                      <span className="font-mono font-black text-lg text-emerald-950">
+                        {formatGhs(prod.retailPrice)}
+                      </span>
+                    </div>
+
+                    <div className="pt-1 text-center">
+                      {renderSvgBarcode(barcodeValue, 28)}
+                      <div className="text-[9px] font-mono font-bold tracking-widest text-slate-800">
+                        {barcodeValue} · {prod.sku}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            // A4 Multi-label Sheet (30 per page: 3 cols x 10 rows)
+            return (
+              <div
+                key={index}
+                className="border border-gray-400 p-2 text-black font-sans text-[9px] flex flex-col justify-between rounded bg-white"
+                style={{ height: '70px' }}
+              >
+                <div className="flex justify-between items-start leading-tight">
+                  <span className="font-bold truncate text-[10px] max-w-[120px]">{prod.name}</span>
+                  {showPrice && (
+                    <span className="font-mono font-black text-[11px] text-black shrink-0">
+                      {formatGhs(prod.retailPrice)}
+                    </span>
+                  )}
+                </div>
+                <div className="text-center">
+                  {renderSvgBarcode(barcodeValue, 20)}
+                  <span className="text-[8px] font-mono tracking-widest">{barcodeValue}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </OfficialPrintPortal>
+  </>
   );
 };

@@ -3,6 +3,7 @@ import { LocalOrder } from '../../utils/dexieSync';
 import { formatGhs } from '../../utils/ghanaTaxEngine';
 import { Printer, Share2 } from 'lucide-react';
 import { getReceiptConfig } from '../../utils/receiptConfig';
+import { OfficialPrintPortal } from '../common/OfficialPrintPortal';
 
 interface ThermalReceiptProps {
   order: LocalOrder;
@@ -34,52 +35,17 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  return (
-    <div className="flex flex-col items-center">
-      {/* Action Bar */}
-      <div className="no-print flex items-center justify-between w-full max-w-sm mb-4 gap-2 bg-[#11151A] p-2.5 rounded-2xl border border-[#242D37] shadow-xl">
-        <button
-          onClick={handlePrint}
-          className="flex-1 flex items-center justify-center gap-1.5 bg-[#10B981] hover:bg-[#059669] text-[#090B0E] font-black py-2 px-3 rounded-xl text-xs transition active:scale-95"
-        >
-          <Printer className="w-4 h-4" />
-          <span>Print (ESC/POS)</span>
-        </button>
-        <button
-          onClick={handleSendSms}
-          className="flex items-center justify-center gap-1.5 bg-[#1A2027] hover:bg-[#242D37] text-[#F4F6F8] border border-[#242D37] font-semibold py-2 px-3 rounded-xl text-xs transition active:scale-95"
-          title="Send digital receipt via Arkesel SMS"
-        >
-          <Share2 className="w-4 h-4 text-emerald-400" />
-          <span>{smsSent ? 'SMS Sent!' : 'SMS Receipt'}</span>
-        </button>
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="text-[#8A99A8] hover:text-white px-2 py-1 text-xs font-semibold"
-          >
-            Close
-          </button>
-        )}
+  const renderReceiptContent = () => (
+    <>
+      {/* Store Header */}
+      <div className="text-center pb-2 border-b border-dashed border-gray-400">
+        <div className="font-bold text-sm tracking-wide uppercase">{config.storeName}</div>
+        {config.tagline && <div className="text-[9.5px] text-gray-600 italic">{config.tagline}</div>}
+        <div className="text-[10px] font-semibold">{order.branchName}</div>
+        <div className="text-[10px] text-gray-700">Digital Address: {config.digitalAddress}</div>
+        <div className="text-[10px] text-gray-700">Tel: {config.phone}</div>
+        <div className="text-[10px] text-gray-700">TIN: {config.tinNumber} | VAT REG: YES</div>
       </div>
-
-      {/* The Printable Thermal Receipt Body */}
-      <div
-        id="thermal-receipt-print-area"
-        className={`bg-white text-black font-mono p-4 rounded shadow-2xl border border-slate-300 text-xs leading-tight ${
-          widthMm === 58 ? 'w-[58mm] text-[10px]' : 'w-[80mm] max-w-[340px]'
-        }`}
-        style={{ color: '#000000', backgroundColor: '#ffffff' }}
-      >
-        {/* Store Header */}
-        <div className="text-center pb-2 border-b border-dashed border-gray-400">
-          <div className="font-bold text-sm tracking-wide uppercase">{config.storeName}</div>
-          {config.tagline && <div className="text-[9.5px] text-gray-600 italic">{config.tagline}</div>}
-          <div className="text-[10px] font-semibold">{order.branchName}</div>
-          <div className="text-[10px] text-gray-700">Digital Address: {config.digitalAddress}</div>
-          <div className="text-[10px] text-gray-700">Tel: {config.phone}</div>
-          <div className="text-[10px] text-gray-700">TIN: {config.tinNumber} | VAT REG: YES</div>
-        </div>
 
         {/* Receipt Meta */}
         <div className="py-2 border-b border-dashed border-gray-400 text-[10px] space-y-0.5">
@@ -293,7 +259,63 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
             Powered by Akwaaba POS & Retail OS (Offline-Ready)
           </div>
         </div>
+    </>
+  );
+
+  return (
+    <>
+      <div className="flex flex-col items-center no-print">
+        {/* Action Bar */}
+        <div className="no-print flex items-center justify-between w-full max-w-sm mb-4 gap-2 bg-[#11151A] p-2.5 rounded-2xl border border-[#242D37] shadow-xl">
+          <button
+            onClick={handlePrint}
+            className="flex-1 flex items-center justify-center gap-1.5 bg-[#10B981] hover:bg-[#059669] text-[#090B0E] font-black py-2 px-3 rounded-xl text-xs transition active:scale-95"
+          >
+            <Printer className="w-4 h-4" />
+            <span>Print (ESC/POS)</span>
+          </button>
+          <button
+            onClick={handleSendSms}
+            className="flex items-center justify-center gap-1.5 bg-[#1A2027] hover:bg-[#242D37] text-[#F4F6F8] border border-[#242D37] font-semibold py-2 px-3 rounded-xl text-xs transition active:scale-95"
+            title="Send digital receipt via Arkesel SMS"
+          >
+            <Share2 className="w-4 h-4 text-emerald-400" />
+            <span>{smsSent ? 'SMS Sent!' : 'SMS Receipt'}</span>
+          </button>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="text-[#8A99A8] hover:text-white px-2 py-1 text-xs font-semibold"
+            >
+              Close
+            </button>
+          )}
+        </div>
+
+        {/* The On-Screen Thermal Receipt Preview */}
+        <div
+          id="thermal-receipt-preview-area"
+          className={`bg-white text-black font-mono p-4 rounded shadow-2xl border border-slate-300 text-xs leading-tight ${
+            widthMm === 58 ? 'w-[58mm] text-[10px]' : 'w-[80mm] max-w-[340px]'
+          }`}
+          style={{ color: '#000000', backgroundColor: '#ffffff' }}
+        >
+          {renderReceiptContent()}
+        </div>
       </div>
-    </div>
+
+      {/* Official Print Portal for Thermal Receipt */}
+      <OfficialPrintPortal active={true}>
+        <div
+          id="thermal-receipt-print-area"
+          className={`official-thermal-receipt bg-white text-black font-mono p-3 text-xs leading-tight mx-auto ${
+            widthMm === 58 ? 'w-[58mm] text-[10px]' : 'w-[80mm] max-w-[340px]'
+          }`}
+          style={{ color: '#000000', backgroundColor: '#ffffff' }}
+        >
+          {renderReceiptContent()}
+        </div>
+      </OfficialPrintPortal>
+    </>
   );
 };

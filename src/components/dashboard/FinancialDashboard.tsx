@@ -48,6 +48,7 @@ import {
 import { SystemUser } from '../../utils/dexieSync';
 import { ReceiptCustomizerModal } from '../pos/ReceiptCustomizerModal';
 import { AttendantSalesAuditView } from './AttendantSalesAuditView';
+import { OfficialPrintPortal } from '../common/OfficialPrintPortal';
 
 interface FinancialDashboardProps {
   isDark: boolean;
@@ -1463,190 +1464,310 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
 
       {/* DOWNLOAD PDF / PRINTABLE EXECUTIVE AUDIT MODAL */}
       {showPdfPreviewModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-6 overflow-y-auto">
-          <div className={`w-full max-w-3xl rounded-3xl border shadow-2xl flex flex-col max-h-[92vh] overflow-hidden transition ${
-            isDark ? 'bg-[#11151A] border-[#242D37] text-[#F4F6F8]' : 'bg-[#EBEEF2] border-slate-300 text-slate-900'
-          }`}>
-            
-            {/* Modal Header */}
-            <div className={`p-4 border-b flex items-center justify-between shrink-0 ${
-              isDark ? 'border-[#242D37] bg-[#1A2027]' : 'border-slate-300 bg-white'
+        <>
+          {/* Interactive Screen Preview Modal (Excluded from paper print via no-print) */}
+          <div className="no-print fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-6 overflow-y-auto">
+            <div className={`w-full max-w-3xl rounded-3xl border shadow-2xl flex flex-col max-h-[92vh] overflow-hidden transition ${
+              isDark ? 'bg-[#11151A] border-[#242D37] text-[#F4F6F8]' : 'bg-[#EBEEF2] border-slate-300 text-slate-900'
             }`}>
-              <div className="flex items-center gap-2.5">
-                <FileText className="w-5 h-5 text-emerald-500" />
-                <div>
-                  <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">Executive Financial Summary & GRA Audit PDF</h3>
-                  <p className="text-[11px] text-slate-500 dark:text-[#8A99A8]">
-                    Generated for {selectedBranch === 'ALL_BRANCHES' ? 'Consolidated Network' : branchName} • {selectedDrillDay ? `Drill-Down: ${selectedDrillDay.day}` : `Period: ${timeRange}`}
-                  </p>
+              
+              {/* Modal Header */}
+              <div className={`p-4 border-b flex items-center justify-between shrink-0 ${
+                isDark ? 'border-[#242D37] bg-[#1A2027]' : 'border-slate-300 bg-white'
+              }`}>
+                <div className="flex items-center gap-2.5">
+                  <FileText className="w-5 h-5 text-emerald-500" />
+                  <div>
+                    <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">Executive Financial Summary & GRA Audit PDF</h3>
+                    <p className="text-[11px] text-slate-500 dark:text-[#8A99A8]">
+                      Generated for {selectedBranch === 'ALL_BRANCHES' ? 'Consolidated Network' : branchName} • {selectedDrillDay ? `Drill-Down: ${selectedDrillDay.day}` : `Period: ${timeRange}`}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handlePrintPdf}
+                    className="px-4 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 active:scale-95 transition shadow-sm cursor-pointer"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>Print / Save as PDF</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowPdfPreviewModal(false)}
+                    className={`p-1.5 rounded-xl border transition cursor-pointer ${
+                      isDark ? 'border-[#242D37] text-slate-400 hover:text-white' : 'border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* On-Screen Document Preview */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-6 text-xs font-sans">
+                {/* Document Letterhead */}
+                <div className="border-b-2 border-slate-900 dark:border-slate-400 pb-4 flex items-start justify-between">
+                  <div>
+                    <h1 className="text-xl font-black tracking-tight text-slate-900 dark:text-emerald-500 font-serif">
+                      AKWAABA RETAIL OS ENTERPRISE
+                    </h1>
+                    <p className="text-slate-700 dark:text-[#8A99A8] mt-0.5 font-mono text-[11px] font-bold">
+                      EXECUTIVE FINANCIAL & REVENUE AUDIT REPORT • GRA FISCAL COMPLIANCE
+                    </p>
+                    <div className="mt-1 text-[11px] text-slate-600 dark:text-[#8A99A8] font-mono">
+                      <span>Store: <strong>{branchName}</strong></span> • <span>TIN: <strong>C0029482190</strong></span> • <span>Node ID: <strong>ACC-STORE-01</strong></span>
+                    </div>
+                  </div>
+
+                  <div className="text-right text-[11px] font-mono text-slate-600 dark:text-[#8A99A8]">
+                    <div>Date: <strong>{new Date().toLocaleDateString('en-GB')}</strong></div>
+                    <div>Report Ref: <strong>AUD-{Date.now().toString().slice(-6)}</strong></div>
+                    <div className="mt-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-bold inline-block">
+                      COMPLIANT
+                    </div>
+                  </div>
+                </div>
+
+                {/* Daily Summary Strip in Document */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-white border-slate-300 shadow-2xs'}`}>
+                    <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] uppercase block">Total Daily Sales ({activeDayTarget.day})</span>
+                    <div className="text-base font-black font-mono text-emerald-600 dark:text-emerald-400">{formatGhs(currentDailySales)}</div>
+                    <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">{currentDayOrders} transactions</span>
+                  </div>
+                  <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-white border-slate-300 shadow-2xs'}`}>
+                    <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] uppercase block">Total Refunds</span>
+                    <div className="text-base font-black font-mono text-rose-600 dark:text-rose-400">{formatGhs(currentDayRefunds)}</div>
+                    <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">{currentDayRefundCount} authorized tickets</span>
+                  </div>
+                  <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-white border-slate-300 shadow-2xs'}`}>
+                    <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] uppercase block">Cashier Net Variance</span>
+                    <div className={`text-base font-black font-mono ${currentDayVariance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                      {currentDayVariance >= 0 ? `+${formatGhs(currentDayVariance)}` : formatGhs(currentDayVariance)}
+                    </div>
+                    <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">{currentDayVariance >= 0 ? 'Audited Surplus' : 'Audited Shortage'}</span>
+                  </div>
+                </div>
+
+                {/* Daily Periodic Breakdown Table */}
+                <div>
+                  <h4 className="font-bold text-xs uppercase font-mono tracking-wider mb-2 text-slate-600 dark:text-[#8A99A8]">
+                    Daily Periodic Revenue Audit Table
+                  </h4>
+                  <div className={`rounded-xl border overflow-hidden ${
+                    isDark ? 'border-[#242D37]' : 'border-slate-300'
+                  }`}>
+                    <table className="w-full text-left text-xs">
+                      <thead className={`text-[10px] font-mono uppercase border-b ${
+                        isDark ? 'bg-white/[0.02] text-[#8A99A8] border-[#242D37]' : 'bg-slate-100 text-slate-700 border-slate-300 font-bold'
+                      }`}>
+                        <tr>
+                          <th className="p-2.5">Date / Period</th>
+                          <th className="p-2.5 text-right">Gross Sales</th>
+                          <th className="p-2.5 text-right">MoMo Push</th>
+                          <th className="p-2.5 text-right">Cash Received</th>
+                          <th className="p-2.5 text-right">Refunds</th>
+                          <th className="p-2.5 text-right">Variance</th>
+                          <th className="p-2.5 text-center">Tickets</th>
+                        </tr>
+                      </thead>
+                      <tbody className={`font-mono text-[11px] ${
+                        isDark ? 'divide-y divide-[#242D37]/30' : 'divide-y divide-slate-200'
+                      }`}>
+                        {activeDataset.map(row => (
+                          <tr key={row.day} className={isDark ? 'hover:bg-white/[0.01]' : 'hover:bg-slate-50'}>
+                            <td className="p-2.5 font-bold font-sans text-slate-900 dark:text-white">{row.day}</td>
+                            <td className="p-2.5 text-right font-bold text-amber-600 dark:text-amber-500">{formatGhs(row.revenue)}</td>
+                            <td className="p-2.5 text-right text-amber-600 dark:text-amber-400">{formatGhs(row.momoMtn + row.momoTelecel)}</td>
+                            <td className="p-2.5 text-right font-mono text-slate-800 dark:text-stone-300">{formatGhs(row.cash)}</td>
+                            <td className="p-2.5 text-right text-rose-600 dark:text-rose-400">{formatGhs(row.refunds)}</td>
+                            <td className={`p-2.5 text-right font-bold ${row.cashierVariance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                              {row.cashierVariance >= 0 ? `+${formatGhs(row.cashierVariance)}` : formatGhs(row.cashierVariance)}
+                            </td>
+                            <td className="p-2.5 text-center text-slate-700 dark:text-slate-300">{row.orders}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Signoff & Certification Lines */}
+                <div className="pt-4 border-t border-slate-300 dark:border-[#242D37]/60 grid grid-cols-2 gap-8 text-[11px]">
+                  <div>
+                    <span className="text-slate-600 dark:text-[#8A99A8] block mb-6">Prepared by / Branch Manager Sign-Off:</span>
+                    <div className="border-b border-slate-400 dark:border-[#242D37] w-48"></div>
+                    <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono mt-1 block">Abena Osei • ID: USR-MGR-02</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-slate-600 dark:text-[#8A99A8] block mb-6">Internal Auditor / GRA Tax Inspector:</span>
+                    <div className="border-b border-slate-400 dark:border-[#242D37] w-48 ml-auto"></div>
+                    <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono mt-1 block">Akosua Addo • Cert #GRA-2026-901</span>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Modal Footer Controls */}
+              <div className="p-4 border-t flex items-center justify-between shrink-0 border-slate-300 bg-white dark:border-[#242D37] dark:bg-[#1A2027]">
                 <button
                   type="button"
-                  onClick={handlePrintPdf}
-                  className="px-4 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 active:scale-95 transition shadow-sm cursor-pointer"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  <span>Print / Save as PDF</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowPdfPreviewModal(false)}
-                  className={`p-1.5 rounded-xl border transition cursor-pointer ${
-                    isDark ? 'border-[#242D37] text-slate-400 hover:text-white' : 'border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  onClick={handleExportCSV}
+                  className={`px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition cursor-pointer ${
+                    isDark ? 'border-[#242D37] text-emerald-400 hover:bg-[#242D37]' : 'border-slate-300 text-emerald-800 hover:bg-slate-100'
                   }`}
                 >
-                  <X className="w-4 h-4" />
+                  <FileSpreadsheet className="w-3.5 h-3.5" />
+                  <span>Export Corresponding CSV</span>
                 </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowPdfPreviewModal(false)}
+                    className={`px-4 py-2 rounded-xl border text-xs font-semibold cursor-pointer ${
+                      isDark ? 'border-[#242D37] text-[#8A99A8]' : 'border-slate-300 text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    Close Preview
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handlePrintPdf}
+                    className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition cursor-pointer"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>Print / Save as PDF</span>
+                  </button>
+                </div>
               </div>
+
             </div>
+          </div>
 
-            {/* Printable Document Body */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 text-xs font-sans print:p-0">
-              
-              {/* Document Letterhead */}
-              <div className="border-b border-slate-300 dark:border-[#242D37]/60 pb-4 flex items-start justify-between">
+          {/* OFFICIAL PURE WHITE VECTOR PRINT SHEET (Rendered directly to #official-print-portal) */}
+          <OfficialPrintPortal active={showPdfPreviewModal}>
+            <div className="official-document-sheet" style={{ background: '#FFFFFF', color: '#000000', padding: '12mm 15mm', fontFamily: 'Inter, sans-serif' }}>
+              {/* Formal Corporate Letterhead */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '2.5px solid #0F172A', paddingBottom: '14px', marginBottom: '18px' }}>
                 <div>
-                  <h1 className="text-xl font-black tracking-tight text-emerald-600 dark:text-emerald-500 font-serif">
-                    AKWAABA RETAIL OS • FINANCIAL AUDIT
-                  </h1>
-                  <p className="text-slate-600 dark:text-[#8A99A8] mt-0.5 font-mono text-[11px]">
-                    Ghana Revenue Authority (GRA) E-VAT Certified & Bank of Ghana MoMo Reconciliation
-                  </p>
-                  <div className="mt-2 text-[11px] text-slate-600 dark:text-[#8A99A8]">
-                    <span>Store: <strong>{branchName}</strong></span> • <span>Node ID: <strong>ACC-STORE-01</strong></span>
+                  <div style={{ fontSize: '20px', fontWeight: 900, letterSpacing: '-0.5px', textTransform: 'uppercase', color: '#0F172A' }}>
+                    AKWAABA RETAIL OS ENTERPRISE
+                  </div>
+                  <div style={{ fontSize: '12.5px', fontWeight: 700, color: '#334155', marginTop: '3px' }}>
+                    EXECUTIVE FINANCIAL &amp; REVENUE AUDIT REPORT • GRA FISCAL COMPLIANCE
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#475569', marginTop: '4px' }}>
+                    Store: <strong>{branchName}</strong> • TIN: <strong>C0029482190</strong> • Node ID: <strong>ACC-STORE-01</strong>
+                  </div>
+                  <div style={{ fontSize: '10px', color: '#64748B', marginTop: '2px' }}>
+                    Ghana Revenue Authority (GRA) E-VAT Certified &amp; Bank of Ghana MoMo Settlement Ledger
                   </div>
                 </div>
 
-                <div className="text-right text-[11px] font-mono text-slate-600 dark:text-[#8A99A8]">
-                  <div>Date: <strong>{new Date().toLocaleDateString('en-GB')}</strong></div>
+                <div style={{ textAlign: 'right', fontSize: '11px', color: '#334155' }}>
+                  <div>Print Date: <strong>{new Date().toLocaleDateString('en-GB')}</strong></div>
                   <div>Report Ref: <strong>AUD-{Date.now().toString().slice(-6)}</strong></div>
-                  <div className="mt-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-bold inline-block">
-                    COMPLIANT
+                  <div>Audit Period: <strong>{selectedDrillDay ? `Drill-Down: ${selectedDrillDay.day}` : timeRange}</strong></div>
+                  <div style={{ marginTop: '5px', display: 'inline-block', border: '1.5px solid #059669', background: '#ECFDF5', color: '#047857', padding: '2px 8px', fontWeight: 800, fontSize: '10px', borderRadius: '4px' }}>
+                    GRA FISCAL COMPLIANT
                   </div>
                 </div>
               </div>
 
-              {/* Daily Summary Strip in Document */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-white border-slate-300 shadow-2xs'}`}>
-                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] uppercase block">Total Daily Sales ({activeDayTarget.day})</span>
-                  <div className="text-base font-black font-mono text-emerald-600 dark:text-emerald-400">{formatGhs(currentDailySales)}</div>
-                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">{currentDayOrders} transactions</span>
+              {/* Metric Summary Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', marginBottom: '20px' }}>
+                <div style={{ border: '1px solid #CBD5E1', padding: '12px', borderRadius: '6px', background: '#F8FAFC' }}>
+                  <div style={{ fontSize: '10px', textTransform: 'uppercase', color: '#475569', fontWeight: 700 }}>
+                    Total Daily Sales ({activeDayTarget.day})
+                  </div>
+                  <div style={{ fontSize: '18px', fontWeight: 900, color: '#0F172A', marginTop: '4px' }}>
+                    {formatGhs(currentDailySales)}
+                  </div>
+                  <div style={{ fontSize: '10.5px', color: '#64748B', marginTop: '3px' }}>
+                    {currentDayOrders} authorized transactions
+                  </div>
                 </div>
-                <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-white border-slate-300 shadow-2xs'}`}>
-                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] uppercase block">Total Refunds</span>
-                  <div className="text-base font-black font-mono text-rose-600 dark:text-rose-400">{formatGhs(currentDayRefunds)}</div>
-                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">{currentDayRefundCount} authorized tickets</span>
+
+                <div style={{ border: '1px solid #CBD5E1', padding: '12px', borderRadius: '6px', background: '#F8FAFC' }}>
+                  <div style={{ fontSize: '10px', textTransform: 'uppercase', color: '#475569', fontWeight: 700 }}>
+                    Total Authorized Refunds
+                  </div>
+                  <div style={{ fontSize: '18px', fontWeight: 900, color: '#DC2626', marginTop: '4px' }}>
+                    {formatGhs(currentDayRefunds)}
+                  </div>
+                  <div style={{ fontSize: '10.5px', color: '#64748B', marginTop: '3px' }}>
+                    {currentDayRefundCount} supervisor vouchers
+                  </div>
                 </div>
-                <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#090B0E] border-[#242D37]' : 'bg-white border-slate-300 shadow-2xs'}`}>
-                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] uppercase block">Cashier Net Variance</span>
-                  <div className={`text-base font-black font-mono ${currentDayVariance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+
+                <div style={{ border: '1px solid #CBD5E1', padding: '12px', borderRadius: '6px', background: '#F8FAFC' }}>
+                  <div style={{ fontSize: '10px', textTransform: 'uppercase', color: '#475569', fontWeight: 700 }}>
+                    Cashier Net Variance
+                  </div>
+                  <div style={{ fontSize: '18px', fontWeight: 900, color: currentDayVariance >= 0 ? '#047857' : '#DC2626', marginTop: '4px' }}>
                     {currentDayVariance >= 0 ? `+${formatGhs(currentDayVariance)}` : formatGhs(currentDayVariance)}
                   </div>
-                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono">{currentDayVariance >= 0 ? 'Audited Surplus' : 'Audited Shortage'}</span>
+                  <div style={{ fontSize: '10.5px', color: '#64748B', marginTop: '3px' }}>
+                    {currentDayVariance >= 0 ? 'Audited Surplus' : 'Audited Shortage'}
+                  </div>
                 </div>
               </div>
 
-              {/* Daily Periodic Breakdown Table */}
-              <div>
-                <h4 className="font-bold text-xs uppercase font-mono tracking-wider mb-2 text-slate-600 dark:text-[#8A99A8]">
+              {/* Breakdown Table */}
+              <div style={{ marginTop: '16px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px', color: '#0F172A' }}>
                   Daily Periodic Revenue Audit Table
-                </h4>
-                <div className={`rounded-xl border overflow-hidden ${
-                  isDark ? 'border-[#242D37]' : 'border-slate-300'
-                }`}>
-                  <table className="w-full text-left text-xs">
-                    <thead className={`text-[10px] font-mono uppercase border-b ${
-                      isDark ? 'bg-white/[0.02] text-[#8A99A8] border-[#242D37]' : 'bg-slate-100 text-slate-700 border-slate-300 font-bold'
-                    }`}>
-                      <tr>
-                        <th className="p-2.5">Date / Period</th>
-                        <th className="p-2.5 text-right">Gross Sales</th>
-                        <th className="p-2.5 text-right">MoMo Push</th>
-                        <th className="p-2.5 text-right">Cash Received</th>
-                        <th className="p-2.5 text-right">Refunds</th>
-                        <th className="p-2.5 text-right">Variance</th>
-                        <th className="p-2.5 text-center">Tickets</th>
-                      </tr>
-                    </thead>
-                    <tbody className={`font-mono text-[11px] ${
-                      isDark ? 'divide-y divide-[#242D37]/30' : 'divide-y divide-slate-200'
-                    }`}>
-                      {activeDataset.map(row => (
-                        <tr key={row.day} className={isDark ? 'hover:bg-white/[0.01]' : 'hover:bg-slate-50'}>
-                          <td className="p-2.5 font-bold font-sans text-slate-900 dark:text-white">{row.day}</td>
-                          <td className="p-2.5 text-right font-bold text-amber-600 dark:text-amber-500">{formatGhs(row.revenue)}</td>
-                          <td className="p-2.5 text-right text-amber-600 dark:text-amber-400">{formatGhs(row.momoMtn + row.momoTelecel)}</td>
-                          <td className="p-2.5 text-right font-mono text-slate-800 dark:text-stone-300">{formatGhs(row.cash)}</td>
-                          <td className="p-2.5 text-right text-rose-600 dark:text-rose-400">{formatGhs(row.refunds)}</td>
-                          <td className={`p-2.5 text-right font-bold ${row.cashierVariance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                            {row.cashierVariance >= 0 ? `+${formatGhs(row.cashierVariance)}` : formatGhs(row.cashierVariance)}
-                          </td>
-                          <td className="p-2.5 text-center text-slate-700 dark:text-slate-300">{row.orders}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
                 </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: '#F1F5F9' }}>
+                      <th style={{ border: '1px solid #94A3B8', padding: '7px 10px', textAlign: 'left', fontSize: '10.5px', color: '#0F172A' }}>Date / Period</th>
+                      <th style={{ border: '1px solid #94A3B8', padding: '7px 10px', textAlign: 'right', fontSize: '10.5px', color: '#0F172A' }}>Gross Sales</th>
+                      <th style={{ border: '1px solid #94A3B8', padding: '7px 10px', textAlign: 'right', fontSize: '10.5px', color: '#0F172A' }}>MoMo Push</th>
+                      <th style={{ border: '1px solid #94A3B8', padding: '7px 10px', textAlign: 'right', fontSize: '10.5px', color: '#0F172A' }}>Cash Received</th>
+                      <th style={{ border: '1px solid #94A3B8', padding: '7px 10px', textAlign: 'right', fontSize: '10.5px', color: '#0F172A' }}>Refunds</th>
+                      <th style={{ border: '1px solid #94A3B8', padding: '7px 10px', textAlign: 'right', fontSize: '10.5px', color: '#0F172A' }}>Variance</th>
+                      <th style={{ border: '1px solid #94A3B8', padding: '7px 10px', textAlign: 'center', fontSize: '10.5px', color: '#0F172A' }}>Tickets</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {activeDataset.map((row, idx) => (
+                      <tr key={row.day} style={{ background: idx % 2 === 1 ? '#F8FAFC' : '#FFFFFF' }}>
+                        <td style={{ border: '1px solid #CBD5E1', padding: '6px 10px', fontWeight: 700, fontSize: '10.5px' }}>{row.day}</td>
+                        <td style={{ border: '1px solid #CBD5E1', padding: '6px 10px', textAlign: 'right', fontWeight: 700, fontSize: '10.5px' }}>{formatGhs(row.revenue)}</td>
+                        <td style={{ border: '1px solid #CBD5E1', padding: '6px 10px', textAlign: 'right', fontSize: '10.5px' }}>{formatGhs(row.momoMtn + row.momoTelecel)}</td>
+                        <td style={{ border: '1px solid #CBD5E1', padding: '6px 10px', textAlign: 'right', fontSize: '10.5px' }}>{formatGhs(row.cash)}</td>
+                        <td style={{ border: '1px solid #CBD5E1', padding: '6px 10px', textAlign: 'right', fontSize: '10.5px', color: '#DC2626' }}>{formatGhs(row.refunds)}</td>
+                        <td style={{ border: '1px solid #CBD5E1', padding: '6px 10px', textAlign: 'right', fontWeight: 700, fontSize: '10.5px', color: row.cashierVariance >= 0 ? '#047857' : '#DC2626' }}>
+                          {row.cashierVariance >= 0 ? `+${formatGhs(row.cashierVariance)}` : formatGhs(row.cashierVariance)}
+                        </td>
+                        <td style={{ border: '1px solid #CBD5E1', padding: '6px 10px', textAlign: 'center', fontSize: '10.5px' }}>{row.orders}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
 
               {/* Signoff & Certification Lines */}
-              <div className="pt-4 border-t border-slate-300 dark:border-[#242D37]/60 grid grid-cols-2 gap-8 text-[11px]">
+              <div style={{ marginTop: '36px', borderTop: '1.5px solid #94A3B8', paddingTop: '18px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', fontSize: '11px' }}>
                 <div>
-                  <span className="text-slate-600 dark:text-[#8A99A8] block mb-6">Prepared by / Branch Manager Sign-Off:</span>
-                  <div className="border-b border-slate-400 dark:border-[#242D37] w-48"></div>
-                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono mt-1 block">Abena Osei • ID: USR-MGR-02</span>
+                  <div style={{ color: '#334155', marginBottom: '32px', fontWeight: 600 }}>Prepared by / Branch Manager Sign-Off:</div>
+                  <div style={{ borderBottom: '1px solid #0F172A', width: '220px' }}></div>
+                  <div style={{ color: '#64748B', fontSize: '10px', marginTop: '4px' }}>Abena Osei • ID: USR-MGR-02</div>
                 </div>
-                <div className="text-right">
-                  <span className="text-slate-600 dark:text-[#8A99A8] block mb-6">Internal Auditor / GRA Tax Inspector:</span>
-                  <div className="border-b border-slate-400 dark:border-[#242D37] w-48 ml-auto"></div>
-                  <span className="text-[10px] text-slate-500 dark:text-[#8A99A8] font-mono mt-1 block">Akosua Addo • Cert #GRA-2026-901</span>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ color: '#334155', marginBottom: '32px', fontWeight: 600 }}>Internal Auditor / GRA Tax Inspector:</div>
+                  <div style={{ borderBottom: '1px solid #0F172A', width: '220px', marginLeft: 'auto' }}></div>
+                  <div style={{ color: '#64748B', fontSize: '10px', marginTop: '4px' }}>Akosua Addo • Cert #GRA-2026-901</div>
                 </div>
               </div>
-
             </div>
-
-            {/* Modal Footer Controls */}
-            <div className={`p-4 border-t flex items-center justify-between shrink-0 ${
-              isDark ? 'border-[#242D37] bg-[#1A2027]' : 'border-slate-300 bg-white'
-            }`}>
-              <button
-                type="button"
-                onClick={handleExportCSV}
-                className={`px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition cursor-pointer ${
-                  isDark ? 'border-[#242D37] text-emerald-400 hover:bg-[#242D37]' : 'border-slate-300 text-emerald-800 hover:bg-slate-100'
-                }`}
-              >
-                <FileSpreadsheet className="w-3.5 h-3.5" />
-                <span>Export Corresponding CSV</span>
-              </button>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowPdfPreviewModal(false)}
-                  className={`px-4 py-2 rounded-xl border text-xs font-semibold cursor-pointer ${
-                    isDark ? 'border-[#242D37] text-[#8A99A8]' : 'border-slate-300 text-slate-600 hover:bg-slate-100'
-                  }`}
-                >
-                  Close Preview
-                </button>
-                <button
-                  type="button"
-                  onClick={handlePrintPdf}
-                  className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition cursor-pointer"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  <span>Print / Save as PDF</span>
-                </button>
-              </div>
-            </div>
-
-          </div>
-        </div>
+          </OfficialPrintPortal>
+        </>
       )}
 
       {/* RECEIPT DESIGN & POLICY CUSTOMIZER MODAL */}

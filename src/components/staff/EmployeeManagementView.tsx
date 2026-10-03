@@ -35,6 +35,12 @@ import {
   Pencil
 } from 'lucide-react';
 import { ENTERPRISE_BRANCHES } from '../../utils/terminalConfig';
+import {
+  validatePasswordRules,
+  validateSixDigitPin,
+  generateRandomSixDigitPin,
+  PasswordRuleStatus
+} from '../../utils/credentialValidator';
 
 interface EmployeeManagementViewProps {
   currentUser: SystemUser;
@@ -85,7 +91,9 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
     username: '',
     role: 'CASHIER' as SystemUser['role'],
     branchName: branchName || 'Accra Central Mall Store',
-    pin: '1234',
+    credentialType: 'PIN' as 'PIN' | 'PASSWORD',
+    pin: generateRandomSixDigitPin(),
+    password: '',
     phone: '',
     email: '',
     avatarColor: '#10B981',
@@ -110,7 +118,9 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
     role: 'CASHIER' as SystemUser['role'],
     branchName: 'Accra Central Mall Store',
     branchId: 'branch-accra-01',
+    credentialType: 'PIN' as 'PIN' | 'PASSWORD',
     pin: '',
+    password: '',
     phone: '',
     email: '',
     status: 'ACTIVE' as 'ACTIVE' | 'SUSPENDED',
@@ -124,7 +134,9 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
       role: user.role,
       branchName: user.branchName,
       branchId: user.branchId,
-      pin: user.pin || '1234',
+      credentialType: user.password && !user.pin ? 'PASSWORD' : 'PIN',
+      pin: user.pin || '123456',
+      password: user.password || '',
       phone: user.phone || '',
       email: user.email || '',
       status: user.status || 'ACTIVE',
@@ -141,14 +153,40 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
       return;
     }
 
+    // Role security restriction
+    if (editFormData.role === 'SUPER_ADMIN' && currentUser.role !== 'SUPER_ADMIN') {
+      setEditFormError('Permission Denied: General Managers cannot assign the Super Admin role.');
+      return;
+    }
+
+    if (editingUser.role === 'SUPER_ADMIN' && currentUser.role !== 'SUPER_ADMIN') {
+      setEditFormError('Permission Denied: Only Super Admin can modify a Super Administrator account.');
+      return;
+    }
+
     if (!editFormData.fullName.trim()) {
       setEditFormError('Full name is required.');
       return;
     }
 
-    if (!/^\d{4}$/.test(editFormData.pin)) {
-      setEditFormError('Security PIN must be exactly 4 digits.');
-      return;
+    let effectivePin = editFormData.pin.trim();
+    let effectivePassword = editFormData.password.trim();
+
+    if (editFormData.credentialType === 'PIN') {
+      const pinValidation = validateSixDigitPin(effectivePin);
+      if (!pinValidation.isValid) {
+        setEditFormError(pinValidation.error || 'Security PIN must be exactly 6 numeric digits.');
+        return;
+      }
+    } else {
+      const pwdValidation = validatePasswordRules(effectivePassword);
+      if (!pwdValidation.isValid) {
+        setEditFormError(`Password must satisfy complexity standards: ${pwdValidation.errors.join(', ')}`);
+        return;
+      }
+      if (!effectivePin || effectivePin.length < 6) {
+        effectivePin = generateRandomSixDigitPin();
+      }
     }
 
     setIsSubmitting(true);
@@ -160,7 +198,8 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
           role: editFormData.role,
           branchId: editFormData.branchId,
           branchName: editFormData.branchName,
-          pin: editFormData.pin,
+          pin: effectivePin,
+          password: effectivePassword || undefined,
           phone: editFormData.phone.trim() || undefined,
           email: editFormData.email.trim() || undefined,
           status: editFormData.status,
@@ -183,7 +222,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
       setIsEditModalOpen(false);
       setEditingUser(null);
       await loadUsersList();
-      showToast(`Employee profile & branch assignment updated for ${editFormData.fullName}!`);
+      showToast(`Employee profile & credentials updated for ${editFormData.fullName}!`);
     } catch (err: any) {
       console.error('Update employee error', err);
       setEditFormError(err.message || 'Failed to update employee.');
@@ -224,17 +263,15 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
       username: '',
       role: 'CASHIER',
       branchName: branchName || 'Accra Central Mall Store',
-      pin: generateRandomPin(),
+      credentialType: 'PIN',
+      pin: generateRandomSixDigitPin(),
+      password: '',
       phone: '',
       email: '',
       avatarColor: '#10B981',
     });
     setFormError('');
     setIsEnrollModalOpen(true);
-  };
-
-  const generateRandomPin = () => {
-    return Math.floor(1000 + Math.random() * 9000).toString();
   };
 
   const handleNameChange = (name: string) => {
@@ -251,6 +288,11 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
   };
 
   const handleRoleChange = (newRole: SystemUser['role']) => {
+    if (newRole === 'SUPER_ADMIN' && currentUser.role !== 'SUPER_ADMIN') {
+      setFormError('Permission Denied: General Managers cannot assign the Super Admin role.');
+      return;
+    }
+
     let color = '#10B981';
     if (newRole === 'SUPER_ADMIN') color = '#F59E0B';
     else if (newRole === 'GENERAL_MANAGER') color = '#8B5CF6';
@@ -280,6 +322,12 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
       return;
     }
 
+    // Role security restriction: GM cannot assign SUPER_ADMIN
+    if (formData.role === 'SUPER_ADMIN' && currentUser.role !== 'SUPER_ADMIN') {
+      setFormError('Permission Denied: General Managers cannot assign the Super Admin role to anyone.');
+      return;
+    }
+
     if (!formData.fullName.trim()) {
       setFormError('Please enter the employee full name.');
       return;
@@ -299,9 +347,25 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
       return;
     }
 
-    if (!/^\d{4}$/.test(formData.pin)) {
-      setFormError('Security PIN must be exactly 4 digits.');
-      return;
+    let effectivePin = formData.pin.trim();
+    let effectivePassword = formData.password.trim();
+
+    if (formData.credentialType === 'PIN') {
+      const pinValidation = validateSixDigitPin(effectivePin);
+      if (!pinValidation.isValid) {
+        setFormError(pinValidation.error || 'Security PIN must be exactly 6 numeric digits (0-9).');
+        return;
+      }
+      if (!effectivePassword) {
+        effectivePassword = `User#${effectivePin}!`;
+      }
+    } else {
+      const pwdValidation = validatePasswordRules(effectivePassword);
+      if (!pwdValidation.isValid) {
+        setFormError(`Password does not meet rules: ${pwdValidation.errors.join(', ')}`);
+        return;
+      }
+      effectivePin = generateRandomSixDigitPin();
     }
 
     setIsSubmitting(true);
@@ -313,7 +377,8 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
           role: formData.role,
           branchId: `branch-${formData.branchName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
           branchName: formData.branchName,
-          pin: formData.pin,
+          pin: effectivePin,
+          password: effectivePassword,
           avatarColor: formData.avatarColor,
           phone: formData.phone.trim() || undefined,
           email: formData.email.trim() || undefined,
@@ -324,7 +389,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
 
       setIsEnrollModalOpen(false);
       await loadUsersList();
-      showToast(`Employee '${enrolled.fullName}' enrolled successfully with PIN ${enrolled.pin}!`);
+      showToast(`Employee '${enrolled.fullName}' enrolled successfully with 6-digit PIN ${enrolled.pin}!`);
     } catch (err: any) {
       console.error('Enrollment error', err);
       setFormError(err.message || 'Failed to enroll employee. Please try again.');
@@ -765,7 +830,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                             <span className={`font-mono text-xs px-2 py-1 rounded-lg border font-bold ${
                               isDark ? 'bg-[#090B0E] border-[#242D37] text-purple-400' : 'bg-slate-100 border-slate-300 text-purple-700'
                             }`}>
-                              {isPinRevealed ? user.pin || '0000' : '••••'}
+                              {isPinRevealed ? user.pin || '000000' : '••••••'}
                             </span>
                             <button
                               type="button"
@@ -784,13 +849,13 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                         <td className="py-3 px-4">
                           <button
                             type="button"
-                            disabled={!isAuthorized || isSelf}
+                            disabled={!isAuthorized || isSelf || (user.role === 'SUPER_ADMIN' && currentUser.role !== 'SUPER_ADMIN')}
                             onClick={() => handleToggleStatus(user)}
                             className={`px-2 py-0.5 rounded-full text-[10px] font-bold border flex items-center gap-1 transition ${
                               isActive
                                 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                                 : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
-                            } ${isAuthorized && !isSelf ? 'cursor-pointer hover:opacity-80' : 'cursor-default'}`}
+                            } ${isAuthorized && !isSelf && (user.role !== 'SUPER_ADMIN' || currentUser.role === 'SUPER_ADMIN') ? 'cursor-pointer hover:opacity-80' : 'cursor-default opacity-60'}`}
                           >
                             <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-400' : 'bg-rose-400'}`} />
                             <span>{isActive ? 'Active' : 'Suspended'}</span>
@@ -801,7 +866,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                         <td className="py-3 px-4 text-right">
                           <div className="flex items-center justify-end gap-1.5">
                             {/* Edit & Assign Branch */}
-                            {canManageBranches && (
+                            {canManageBranches && (user.role !== 'SUPER_ADMIN' || currentUser.role === 'SUPER_ADMIN') && (
                               <button
                                 type="button"
                                 onClick={() => handleOpenEditModal(user)}
@@ -835,7 +900,7 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                             )}
 
                             {/* Delete Account */}
-                            {isAuthorized && !isSelf && (
+                            {isAuthorized && !isSelf && (user.role !== 'SUPER_ADMIN' || currentUser.role === 'SUPER_ADMIN') && (
                               <button
                                 type="button"
                                 onClick={() => handleDeleteUser(user)}
@@ -956,93 +1021,175 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                     { id: 'SUPER_ADMIN', label: 'Super Admin', desc: 'Multi-store owner & full controls' },
                     { id: 'INVENTORY_OFFICER', label: 'Inventory Officer', desc: 'Goods receipt & POs' },
                     { id: 'AUDITOR', label: 'Tax Auditor', desc: 'Read-only GRA fiscal logs' },
-                  ].map(r => {
-                    const isSelected = formData.role === r.id;
-                    return (
-                      <button
-                        key={r.id}
-                        type="button"
-                        onClick={() => handleRoleChange(r.id as any)}
-                        className={`p-2.5 rounded-2xl border text-left transition flex flex-col justify-between ${
-                          isSelected
-                            ? 'border-purple-500 bg-purple-500/15 shadow-xs ring-1 ring-purple-500/40'
-                            : isDark
-                            ? 'border-[#242D37] bg-[#090B0E] hover:border-slate-600'
-                            : 'border-slate-300 bg-white hover:border-purple-400'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className={`text-xs font-bold ${
-                            isSelected ? (isDark ? 'text-purple-400' : 'text-purple-700') : isDark ? 'text-white' : 'text-slate-900'
-                          }`}>
-                            {r.label}
+                  ]
+                    .filter(r => r.id !== 'SUPER_ADMIN' || currentUser.role === 'SUPER_ADMIN')
+                    .map(r => {
+                      const isSelected = formData.role === r.id;
+                      return (
+                        <button
+                          key={r.id}
+                          type="button"
+                          onClick={() => handleRoleChange(r.id as any)}
+                          className={`p-2.5 rounded-2xl border text-left transition flex flex-col justify-between ${
+                            isSelected
+                              ? 'border-purple-500 bg-purple-500/15 shadow-xs ring-1 ring-purple-500/40'
+                              : isDark
+                              ? 'border-[#242D37] bg-[#090B0E] hover:border-slate-600'
+                              : 'border-slate-300 bg-white hover:border-purple-400'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className={`text-xs font-bold ${
+                              isSelected ? (isDark ? 'text-purple-400' : 'text-purple-700') : isDark ? 'text-white' : 'text-slate-900'
+                            }`}>
+                              {r.label}
+                            </span>
+                            {isSelected && <BadgeCheck className="w-3.5 h-3.5 text-purple-500" />}
+                          </div>
+                          <span className={`text-[10px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-500'} mt-1 leading-tight`}>
+                            {r.desc}
                           </span>
-                          {isSelected && <BadgeCheck className="w-3.5 h-3.5 text-purple-500" />}
-                        </div>
-                        <span className={`text-[10px] ${isDark ? 'text-[#8A99A8]' : 'text-slate-500'} mt-1 leading-tight`}>
-                          {r.desc}
-                        </span>
-                      </button>
-                    );
-                  })}
+                        </button>
+                      );
+                    })}
                 </div>
               </div>
 
-              {/* Branch Assignment & 4-Digit PIN */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className={`block text-[11px] font-bold ${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} uppercase tracking-wider mb-1.5`}>
-                    Branch Assignment *
-                  </label>
-                  <select
-                    value={formData.branchName}
-                    onChange={e => setFormData(prev => ({ ...prev, branchName: e.target.value }))}
-                    className={`w-full px-3.5 py-2.5 rounded-xl text-xs border outline-none font-medium transition ${
-                      isDark
-                        ? 'bg-[#090B0E] border-[#242D37] text-white focus:border-purple-500'
-                        : 'bg-white border-slate-300 text-slate-900 focus:border-purple-600'
-                    }`}
-                  >
-                    {PRESET_BRANCHES.map(b => (
-                      <option key={b} value={b}>{b}</option>
-                    ))}
-                  </select>
-                </div>
+              {/* Branch Assignment */}
+              <div>
+                <label className={`block text-[11px] font-bold ${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} uppercase tracking-wider mb-1.5`}>
+                  Branch Assignment *
+                </label>
+                <select
+                  value={formData.branchName}
+                  onChange={e => setFormData(prev => ({ ...prev, branchName: e.target.value }))}
+                  className={`w-full px-3.5 py-2.5 rounded-xl text-xs border outline-none font-medium transition ${
+                    isDark
+                      ? 'bg-[#090B0E] border-[#242D37] text-white focus:border-purple-500'
+                      : 'bg-white border-slate-300 text-slate-900 focus:border-purple-600'
+                  }`}
+                >
+                  {PRESET_BRANCHES.map(b => (
+                    <option key={b} value={b}>{b}</option>
+                  ))}
+                </select>
+              </div>
 
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className={`block text-[11px] font-bold ${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} uppercase tracking-wider`}>
-                      4-Digit Operator PIN *
-                    </label>
+              {/* Security Credentials: 6-Digit PIN or Complex Password */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className={`block text-[11px] font-bold ${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} uppercase tracking-wider`}>
+                    Security Credentials *
+                  </label>
+                  <div className="flex items-center gap-1 p-0.5 rounded-lg border border-purple-500/30 bg-purple-500/10 text-[10.5px]">
                     <button
                       type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, pin: generateRandomPin() }))}
-                      className="text-[10px] text-purple-600 dark:text-purple-400 font-bold hover:underline flex items-center gap-1"
+                      onClick={() => setFormData(prev => ({ ...prev, credentialType: 'PIN' }))}
+                      className={`px-2 py-0.5 rounded-md font-bold transition ${
+                        formData.credentialType === 'PIN'
+                          ? 'bg-purple-600 text-white shadow-xs'
+                          : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-black'
+                      }`}
                     >
-                      <Sparkles className="w-2.5 h-2.5" />
-                      <span>Random PIN</span>
+                      6-Digit PIN
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, credentialType: 'PASSWORD' }))}
+                      className={`px-2 py-0.5 rounded-md font-bold transition ${
+                        formData.credentialType === 'PASSWORD'
+                          ? 'bg-purple-600 text-white shadow-xs'
+                          : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-black'
+                      }`}
+                    >
+                      Password Rules
                     </button>
                   </div>
-                  <div className="relative">
-                    <KeyRound className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="text"
-                      maxLength={4}
-                      required
-                      value={formData.pin}
-                      onChange={e => {
-                        const val = e.target.value.replace(/[^0-9]/g, '');
-                        setFormData(prev => ({ ...prev, pin: val }));
-                      }}
-                      placeholder="1234"
-                      className={`w-full pl-9 pr-3.5 py-2.5 rounded-xl text-xs border outline-none font-mono font-bold tracking-widest text-center transition ${
-                        isDark
-                          ? 'bg-[#090B0E] border-[#242D37] text-purple-400 focus:border-purple-500'
-                          : 'bg-white border-slate-300 text-purple-700 focus:border-purple-600'
-                      }`}
-                    />
-                  </div>
                 </div>
+
+                {formData.credentialType === 'PIN' ? (
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                        Strict 6-digit numeric terminal keypad code
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, pin: generateRandomSixDigitPin() }))}
+                        className="text-[10px] text-purple-600 dark:text-purple-400 font-bold hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <Sparkles className="w-2.5 h-2.5" />
+                        <span>Generate 6-Digit PIN</span>
+                      </button>
+                    </div>
+                    <div className="relative">
+                      <KeyRound className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        maxLength={6}
+                        required
+                        value={formData.pin}
+                        onChange={e => {
+                          const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 6);
+                          setFormData(prev => ({ ...prev, pin: val }));
+                        }}
+                        placeholder="123456"
+                        className={`w-full pl-9 pr-3.5 py-2.5 rounded-xl text-xs border outline-none font-mono font-bold tracking-widest text-center transition ${
+                          isDark
+                            ? 'bg-[#090B0E] border-[#242D37] text-purple-400 focus:border-purple-500'
+                            : 'bg-white border-slate-300 text-purple-700 focus:border-purple-600'
+                        }`}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="relative">
+                      <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        required
+                        value={formData.password}
+                        onChange={e => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                        placeholder="e.g. Staff#Akwaaba2026!"
+                        className={`w-full pl-9 pr-3.5 py-2.5 rounded-xl text-xs border outline-none font-medium transition ${
+                          isDark
+                            ? 'bg-[#090B0E] border-[#242D37] text-white focus:border-purple-500'
+                            : 'bg-white border-slate-300 text-slate-900 focus:border-purple-600'
+                        }`}
+                      />
+                    </div>
+                    {/* Password rule status chips */}
+                    {(() => {
+                      const rules = validatePasswordRules(formData.password);
+                      return (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {[
+                            { label: '8+ Chars', met: rules.hasMinLength },
+                            { label: 'Uppercase', met: rules.hasUpper },
+                            { label: 'Lowercase', met: rules.hasLower },
+                            { label: 'Number', met: rules.hasNumber },
+                            { label: 'Symbol', met: rules.hasSpecial },
+                          ].map(rule => (
+                            <span
+                              key={rule.label}
+                              className={`text-[9.5px] px-2 py-0.5 rounded-md font-bold flex items-center gap-1 border ${
+                                rule.met
+                                  ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                                  : isDark
+                                  ? 'bg-black/30 text-slate-500 border-white/5'
+                                  : 'bg-slate-100 text-slate-400 border-slate-200'
+                              }`}
+                            >
+                              <span className={`w-1.5 h-1.5 rounded-full ${rule.met ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                              {rule.label}
+                            </span>
+                          ))}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
               </div>
 
               {/* Optional Phone & Email */}
@@ -1267,29 +1414,122 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
                     <option value="CASHIER">Cashier / POS Operator</option>
                     <option value="BRANCH_MANAGER">Branch Manager</option>
                     <option value="GENERAL_MANAGER">General Manager</option>
-                    <option value="SUPER_ADMIN">Super Administrator</option>
+                    {currentUser.role === 'SUPER_ADMIN' && (
+                      <option value="SUPER_ADMIN">Super Administrator</option>
+                    )}
                     <option value="INVENTORY_OFFICER">Inventory Officer</option>
                     <option value="AUDITOR">Tax Auditor</option>
                   </select>
                 </div>
               )}
 
-              {/* Security PIN */}
-              <div>
-                <label className={`${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} block mb-1 font-semibold`}>4-Digit Security PIN *</label>
-                <div className="relative">
-                  <KeyRound className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8A99A8]" />
-                  <input
-                    type="password"
-                    maxLength={4}
-                    required
-                    value={editFormData.pin}
-                    onChange={e => setEditFormData(prev => ({ ...prev, pin: e.target.value.replace(/\D/g, '').slice(0, 4) }))}
-                    className={`w-full pl-9 pr-3 py-2.5 rounded-xl border text-xs font-mono font-bold outline-none focus:border-amber-500 ${
-                      isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-white border-slate-300 text-slate-900'
-                    }`}
-                  />
+              {/* Security Credentials: 6-Digit PIN or Complex Password */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className={`${isDark ? 'text-[#8A99A8]' : 'text-slate-700'} block mb-1 font-semibold`}>
+                    Security Credentials *
+                  </label>
+                  <div className="flex items-center gap-1 p-0.5 rounded-lg border border-amber-500/30 bg-amber-500/10 text-[10.5px]">
+                    <button
+                      type="button"
+                      onClick={() => setEditFormData(prev => ({ ...prev, credentialType: 'PIN' }))}
+                      className={`px-2 py-0.5 rounded-md font-bold transition ${
+                        editFormData.credentialType === 'PIN'
+                          ? 'bg-amber-500 text-slate-950 shadow-xs'
+                          : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-black'
+                      }`}
+                    >
+                      6-Digit PIN
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditFormData(prev => ({ ...prev, credentialType: 'PASSWORD' }))}
+                      className={`px-2 py-0.5 rounded-md font-bold transition ${
+                        editFormData.credentialType === 'PASSWORD'
+                          ? 'bg-amber-500 text-slate-950 shadow-xs'
+                          : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-black'
+                      }`}
+                    >
+                      Password
+                    </button>
+                  </div>
                 </div>
+
+                {editFormData.credentialType === 'PIN' ? (
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                        Strict 6-digit numeric terminal code
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setEditFormData(prev => ({ ...prev, pin: generateRandomSixDigitPin() }))}
+                        className="text-[10px] text-amber-600 dark:text-amber-400 font-bold hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <Sparkles className="w-2.5 h-2.5" />
+                        <span>Reset to Random 6-Digit PIN</span>
+                      </button>
+                    </div>
+                    <div className="relative">
+                      <KeyRound className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8A99A8]" />
+                      <input
+                        type="text"
+                        maxLength={6}
+                        required
+                        value={editFormData.pin}
+                        onChange={e => setEditFormData(prev => ({ ...prev, pin: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
+                        className={`w-full pl-9 pr-3 py-2.5 rounded-xl border text-xs font-mono font-bold tracking-widest text-center outline-none focus:border-amber-500 ${
+                          isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-white border-slate-300 text-slate-900'
+                        }`}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="relative">
+                      <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8A99A8]" />
+                      <input
+                        type="text"
+                        required
+                        value={editFormData.password}
+                        onChange={e => setEditFormData(prev => ({ ...prev, password: e.target.value }))}
+                        placeholder="e.g. Manager#Akwaaba2026!"
+                        className={`w-full pl-9 pr-3 py-2.5 rounded-xl border text-xs outline-none focus:border-amber-500 ${
+                          isDark ? 'bg-[#090B0E] border-[#242D37] text-white' : 'bg-white border-slate-300 text-slate-900'
+                        }`}
+                      />
+                    </div>
+                    {/* Password rule status chips */}
+                    {(() => {
+                      const rules = validatePasswordRules(editFormData.password);
+                      return (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {[
+                            { label: '8+ Chars', met: rules.hasMinLength },
+                            { label: 'Uppercase', met: rules.hasUpper },
+                            { label: 'Lowercase', met: rules.hasLower },
+                            { label: 'Number', met: rules.hasNumber },
+                            { label: 'Symbol', met: rules.hasSpecial },
+                          ].map(rule => (
+                            <span
+                              key={rule.label}
+                              className={`text-[9.5px] px-2 py-0.5 rounded-md font-bold flex items-center gap-1 border ${
+                                rule.met
+                                  ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                                  : isDark
+                                  ? 'bg-black/30 text-slate-500 border-white/5'
+                                  : 'bg-slate-100 text-slate-400 border-slate-200'
+                              }`}
+                            >
+                              <span className={`w-1.5 h-1.5 rounded-full ${rule.met ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                              {rule.label}
+                            </span>
+                          ))}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
               </div>
 
               {/* Contact */}

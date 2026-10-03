@@ -28,6 +28,7 @@ import {
   BookOpen,
   ShoppingBag
 } from 'lucide-react';
+import { OfficialPrintPortal } from '../common/OfficialPrintPortal';
 
 interface AttendantSalesAuditViewProps {
   isDark: boolean;
@@ -914,7 +915,7 @@ export const AttendantSalesAuditView: React.FC<AttendantSalesAuditViewProps> = (
 
       {/* MODAL 1: ITEMIZED PRODUCT INSPECTOR */}
       {inspectOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-slide-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-slide-in no-print">
           <div className={`w-full max-w-xl rounded-2xl border p-5 space-y-4 animate-scale-in ${
             isDark ? 'bg-[#0D1117] border-[#242D37] text-white shadow-2xl' : 'bg-white border-slate-300 text-slate-900 shadow-xl'
           }`}>
@@ -983,7 +984,7 @@ export const AttendantSalesAuditView: React.FC<AttendantSalesAuditViewProps> = (
 
       {/* MODAL 2: RETURN VERIFICATION & OFFICIAL CREDIT NOTE ISSUANCE */}
       {returnTargetOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-slide-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-slide-in no-print">
           <div className={`w-full max-w-2xl rounded-2xl border p-5 sm:p-6 space-y-4 animate-scale-in max-h-[90vh] overflow-y-auto ${
             isDark ? 'bg-[#0D1117] border-[#242D37] text-white shadow-2xl' : 'bg-white border-slate-300 text-slate-900 shadow-xl'
           }`}>
@@ -1288,6 +1289,106 @@ export const AttendantSalesAuditView: React.FC<AttendantSalesAuditViewProps> = (
 
           </div>
         </div>
+      )}
+
+      {/* OFFICIAL PRINTABLE GOODS RETURN VOUCHER / CREDIT NOTE */}
+      {returnSuccessVoucher && (
+        <OfficialPrintPortal active={true}>
+          <div className="official-printable-doc p-8 font-sans text-black bg-white max-w-2xl mx-auto">
+            {/* Corporate Header */}
+            <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-5">
+              <div>
+                <h1 className="text-xl font-black uppercase tracking-tight text-black">
+                  AKWAABA RETAIL SYSTEMS LTD.
+                </h1>
+                <p className="text-xs text-gray-700 font-medium">Customer Service & Merchandise Return Logistics</p>
+                <p className="text-xs text-gray-700">{branchName} • Central Store Node</p>
+                <p className="text-xs text-gray-700 font-mono font-bold">GRA TIN: C0029482190 | e-VAT COMPLIANT</p>
+              </div>
+              <div className="text-right">
+                <div className="inline-block border-2 border-black px-3 py-1 bg-gray-50 text-center">
+                  <span className="block text-[9px] uppercase font-bold tracking-wider text-rose-700">AUDITED RETURN</span>
+                  <span className="text-sm font-black text-black">OFFICIAL CREDIT NOTE</span>
+                </div>
+                <p className="text-xs font-mono mt-1 font-bold">
+                  Voucher: {returnSuccessVoucher.voucherNumber}
+                </p>
+                <p className="text-xs font-mono text-gray-600">
+                  {new Date(returnSuccessVoucher.timestamp).toLocaleString('en-GH')}
+                </p>
+              </div>
+            </div>
+
+            {/* Context Dossier Grid */}
+            <div className="grid grid-cols-2 gap-4 border border-gray-300 p-3 rounded mb-5 text-xs bg-gray-50/50">
+              <div>
+                <p><strong>Original Sale Receipt:</strong> <span className="font-mono">{returnSuccessVoucher.originalReceiptNumber}</span></p>
+                <p><strong>Customer Name:</strong> {returnSuccessVoucher.customerName} ({returnSuccessVoucher.customerPhone})</p>
+                <p><strong>Refund Disposition:</strong> <span className="font-bold uppercase font-mono">{returnSuccessVoucher.returnDisposition}</span></p>
+              </div>
+              <div className="text-right">
+                <p><strong>Original Serving Cashier:</strong> {returnSuccessVoucher.originalCashierName} ({returnSuccessVoucher.originalCashierId})</p>
+                <p><strong>Auditing Supervisor:</strong> {returnSuccessVoucher.supervisorName}</p>
+                <p><strong>Return Reason:</strong> {returnSuccessVoucher.returnReason}</p>
+              </div>
+            </div>
+
+            {/* Returned Items Table */}
+            <table className="w-full text-left text-xs border-collapse border border-gray-300 mb-5">
+              <thead>
+                <tr className="bg-gray-100 border-b border-gray-300 text-[10px] font-bold uppercase">
+                  <th className="p-2 border border-gray-300">Item Description</th>
+                  <th className="p-2 border border-gray-300">SKU</th>
+                  <th className="p-2 border border-gray-300 text-center w-20">Returned Qty</th>
+                  <th className="p-2 border border-gray-300 text-right w-24">Unit Price</th>
+                  <th className="p-2 border border-gray-300 text-right w-28">Refund Total</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 font-mono">
+                {returnSuccessVoucher.returnedItems?.map((it: any, i: number) => (
+                  <tr key={i}>
+                    <td className="p-2 border border-gray-300 font-sans font-medium">{it.name}</td>
+                    <td className="p-2 border border-gray-300 text-gray-600">{it.sku}</td>
+                    <td className="p-2 border border-gray-300 text-center font-bold">{it.quantity}</td>
+                    <td className="p-2 border border-gray-300 text-right">{formatGhs(it.unitPrice)}</td>
+                    <td className="p-2 border border-gray-300 text-right font-bold">{formatGhs(it.lineTotal)}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr className="border-t-2 border-black bg-gray-50 font-bold font-mono">
+                  <td colSpan={4} className="p-2 border border-gray-300 text-right uppercase font-sans">
+                    Total Credit / Refund Payable:
+                  </td>
+                  <td className="p-2 border border-gray-300 text-right text-sm font-black">
+                    {formatGhs(returnSuccessVoucher.returnedSubtotal)}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+
+            {/* Terms and Disposition Note */}
+            <div className="border border-gray-300 p-2.5 rounded mb-6 text-[10px] bg-gray-50">
+              <p>
+                <strong>Audit Disposition:</strong> Merchandise has been inspected and returned to store inventory under supervisor authorization. In case of store credit, customer ledger will reflect this credit note balance.
+              </p>
+            </div>
+
+            {/* Formal Dual Signatures */}
+            <div className="grid grid-cols-2 gap-8 pt-4 border-t border-gray-300 text-[10px]">
+              <div>
+                <div className="border-b border-black w-48 mb-1"></div>
+                <p className="font-bold">Customer Signature & Date</p>
+                <p className="text-gray-500">{returnSuccessVoucher.customerName}</p>
+              </div>
+              <div className="text-right">
+                <div className="border-b border-black w-48 ml-auto mb-1"></div>
+                <p className="font-bold">Supervisor Authorization Seal & Signature</p>
+                <p className="text-gray-500">{returnSuccessVoucher.supervisorName}</p>
+              </div>
+            </div>
+          </div>
+        </OfficialPrintPortal>
       )}
 
     </div>

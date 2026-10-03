@@ -32,6 +32,7 @@ import {
   ArrowDownLeft,
   ArrowUpRight
 } from 'lucide-react';
+import { OfficialPrintPortal } from '../common/OfficialPrintPortal';
 
 interface DebtBookProps {
   customers: LocalCustomer[];
@@ -126,6 +127,15 @@ export const DebtBook: React.FC<DebtBookProps> = ({
 
   // Customer Loyalty & Sale History State
   const [customerOrders, setCustomerOrders] = useState<LocalOrder[]>([]);
+  const [isPrintingStatement, setIsPrintingStatement] = useState(false);
+
+  const handlePrintStatement = () => {
+    setIsPrintingStatement(true);
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => setIsPrintingStatement(false), 800);
+    }, 120);
+  };
 
   const selectedCustomer = customers.find(c => c.id === selectedCustomerId) || customers[0] || null;
 
@@ -1030,7 +1040,8 @@ export const DebtBook: React.FC<DebtBookProps> = ({
                       </div>
                     </div>
                     <button
-                      onClick={() => window.print()}
+                      type="button"
+                      onClick={handlePrintStatement}
                       className="w-full mt-2 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-sans font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                     >
                       <Printer className="w-3.5 h-3.5" />
@@ -1051,7 +1062,7 @@ export const DebtBook: React.FC<DebtBookProps> = ({
 
       {/* ═══ REPAYMENT MODAL ═══ */}
       {showRepayModal && selectedCustomer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-150 no-print">
           <div className={`w-full max-w-sm rounded-3xl shadow-2xl p-6 space-y-4 border ${
             isDark ? 'bg-[#16181F] border-[#282B34] text-white' : 'bg-[#EBEEF2] border-slate-300 text-slate-900'
           }`}>
@@ -1113,7 +1124,7 @@ export const DebtBook: React.FC<DebtBookProps> = ({
 
       {/* ═══ AWARD BONUS POINTS MODAL ═══ */}
       {showBonusModal && selectedCustomer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-150 no-print">
           <form
             onSubmit={handleAwardBonusPoints}
             className={`w-full max-w-sm rounded-3xl shadow-2xl p-6 space-y-4 border ${
@@ -1185,7 +1196,7 @@ export const DebtBook: React.FC<DebtBookProps> = ({
 
       {/* ═══ ADD NEW MEMBER MODAL ═══ */}
       {showAddCustomer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-150 no-print">
           <form
             onSubmit={handleAddCustomer}
             className={`w-full max-w-sm rounded-3xl shadow-2xl p-6 space-y-3.5 border ${
@@ -1285,6 +1296,149 @@ export const DebtBook: React.FC<DebtBookProps> = ({
         </div>
       )}
 
+      {/* OFFICIAL CUSTOMER STATEMENT OF ACCOUNT & CREDIT DOSSIER */}
+      {selectedCustomer && (
+        <OfficialPrintPortal active={isPrintingStatement}>
+          <div className="official-printable-doc p-8 font-sans text-black bg-white max-w-3xl mx-auto">
+            {/* Corporate Header */}
+            <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-5">
+              <div>
+                <h1 className="text-xl font-black uppercase tracking-tight text-black">
+                  AKWAABA RETAIL SYSTEMS LTD.
+                </h1>
+                <p className="text-xs text-gray-700 font-medium">Customer Credit Services & BISA Ledger Division</p>
+                <p className="text-xs text-gray-700">Digital Address: GA-183-9022, Accra Central, Ghana</p>
+                <p className="text-xs text-gray-700">Tel: +233 (0) 30 223 9081 / 024 400 1122</p>
+                <p className="text-xs text-gray-700 font-mono font-bold">GRA TIN: C0029482190</p>
+              </div>
+              <div className="text-right">
+                <div className="inline-block border-2 border-black px-3 py-1 bg-gray-50 text-center">
+                  <span className="block text-[9px] uppercase font-bold tracking-wider text-gray-600">OFFICIAL RECORD</span>
+                  <span className="text-sm font-black text-black">STATEMENT OF ACCOUNT</span>
+                </div>
+                <p className="text-xs font-mono mt-1 text-gray-700">
+                  Date: {new Date().toLocaleDateString('en-GH')}
+                </p>
+              </div>
+            </div>
+
+            {/* Customer Dossier Context Grid */}
+            <div className="grid grid-cols-2 gap-4 border border-gray-300 p-3 rounded mb-5 text-xs bg-gray-50/50">
+              <div>
+                <p><strong>Customer Name:</strong> {selectedCustomer.fullName}</p>
+                <p><strong>Account ID:</strong> <span className="font-mono">{selectedCustomer.id}</span></p>
+                <p><strong>Mobile Phone:</strong> <span className="font-mono">{selectedCustomer.phone}</span></p>
+                <p><strong>GPS / Residential Address:</strong> {selectedCustomer.ghanaPostGps || 'Accra Central'}</p>
+              </div>
+              <div className="text-right">
+                <p><strong>Membership Tier:</strong> {getLoyaltyTier(selectedCustomer.loyaltyPoints || 0).name}</p>
+                <p><strong>Loyalty Points Accrued:</strong> <span className="font-bold font-mono">{selectedCustomer.loyaltyPoints || 0} pts</span></p>
+                <p><strong>Credit Facility Limit:</strong> <span className="font-mono">{formatGhs(selectedCustomer.creditLimit || 1000)}</span></p>
+                <p><strong>Branch Location:</strong> {branchName}</p>
+              </div>
+            </div>
+
+            {/* Outstanding Summary Cards */}
+            <div className="grid grid-cols-3 gap-3 mb-5 text-center text-xs">
+              <div className="p-3 border border-gray-300 rounded bg-gray-50">
+                <span className="text-gray-600 block text-[10px] uppercase font-bold">Approved Credit Limit</span>
+                <span className="font-mono font-bold text-sm">{formatGhs(selectedCustomer.creditLimit || 1000)}</span>
+              </div>
+              <div className="p-3 border border-rose-300 rounded bg-rose-50 text-rose-950">
+                <span className="text-rose-700 block text-[10px] uppercase font-bold">Outstanding Bisa Debt Due</span>
+                <span className="font-mono font-black text-base text-rose-700">{formatGhs(selectedCustomer.currentDebt)}</span>
+              </div>
+              <div className="p-3 border border-emerald-300 rounded bg-emerald-50 text-emerald-950">
+                <span className="text-emerald-700 block text-[10px] uppercase font-bold">Available Credit Line</span>
+                <span className="font-mono font-bold text-sm text-emerald-800">
+                  {formatGhs(Math.max(0, (selectedCustomer.creditLimit || 1000) - selectedCustomer.currentDebt))}
+                </span>
+              </div>
+            </div>
+
+            {/* Recent Transaction History Ledger */}
+            <div className="mb-5">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-800 mb-2 border-b pb-1">
+                Recent Invoiced Credit & Repayment Activity:
+              </h3>
+              <table className="w-full text-left text-xs border-collapse border border-gray-300">
+                <thead>
+                  <tr className="bg-gray-100 border-b border-gray-300 text-[10px] font-bold uppercase">
+                    <th className="p-2 border border-gray-300">Date</th>
+                    <th className="p-2 border border-gray-300">Invoice / Ref #</th>
+                    <th className="p-2 border border-gray-300">Payment Status</th>
+                    <th className="p-2 border border-gray-300 text-center">Items</th>
+                    <th className="p-2 border border-gray-300 text-right">Invoiced Amount (GHS)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 font-mono">
+                  {customerOrders.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="p-3 text-center text-gray-500 font-sans italic">
+                        No previous purchases on file for this customer account.
+                      </td>
+                    </tr>
+                  ) : (
+                    customerOrders.map(order => (
+                      <tr key={order.id}>
+                        <td className="p-2 border border-gray-300">
+                          {new Date(order.createdAt).toLocaleDateString('en-GH')}
+                        </td>
+                        <td className="p-2 border border-gray-300 font-bold">
+                          {order.orderNumber}
+                        </td>
+                        <td className="p-2 border border-gray-300 font-sans">
+                          {order.paymentMethod === 'BISA_DEBT' ? (
+                            <span className="font-bold text-rose-700">Credit Purchase</span>
+                          ) : (
+                            <span className="text-emerald-700">Paid ({order.paymentMethod})</span>
+                          )}
+                        </td>
+                        <td className="p-2 border border-gray-300 text-center">
+                          {order.items?.length || 0}
+                        </td>
+                        <td className="p-2 border border-gray-300 text-right font-bold">
+                          {formatGhs(order.grandTotal)}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Payment & MoMo Remittance Instructions */}
+            <div className="border border-gray-300 p-3 rounded mb-6 text-[11px] bg-gray-50">
+              <h4 className="font-bold uppercase tracking-wider text-gray-700 text-[10px] mb-1">
+                Settlement & Payment Details:
+              </h4>
+              <div className="grid grid-cols-2 gap-4">
+                <p>MTN MoMo Pay Merchant ID: <strong className="font-mono">890123</strong> (Akwaaba Retail OS)</p>
+                <p>Telecel Cash Merchant ID: <strong className="font-mono">440211</strong></p>
+                <p>GCB Commercial Account: <strong className="font-mono">1011099283401</strong></p>
+                <p>Reference: <strong className="font-mono">{selectedCustomer.phone}</strong></p>
+              </div>
+              <p className="mt-1 text-[10px] text-gray-500">
+                Terms: In accordance with Akwaaba Retail credit policy, outstanding balances must be cleared within 14 days of invoice.
+              </p>
+            </div>
+
+            {/* Verification Signatures */}
+            <div className="grid grid-cols-2 gap-8 pt-4 border-t border-gray-300 text-[10px]">
+              <div>
+                <div className="border-b border-black w-48 mb-1"></div>
+                <p className="font-bold">Customer Acknowledgement Signature</p>
+                <p className="text-gray-500">{selectedCustomer.fullName}</p>
+              </div>
+              <div className="text-right">
+                <div className="border-b border-black w-48 ml-auto mb-1"></div>
+                <p className="font-bold">Authorized Credit Controller / Officer</p>
+                <p className="text-gray-500">Official Store Authorization Stamp</p>
+              </div>
+            </div>
+          </div>
+        </OfficialPrintPortal>
+      )}
     </div>
   );
 };

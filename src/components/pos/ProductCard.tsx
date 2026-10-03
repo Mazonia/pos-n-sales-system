@@ -220,39 +220,64 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           {product.name}
         </h4>
 
-        {/* Localized / Variant Subtitle */}
-        {product.localName && (
-          <p className="text-[11px] text-slate-600 dark:text-stone-400 mt-0.5 truncate font-medium min-w-0">
-            {product.localName}
-          </p>
+        {/* Wholesale Packaging Specification & Subtitle */}
+        {isWholesale ? (
+          <div className="mt-1 flex items-center gap-1.5 flex-wrap min-w-0">
+            <span className="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-teal-500/15 text-[#008285] dark:text-[#00CED1] border border-teal-500/30 flex items-center gap-1 shrink-0">
+              <Package className="w-3 h-3" />
+              <span>Bulk: {product.baseUnit || 'Carton / Pack'}</span>
+            </span>
+            {product.localName && (
+              <span className="text-[10.5px] text-slate-500 dark:text-stone-400 font-medium truncate">
+                {product.localName}
+              </span>
+            )}
+          </div>
+        ) : (
+          product.localName && (
+            <p className="text-[11px] text-slate-600 dark:text-stone-400 mt-0.5 truncate font-medium min-w-0">
+              {product.localName}
+            </p>
+          )
         )}
       </div>
 
       {/* Bottom Row: Fixed Pinned Price & Add Action (Always visible & inside the card) */}
       <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-[#282B34] flex items-center justify-between gap-1.5 shrink-0">
-        <div className="min-w-0 flex-1 overflow-hidden">
-          <div className="flex items-center gap-1.5 mb-0.5">
-            <span className="text-[9.5px] uppercase font-bold tracking-wider text-slate-500 dark:text-stone-500 block leading-none">
-              {isWholesale ? 'Wholesale Price' : 'Price'}
-            </span>
-            {isWholesale && (
-              <span className="px-1 py-0.2 rounded text-[8.5px] font-black uppercase tracking-wider bg-teal-500/15 text-[#008285] dark:text-[#00CED1] border border-teal-500/30">
-                Wholesale
+        <div className="min-w-0 flex-1 overflow-hidden pr-1">
+          {isWholesale ? (
+            <div>
+              <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                <span className="px-1.5 py-0.5 rounded text-[8.5px] font-black uppercase tracking-wider bg-teal-500/15 text-[#008285] dark:text-[#00CED1] border border-teal-500/30 leading-none">
+                  WHOLESALE
+                </span>
+                {product.retailPrice > effectiveBasePrice && (
+                  <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 leading-none">
+                    Save {formatGhs(product.retailPrice - effectiveBasePrice)}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-baseline gap-1.5 flex-wrap">
+                <span className="text-[15px] sm:text-[16px] font-black tracking-tight tabular-nums text-[#008285] dark:text-[#00CED1] leading-tight">
+                  {formatGhs(effectiveBasePrice)}
+                </span>
+                {product.retailPrice !== effectiveBasePrice && (
+                  <span className="text-[10px] text-slate-400 dark:text-stone-500 tabular-nums">
+                    MSRP: <span className="line-through">{formatGhs(product.retailPrice)}</span>
+                  </span>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <span className="text-[9.5px] uppercase font-bold tracking-wider text-slate-500 dark:text-stone-500 block leading-none mb-0.5">
+                Retail Price
               </span>
-            )}
-          </div>
-          <div className="flex items-baseline gap-1.5 truncate">
-            <span className={`text-[15px] sm:text-[16px] font-black tracking-tight tabular-nums truncate block ${
-              isWholesale ? 'text-[#008285] dark:text-[#00CED1]' : 'text-[#FF4500] dark:text-[#FF5722]'
-            }`}>
-              {formatGhs(effectiveBasePrice)}
-            </span>
-            {isWholesale && product.retailPrice !== effectiveBasePrice && (
-              <span className="text-[11px] line-through text-slate-400 dark:text-stone-500 tabular-nums">
-                {formatGhs(product.retailPrice)}
+              <span className="text-[15px] sm:text-[16px] font-black tracking-tight tabular-nums text-[#FF4500] dark:text-[#FF5722] block leading-tight">
+                {formatGhs(effectiveBasePrice)}
               </span>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-1 shrink-0 relative">

@@ -28,6 +28,7 @@ import {
 import { ItemMasterEditorModal } from './ItemMasterEditorModal';
 import { BarcodeLabelPrinterModal } from './BarcodeLabelPrinterModal';
 import { stripEmojis } from '../../utils/emojiSanitizer';
+import { OfficialPrintPortal } from '../common/OfficialPrintPortal';
 
 interface InventoryManagerProps {
   products: LocalProduct[];
@@ -943,7 +944,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
 
       {/* VIEW PO MODAL */}
       {selectedPoForView && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 no-print">
           <div className={`w-full max-w-2xl rounded-3xl border shadow-2xl p-5 space-y-4 ${
             isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-slate-300 text-slate-900'
           }`}>
@@ -999,7 +1000,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
 
       {/* TRANSFER MODAL */}
       {showTransferModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 no-print">
           <div className={`w-full max-w-sm rounded-3xl border shadow-2xl p-5 space-y-3 ${
             isDark ? 'bg-[#16181F] border-[#282B34] text-stone-100' : 'bg-white border-slate-300 text-slate-900'
           }`}>
@@ -1098,6 +1099,115 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
         branchName={branchName}
         isDark={isDark}
       />
+
+      {/* OFFICIAL PRINTABLE PURCHASE ORDER DOCUMENT FROM INVENTORY MANAGER */}
+      {selectedPoForView && (
+        <OfficialPrintPortal active={true}>
+          <div className="official-printable-doc text-black bg-white p-8 font-sans max-w-4xl mx-auto">
+            {/* Header */}
+            <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-6">
+              <div>
+                <h1 className="text-xl font-black uppercase tracking-tight text-black">
+                  AKWAABA RETAIL SYSTEMS & WHOLESALE LTD.
+                </h1>
+                <p className="text-xs text-gray-700 font-medium">Headquarters & Central Logistics Distribution</p>
+                <p className="text-xs text-gray-700">Digital Address: GA-183-9022, Accra Central, Ghana</p>
+                <p className="text-xs text-gray-700 font-mono font-bold">GRA TIN: C0029482190 | VAT REG: YES</p>
+              </div>
+              <div className="text-right">
+                <div className="inline-block border-2 border-black px-4 py-1.5 text-center bg-gray-50">
+                  <span className="block text-[9px] uppercase font-bold tracking-wider text-gray-600">OFFICIAL VOUCHER</span>
+                  <span className="text-sm font-black text-black">PURCHASE ORDER</span>
+                </div>
+                <div className="mt-2 text-xs font-mono">
+                  <p><strong>PO Number:</strong> {selectedPoForView.poNumber}</p>
+                  <p><strong>Date:</strong> {new Date(selectedPoForView.createdAt).toLocaleDateString('en-GB')}</p>
+                  <p><strong>Terms:</strong> 14 Days Net</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Supplier & Delivery */}
+            <div className="grid grid-cols-2 gap-6 mb-6 text-xs border border-gray-300 p-4 rounded bg-gray-50/50">
+              <div>
+                <h3 className="font-bold uppercase tracking-wider text-gray-600 text-[10px] mb-1">SUPPLIER / VENDOR:</h3>
+                <p className="text-sm font-bold text-black">{selectedPoForView.supplierName}</p>
+                <p className="text-gray-700">Ghana Wholesale & Commercial Division</p>
+              </div>
+              <div>
+                <h3 className="font-bold uppercase tracking-wider text-gray-600 text-[10px] mb-1">RECEIVING BAY / LOCATION:</h3>
+                <p className="text-sm font-bold text-black">{branchName}</p>
+                <p className="text-gray-700">Authorized Officer: {currentUser?.fullName || 'Procurement Officer'} ({currentUser?.role || 'Staff'})</p>
+              </div>
+            </div>
+
+            {/* Items Table */}
+            <table className="w-full text-left text-xs border-collapse border border-gray-300 mb-6">
+              <thead>
+                <tr className="bg-gray-100 border-b border-gray-300 text-[11px] font-bold uppercase">
+                  <th className="p-2 border border-gray-300 text-center w-10">#</th>
+                  <th className="p-2 border border-gray-300">Item Description</th>
+                  <th className="p-2 border border-gray-300">SKU / Code</th>
+                  <th className="p-2 border border-gray-300 text-center">Unit</th>
+                  <th className="p-2 border border-gray-300 text-center">Order Qty</th>
+                  <th className="p-2 border border-gray-300 text-right">Unit Cost (GHS)</th>
+                  <th className="p-2 border border-gray-300 text-right">Line Total (GHS)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 font-mono">
+                {selectedPoForView.items?.map((item, idx) => (
+                  <tr key={idx}>
+                    <td className="p-2 border border-gray-300 text-center">{idx + 1}</td>
+                    <td className="p-2 border border-gray-300 font-sans font-semibold">{item.productName}</td>
+                    <td className="p-2 border border-gray-300">{item.sku}</td>
+                    <td className="p-2 border border-gray-300 text-center">{item.unit}</td>
+                    <td className="p-2 border border-gray-300 text-center font-bold">{item.recommendedOrder}</td>
+                    <td className="p-2 border border-gray-300 text-right">{formatGhs(item.unitCost)}</td>
+                    <td className="p-2 border border-gray-300 text-right font-bold">{formatGhs(item.totalCost)}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr className="bg-gray-50 border-t-2 border-black font-bold font-mono">
+                  <td colSpan={6} className="p-2.5 text-right uppercase font-sans border border-gray-300">
+                    Grand Total Payable (GHS):
+                  </td>
+                  <td className="p-2.5 text-right font-black text-sm border border-gray-300">
+                    {formatGhs(selectedPoForView.totalCost)}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+
+            {/* Notes */}
+            {selectedPoForView.notes && (
+              <div className="mb-6 border border-gray-200 p-3 rounded text-xs bg-gray-50">
+                <p className="font-bold text-gray-800 mb-0.5">PURCHASE ORDER NOTES:</p>
+                <p className="text-gray-700">{selectedPoForView.notes}</p>
+              </div>
+            )}
+
+            {/* Formal Signatures */}
+            <div className="grid grid-cols-3 gap-6 pt-6 border-t-2 border-black text-xs">
+              <div className="border-t border-dashed border-gray-400 pt-2">
+                <p className="font-bold uppercase text-[11px]">1. PREPARED BY:</p>
+                <p className="mt-1 font-semibold">{currentUser?.fullName || 'Store Manager'}</p>
+                <p className="text-[10px] text-gray-500 mt-4">Signature: ______________________</p>
+              </div>
+              <div className="border-t border-dashed border-gray-400 pt-2">
+                <p className="font-bold uppercase text-[11px]">2. APPROVED BY:</p>
+                <p className="mt-1 font-semibold">General Manager / Audit</p>
+                <p className="text-[10px] text-gray-500 mt-4">Signature: ______________________</p>
+              </div>
+              <div className="border-t border-dashed border-gray-400 pt-2">
+                <p className="font-bold uppercase text-[11px]">3. RECEIVING BAY:</p>
+                <p className="mt-1 font-semibold">Goods Inward & Quality</p>
+                <p className="text-[10px] text-gray-500 mt-4">Seal & Stamp: ___________________</p>
+              </div>
+            </div>
+          </div>
+        </OfficialPrintPortal>
+      )}
 
     </div>
   );
