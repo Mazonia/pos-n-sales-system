@@ -19,7 +19,8 @@ import {
   ArrowRight,
   Sparkles,
   Award,
-  Gift
+  Gift,
+  Coins
 } from 'lucide-react';
 
 interface PaymentModalProps {
@@ -362,49 +363,51 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   </div>
                 </div>
 
-                {/* Smart Real-Time Cash Calculation: Change to Give vs Customer Left to Pay */}
+                {/* Smart Direct Cash Calculation: Change Due (#00CED1) vs Left to Pay (#FF4500) */}
                 {isOverpaid && (
-                  <div className="p-3.5 rounded-2xl bg-[#FF4500]/10 border-2 border-[#FF4500]/40 text-[#FF4500] dark:text-[#FF5722] space-y-1 animate-in fade-in duration-150">
+                  <div className="p-3.5 rounded-2xl bg-[#00CED1]/10 border-2 border-[#00CED1]/40 text-[#00CED1] space-y-1.5 animate-in fade-in duration-150 shadow-xs">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider">
-                        <CheckCircle2 className="w-4 h-4 text-[#FF4500]" />
-                        <span>Change to Give Customer:</span>
+                      <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider">
+                        <Coins className="w-4 h-4 text-[#00CED1]" />
+                        <span>Change Due</span>
                       </div>
-                      <span className="font-mono font-black text-lg text-[#FF4500] dark:text-[#FF5722] tabular-nums">
+                      <span className="font-mono font-black text-2xl text-[#00CED1] tabular-nums">
                         {formatGhs(changeToGive)}
                       </span>
                     </div>
-                    <p className="text-[11px] text-stone-600 dark:text-stone-300 leading-tight">
-                      Customer tendered <strong className="font-mono text-stone-900 dark:text-white">{formatGhs(cashTendered)}</strong> for <strong className="font-mono text-stone-900 dark:text-white">{formatGhs(remainingDue)}</strong> due. Hand customer <strong className="font-mono underline text-[#FF4500] dark:text-[#FF5722]">{formatGhs(changeToGive)}</strong> in change.
-                    </p>
+                    <div className="flex items-center justify-between text-[11px] text-stone-600 dark:text-stone-300 font-medium pt-1 border-t border-[#00CED1]/20">
+                      <span>Tendered: <strong className="font-mono text-stone-900 dark:text-white">{formatGhs(cashTendered)}</strong></span>
+                      <span className="text-[#00CED1] font-bold">Return to customer</span>
+                    </div>
                   </div>
                 )}
 
                 {isUnderpaid && (
-                  <div className="p-3.5 rounded-2xl bg-[#FF4500]/10 border-2 border-[#FF4500]/40 text-[#FF4500] dark:text-[#FF5722] space-y-1 animate-in fade-in duration-150">
+                  <div className="p-3.5 rounded-2xl bg-[#FF4500]/10 border-2 border-[#FF4500]/40 text-[#FF4500] dark:text-[#FF5722] space-y-1.5 animate-in fade-in duration-150 shadow-xs">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider">
+                      <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider">
                         <AlertCircle className="w-4 h-4 text-[#FF4500]" />
-                        <span>Customer Left to Pay:</span>
+                        <span>Left to Pay</span>
                       </div>
-                      <span className="font-mono font-black text-lg text-[#FF4500] dark:text-[#FF5722] tabular-nums">
+                      <span className="font-mono font-black text-2xl text-[#FF4500] dark:text-[#FF5722] tabular-nums">
                         {formatGhs(remainingToPay)}
                       </span>
                     </div>
-                    <p className="text-[11px] text-stone-600 dark:text-stone-300 leading-tight">
-                      Customer tendered <strong className="font-mono text-stone-900 dark:text-white">{formatGhs(cashTendered)}</strong> of <strong className="font-mono text-stone-900 dark:text-white">{formatGhs(remainingDue)}</strong>. Outstanding balance remaining to collect: <strong className="font-mono underline text-[#FF4500] dark:text-[#FF5722]">{formatGhs(remainingToPay)}</strong> (settle via MoMo, Card, or additional cash).
-                    </p>
+                    <div className="flex items-center justify-between text-[11px] text-stone-600 dark:text-stone-300 font-medium pt-1 border-t border-[#FF4500]/20">
+                      <span>Tendered: <strong className="font-mono text-stone-900 dark:text-white">{formatGhs(cashTendered)}</strong></span>
+                      <span className="text-[#FF4500] dark:text-[#FF5722] font-bold">Remaining balance</span>
+                    </div>
                   </div>
                 )}
 
                 {isExact && (
-                  <div className="p-3 rounded-2xl bg-[#FF4500]/10 border border-[#FF4500]/30 text-[#FF4500] dark:text-[#FF5722] flex items-center justify-between text-xs animate-in fade-in duration-150">
-                    <div className="flex items-center gap-1.5 font-bold">
-                      <CheckCircle2 className="w-4 h-4 text-[#FF4500]" />
-                      <span>Exact Cash Tender Received:</span>
+                  <div className="p-3 rounded-2xl bg-[#00CED1]/10 border border-[#00CED1]/30 text-[#00CED1] flex items-center justify-between text-xs animate-in fade-in duration-150">
+                    <div className="flex items-center gap-2 font-bold uppercase tracking-wider">
+                      <CheckCircle2 className="w-4 h-4 text-[#00CED1]" />
+                      <span>Exact Cash Received</span>
                     </div>
-                    <span className="font-mono font-bold text-sm text-[#FF4500] dark:text-[#FF5722]">
-                      GH₵ 0.00 Change Due
+                    <span className="font-mono font-bold text-sm text-[#00CED1]">
+                      No Change Due
                     </span>
                   </div>
                 )}
@@ -413,7 +416,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   <div className={`p-3 rounded-xl border flex items-center justify-between text-xs ${
                     isDark ? 'bg-[#1A1C22] border-[#282B34]' : 'bg-white border-stone-200'
                   }`}>
-                    <span className="text-stone-400">Enter tendered cash to calculate change or remaining balance:</span>
+                    <span className="text-stone-400">Enter tendered cash to calculate:</span>
                     <span className="font-mono font-bold text-[#FF4500] dark:text-[#FF5722] tabular-nums">
                       Due: {formatGhs(remainingDue)}
                     </span>
@@ -429,9 +432,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   <Plus className="w-4 h-4" />
                   <span>
                     {isOverpaid
-                      ? `Accept ${formatGhs(cashTendered)} · Return ${formatGhs(changeToGive)} Change`
+                      ? `Accept ${formatGhs(cashTendered)} · Give ${formatGhs(changeToGive)} Change`
                       : isUnderpaid
-                      ? `Apply Partial Cash (${formatGhs(cashTendered)}) · Customer Left with ${formatGhs(remainingToPay)}`
+                      ? `Accept ${formatGhs(cashTendered)} · Left to Pay: ${formatGhs(remainingToPay)}`
                       : `Apply Exact Cash (${formatGhs(cashTendered)})`}
                   </span>
                 </button>

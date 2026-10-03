@@ -13,7 +13,9 @@ import {
   Send,
   Loader2,
   Clock,
-  ShieldAlert
+  ShieldAlert,
+  Coins,
+  AlertCircle
 } from 'lucide-react';
 
 interface SplitPaymentModalProps {
@@ -293,39 +295,50 @@ export const SplitPaymentModal: React.FC<SplitPaymentModalProps> = ({
                   </div>
                 </div>
 
-                {/* Smart Change vs Remaining Balance Display */}
+                {/* Smart Direct Cash Calculation: Change Due (#00CED1) vs Left to Pay (#FF4500) */}
                 {isOverpaid && (
-                  <div className="p-3.5 rounded-2xl bg-emerald-500/15 border-2 border-emerald-500/40 text-emerald-400 space-y-1">
+                  <div className="p-3.5 rounded-2xl bg-[#00CED1]/10 border-2 border-[#00CED1]/40 text-[#00CED1] space-y-1.5 shadow-xs">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-xs uppercase tracking-wider">Change to Give Customer:</span>
-                      <span className="font-mono font-black text-lg text-emerald-300 tabular-nums">
+                      <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider">
+                        <Coins className="w-4 h-4 text-[#00CED1]" />
+                        <span>Change Due</span>
+                      </div>
+                      <span className="font-mono font-black text-2xl text-[#00CED1] tabular-nums">
                         {formatGhs(changeToGive)}
                       </span>
                     </div>
-                    <p className="text-[11px] text-emerald-400/90 leading-tight">
-                      Customer tendered <strong className="font-mono text-white">{formatGhs(cashTendered)}</strong> for <strong className="font-mono text-white">{formatGhs(remainingDue)}</strong> due. Return <strong className="font-mono underline text-white">{formatGhs(changeToGive)}</strong> in change.
-                    </p>
+                    <div className="flex items-center justify-between text-[11px] text-stone-300 font-medium pt-1 border-t border-[#00CED1]/20">
+                      <span>Tendered: <strong className="font-mono text-white">{formatGhs(cashTendered)}</strong></span>
+                      <span className="text-[#00CED1] font-bold">Return to customer</span>
+                    </div>
                   </div>
                 )}
 
                 {isUnderpaid && (
-                  <div className="p-3.5 rounded-2xl bg-amber-500/15 border-2 border-amber-500/40 text-amber-400 space-y-1">
+                  <div className="p-3.5 rounded-2xl bg-[#FF4500]/10 border-2 border-[#FF4500]/40 text-[#FF4500] space-y-1.5 shadow-xs">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-xs uppercase tracking-wider">Customer Left to Pay:</span>
-                      <span className="font-mono font-black text-lg text-amber-300 tabular-nums">
+                      <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider">
+                        <AlertCircle className="w-4 h-4 text-[#FF4500]" />
+                        <span>Left to Pay</span>
+                      </div>
+                      <span className="font-mono font-black text-2xl text-[#FF4500] tabular-nums">
                         {formatGhs(remainingToPay)}
                       </span>
                     </div>
-                    <p className="text-[11px] text-amber-400/90 leading-tight">
-                      Customer tendered <strong className="font-mono text-white">{formatGhs(cashTendered)}</strong>. Outstanding balance remaining to collect: <strong className="font-mono underline text-white">{formatGhs(remainingToPay)}</strong>.
-                    </p>
+                    <div className="flex items-center justify-between text-[11px] text-stone-300 font-medium pt-1 border-t border-[#FF4500]/20">
+                      <span>Tendered: <strong className="font-mono text-white">{formatGhs(cashTendered)}</strong></span>
+                      <span className="text-[#FF4500] font-bold">Remaining balance</span>
+                    </div>
                   </div>
                 )}
 
                 {isExact && (
-                  <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-between text-xs">
-                    <span className="font-bold">Exact Cash Tender Received:</span>
-                    <span className="font-mono font-bold text-sm text-emerald-300">GH₵ 0.00 Change Due</span>
+                  <div className="p-3 rounded-2xl bg-[#00CED1]/10 border border-[#00CED1]/30 text-[#00CED1] flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2 font-bold uppercase tracking-wider">
+                      <CheckCircle2 className="w-4 h-4 text-[#00CED1]" />
+                      <span>Exact Cash Tender Received</span>
+                    </div>
+                    <span className="font-mono font-bold text-sm text-[#00CED1]">No Change Due</span>
                   </div>
                 )}
 
@@ -333,14 +346,14 @@ export const SplitPaymentModal: React.FC<SplitPaymentModalProps> = ({
                   type="button"
                   onClick={handleAddCashPayment}
                   disabled={remainingDue <= 0 || cashTendered <= 0}
-                  className="w-full py-3.5 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition bg-amber-500 hover:bg-amber-400 text-stone-950 font-black"
+                  className="w-full py-3.5 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition bg-[#FF4500] hover:bg-[#E03E00] text-white font-black cursor-pointer shadow-md active:scale-[0.98] disabled:opacity-40"
                 >
                   <Plus className="w-4 h-4" />
                   <span>
                     {isOverpaid
-                      ? `Accept ${formatGhs(cashTendered)} · Return ${formatGhs(changeToGive)} Change`
+                      ? `Accept ${formatGhs(cashTendered)} · Give ${formatGhs(changeToGive)} Change`
                       : isUnderpaid
-                      ? `Apply Partial Cash (${formatGhs(cashTendered)}) · Customer Left with ${formatGhs(remainingToPay)}`
+                      ? `Accept ${formatGhs(cashTendered)} · Left to Pay: ${formatGhs(remainingToPay)}`
                       : `Apply Exact Cash (${formatGhs(cashTendered)})`}
                   </span>
                 </button>

@@ -660,19 +660,21 @@ export default function App() {
         pageTransition ? 'opacity-0 scale-[0.99]' : 'opacity-100 scale-100'
       }`}>
         {activeTab === 'POS' && (
-          <PosTerminalView
-            products={products}
-            customers={customers}
-            activeShiftId={activeShift?.id || 'shift-01'}
-            cashierName={currentUser.fullName}
-            cashierId={currentUser.id}
-            cashierRole={currentUser.role}
-            taxScheme={taxScheme}
-            isOnline={isOnline}
-            branchName={branchName}
-            isDark={isDark}
-            onRefreshData={refreshAllData}
-          />
+          <div className="register-view w-full h-full flex flex-1 overflow-hidden" data-view="POS">
+            <PosTerminalView
+              products={products}
+              customers={customers}
+              activeShiftId={activeShift?.id || 'shift-01'}
+              cashierName={currentUser.fullName}
+              cashierId={currentUser.id}
+              cashierRole={currentUser.role}
+              taxScheme={taxScheme}
+              isOnline={isOnline}
+              branchName={branchName}
+              isDark={isDark}
+              onRefreshData={refreshAllData}
+            />
+          </div>
         )}
 
         {activeTab === 'BISA' && (
