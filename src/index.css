@@ -296,3 +296,90 @@
 .theme-dark .neo-list-item-hover:hover, .dark .neo-list-item-hover:hover {
   background-color: #242731 !important;
 }
+
+/* Circular Reveal Theme Switch Animation */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 9999;
+}
+.dark::view-transition-old(root) {
+  z-index: 9999;
+}
+.dark::view-transition-new(root) {
+  z-index: 1;
+}
+
+/* Official Industry Standard Print Formatting (@media print) */
+@media print {
+  @page {
+    margin: 12mm;
+    size: auto;
+  }
+  
+  /* Suppress all web application chrome, backdrops, navbars, and buttons */
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+  }
+  
+  .no-print,
+  nav,
+  header,
+  aside,
+  button,
+  .pos-dock,
+  .pwa-install-banner {
+    display: none !important;
+  }
+
+  /* Thermal Receipt Print Mode */
+  #thermal-receipt-print-area {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 80mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  /* Official A4 Purchase Order & Document Print Area */
+  .official-printable-doc {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  .official-printable-doc * {
+    visibility: visible !important;
+    color: #000000 !important;
+  }
+
+  .print-page-break {
+    page-break-after: always;
+  }
+}

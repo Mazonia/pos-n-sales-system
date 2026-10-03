@@ -61,6 +61,8 @@ import {
   ENTERPRISE_BRANCHES,
   TerminalBranch
 } from './utils/terminalConfig';
+import { executeThemeTransition } from './utils/themeTransition';
+import { sanitizeUserForStorage } from './utils/security';
 
 export default function App() {
   // Theme State: Crisp Light Mode by default, with dark mode toggle support
@@ -90,13 +92,14 @@ export default function App() {
     const saved = localStorage.getItem('akwaaba_pos_session_user');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        return sanitizeUserForStorage(parsed);
       } catch (e) {
         return null;
       }
     }
     // Start with default cashier for seamless preview, but allow instant logout/login
-    return SYSTEM_USERS[0];
+    return sanitizeUserForStorage(SYSTEM_USERS[0]);
   });
 
   // Navigation State
@@ -244,8 +247,9 @@ export default function App() {
   });
 
   const handleLoginSuccess = (user: SystemUser) => {
-    setCurrentUser(user);
-    localStorage.setItem('akwaaba_pos_session_user', JSON.stringify(user));
+    const safeUser = sanitizeUserForStorage(user);
+    setCurrentUser(safeUser);
+    localStorage.setItem('akwaaba_pos_session_user', JSON.stringify(safeUser));
     // Set appropriate landing tab according to role
     if (user.role === 'INVENTORY_OFFICER') {
       setActiveTab('INVENTORY');
@@ -476,9 +480,9 @@ export default function App() {
 
           {/* Theme Switcher Toggle */}
           <button
-            onClick={() => {
+            onClick={(e) => {
               triggerHaptic('tap');
-              setIsDark(!isDark);
+              executeThemeTransition(() => setIsDark(!isDark), e.clientX, e.clientY);
             }}
             className={`p-2.5 rounded-xl border transition-all duration-200 active:scale-90 cursor-pointer ${
               isDark
@@ -705,6 +709,7 @@ export default function App() {
           <FinancialDashboard
             isDark={isDark}
             branchName={branchName}
+            currentUser={currentUser}
           />
         )}
 

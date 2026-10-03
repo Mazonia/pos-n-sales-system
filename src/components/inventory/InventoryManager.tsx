@@ -347,6 +347,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                     <th className="p-3.5">Category</th>
                     <th className="p-3.5 text-right">Cost Price</th>
                     <th className="p-3.5 text-right">Retail Shelf</th>
+                    <th className="p-3.5 text-right">Wholesale Price</th>
                     <th className="p-3.5 text-center">Safety Threshold</th>
                     <th className="p-3.5 text-center">Current Stock</th>
                     <th className="p-3.5 text-center">Status</th>
@@ -405,8 +406,12 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
 
                           <td className="p-3.5 text-right font-mono tabular-nums text-slate-600 dark:text-stone-400">{formatGhs(prod.costPrice)}</td>
 
-                          <td className="p-3.5 text-right font-mono tabular-nums font-bold text-[#008285] dark:text-emerald-400">
+                          <td className="p-3.5 text-right font-mono tabular-nums font-bold text-[#FF4500]">
                             {formatGhs(prod.retailPrice)}
+                          </td>
+
+                          <td className="p-3.5 text-right font-mono tabular-nums font-bold text-[#008285] dark:text-[#00CED1]">
+                            {formatGhs(prod.wholesalePrice || Math.round(prod.retailPrice * 0.85 * 100) / 100)}
                           </td>
 
                           <td className="p-3.5 text-center font-mono tabular-nums font-bold text-slate-600 dark:text-stone-400">

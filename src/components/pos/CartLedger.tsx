@@ -14,7 +14,9 @@ import {
   Banknote,
   UserCheck,
   ArrowRight,
-  Receipt
+  Receipt,
+  Lock,
+  Package
 } from 'lucide-react';
 
 interface CartLedgerProps {
@@ -32,6 +34,8 @@ interface CartLedgerProps {
   onInitiateCheckout: () => void;
   taxScheme: TaxSchemeType;
   isDark: boolean;
+  orderMode?: 'RETAIL' | 'WHOLESALE';
+  canApplyDiscount?: boolean;
 }
 
 export const CartLedger: React.FC<CartLedgerProps> = ({
@@ -49,6 +53,8 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
   onInitiateCheckout,
   taxScheme,
   isDark,
+  orderMode = 'RETAIL',
+  canApplyDiscount = true,
 }) => {
   const [taxAccordionOpen, setTaxAccordionOpen] = useState(false);
 
@@ -61,6 +67,7 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
   const grandTotal = netOrderAmount;
 
   const selectedCustomer = customers.find(c => c.id === selectedCustomerId);
+  const isWholesale = orderMode === 'WHOLESALE';
 
   return (
     <div className="flex flex-col h-full select-none p-3.5 space-y-3 bg-[#EBEEF2] dark:bg-[#121316]">
@@ -72,9 +79,18 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
             <Receipt className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-[13.5px] font-bold text-slate-900 dark:text-stone-100">
-              Current Ticket
-            </h3>
+            <div className="flex items-center gap-1.5">
+              <h3 className="text-[13.5px] font-bold text-slate-900 dark:text-stone-100">
+                Current Ticket
+              </h3>
+              <span className={`px-1.5 py-0.2 rounded text-[9.5px] font-black uppercase tracking-wider ${
+                isWholesale
+                  ? 'bg-teal-500/15 text-[#008285] dark:text-[#00CED1] border border-teal-500/30'
+                  : 'bg-orange-500/15 text-[#C43400] dark:text-[#FF5722] border border-orange-500/30'
+              }`}>
+                {isWholesale ? 'Wholesale' : 'Retail'}
+              </span>
+            </div>
             <span className="text-[11.5px] text-slate-600 dark:text-stone-400 font-medium">
               {totalItemCount} {totalItemCount === 1 ? 'item' : 'items'}
             </span>
@@ -301,11 +317,19 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
 
             <button
               type="button"
-              onClick={onOpenDiscountModal}
-              className="pos-btn py-2 px-3 text-xs font-semibold flex items-center justify-center gap-1.5"
+              onClick={canApplyDiscount ? onOpenDiscountModal : undefined}
+              disabled={!canApplyDiscount}
+              className={`pos-btn py-2 px-3 text-xs font-semibold flex items-center justify-center gap-1.5 ${
+                !canApplyDiscount ? 'opacity-40 cursor-not-allowed bg-slate-100 dark:bg-[#1A1C22]' : ''
+              }`}
+              title={canApplyDiscount ? 'Apply Order Discount' : 'Discounts locked by Store Management'}
             >
-              <Percent className="w-3.5 h-3.5 text-[#FF4500] dark:text-[#FF5722]" />
-              <span>Discount</span>
+              {canApplyDiscount ? (
+                <Percent className="w-3.5 h-3.5 text-[#FF4500] dark:text-[#FF5722]" />
+              ) : (
+                <Lock className="w-3.5 h-3.5 text-slate-400" />
+              )}
+              <span>{canApplyDiscount ? 'Discount' : 'Discount Locked'}</span>
             </button>
           </div>
 

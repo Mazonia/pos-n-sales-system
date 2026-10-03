@@ -71,6 +71,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
     barcode: '',
     costPrice: 0,
     retailPrice: 0,
+    wholesalePrice: 0,
     baseUnit: 'PCS',
     currentStock: 0,
     safetyThreshold: 10,
@@ -96,6 +97,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
         barcode: product.barcode || '',
         costPrice: product.costPrice || 0,
         retailPrice: product.retailPrice || 0,
+        wholesalePrice: product.wholesalePrice || (product.retailPrice ? Math.round(product.retailPrice * 0.85 * 100) / 100 : 0),
         baseUnit: product.baseUnit || 'PCS',
         currentStock: product.currentStock || 0,
         safetyThreshold: product.safetyThreshold !== undefined ? product.safetyThreshold : 10,
@@ -118,6 +120,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
         barcode: `603${Math.floor(100000000 + Math.random() * 900000000)}`,
         costPrice: 10,
         retailPrice: 15,
+        wholesalePrice: 12.5,
         baseUnit: 'PCS',
         currentStock: 25,
         safetyThreshold: 8,
@@ -206,6 +209,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
         barcode: formData.barcode.trim(),
         costPrice: Number(formData.costPrice),
         retailPrice: Number(formData.retailPrice),
+        wholesalePrice: Number(formData.wholesalePrice) || Math.round(Number(formData.retailPrice) * 0.85 * 100) / 100,
         baseUnit: formData.baseUnit.trim().toUpperCase(),
         currentStock: Number(formData.currentStock),
         safetyThreshold: Number(formData.safetyThreshold),
@@ -506,7 +510,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
               <span>Cost, Retail Shelf Price & Profit Metrics</span>
             </h4>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="text-[11px] text-slate-700 dark:text-stone-400 block mb-1 font-serif font-semibold">
                   Cost Price (GH₵) *
@@ -535,7 +539,7 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                   Retail Shelf Price (GH₵) *
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono font-bold text-[#008285] dark:text-emerald-500">GH₵</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono font-bold text-[#FF4500]">GH₵</span>
                   <input
                     type="number"
                     step="0.01"
@@ -546,7 +550,30 @@ export const ItemMasterEditorModal: React.FC<ItemMasterEditorModalProps> = ({
                       if (['e', 'E', '+', '-'].includes(e.key)) e.preventDefault();
                     }}
                     onChange={e => setFormData(prev => ({ ...prev, retailPrice: parseFloat(e.target.value) || 0 }))}
-                    className={`w-full pl-12 pr-3 py-2 rounded-xl border text-xs font-mono tabular-nums font-extrabold text-[#008285] dark:text-emerald-400 outline-none focus:border-[#008285] ${
+                    className={`w-full pl-12 pr-3 py-2 rounded-xl border text-xs font-mono tabular-nums font-extrabold text-[#FF4500] outline-none focus:border-[#FF4500] ${
+                      isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-slate-50 border-slate-300'
+                    }`}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[11px] text-slate-700 dark:text-stone-400 block mb-1 font-serif font-semibold">
+                  Wholesale / Bulk Price (GH₵) *
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono font-bold text-[#008285] dark:text-[#00CED1]">GH₵</span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    required
+                    value={formData.wholesalePrice}
+                    onKeyDown={e => {
+                      if (['e', 'E', '+', '-'].includes(e.key)) e.preventDefault();
+                    }}
+                    onChange={e => setFormData(prev => ({ ...prev, wholesalePrice: parseFloat(e.target.value) || 0 }))}
+                    className={`w-full pl-12 pr-3 py-2 rounded-xl border text-xs font-mono tabular-nums font-extrabold text-[#008285] dark:text-[#00CED1] outline-none focus:border-[#008285] ${
                       isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-slate-50 border-slate-300'
                     }`}
                   />

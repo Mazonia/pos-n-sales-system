@@ -2,6 +2,7 @@ import React from 'react';
 import { LocalOrder } from '../../utils/dexieSync';
 import { formatGhs } from '../../utils/ghanaTaxEngine';
 import { Printer, Share2 } from 'lucide-react';
+import { getReceiptConfig } from '../../utils/receiptConfig';
 
 interface ThermalReceiptProps {
   order: LocalOrder;
@@ -16,6 +17,7 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
 }) => {
   const [copied, setCopied] = React.useState(false);
   const [smsSent, setSmsSent] = React.useState(false);
+  const config = React.useMemo(() => getReceiptConfig(), []);
 
   const handlePrint = () => {
     window.print();
@@ -71,28 +73,43 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
       >
         {/* Store Header */}
         <div className="text-center pb-2 border-b border-dashed border-gray-400">
-          <div className="font-bold text-sm tracking-wide">AKWAABA RETAIL OS</div>
-          <div className="text-[11px] font-semibold">{order.branchName}</div>
-          <div className="text-[10px] text-gray-700">Digital Address: GA-183-9022</div>
-          <div className="text-[10px] text-gray-700">Tel: +233 (0) 30 223 9081</div>
-          <div className="text-[10px] text-gray-700">TIN: C001889201X | VAT REG: YES</div>
+          <div className="font-bold text-sm tracking-wide uppercase">{config.storeName}</div>
+          {config.tagline && <div className="text-[9.5px] text-gray-600 italic">{config.tagline}</div>}
+          <div className="text-[10px] font-semibold">{order.branchName}</div>
+          <div className="text-[10px] text-gray-700">Digital Address: {config.digitalAddress}</div>
+          <div className="text-[10px] text-gray-700">Tel: {config.phone}</div>
+          <div className="text-[10px] text-gray-700">TIN: {config.tinNumber} | VAT REG: YES</div>
         </div>
 
         {/* Receipt Meta */}
         <div className="py-2 border-b border-dashed border-gray-400 text-[10px] space-y-0.5">
-          <div className="flex justify-between">
-            <span className="font-bold">RCPT #:</span>
+          <div className="flex justify-between font-bold">
+            <span>RCPT #:</span>
             <span>{order.receiptNumber}</span>
           </div>
+          {config.showOrderTypeBadge && (
+            <div className="flex justify-between font-bold text-emerald-800">
+              <span>SALE TYPE:</span>
+              <span>{order.orderType === 'WHOLESALE' ? 'WHOLESALE / BULK' : 'RETAIL SALE'}</span>
+            </div>
+          )}
           <div className="flex justify-between">
             <span>Date:</span>
             <span>{new Date(order.createdAt).toLocaleString('en-GH')}</span>
           </div>
-          <div className="flex justify-between">
-            <span>Cashier:</span>
-            <span>{order.cashierName}</span>
-          </div>
-          {order.customerName && (
+          {config.showCashierName && (
+            <div className="flex justify-between">
+              <span>Cashier:</span>
+              <span>{order.cashierName}</span>
+            </div>
+          )}
+          {order.discountAppliedByUserName && (
+            <div className="flex justify-between text-[9px] text-gray-700">
+              <span>Discount Authorized:</span>
+              <span>{order.discountAppliedByUserName}</span>
+            </div>
+          )}
+          {config.showCustomerInfo && order.customerName && (
             <div className="flex justify-between">
               <span>Customer:</span>
               <span className="font-bold">{order.customerName}</span>
@@ -141,46 +158,53 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
         </div>
 
         {/* GRA Statutory Fiscal Levies Breakdown */}
-        <div className="py-1.5 border-b border-dashed border-gray-400 space-y-0.5 text-[9px] text-gray-800">
-          <div className="font-bold text-[9px] text-black">GRA FISCAL LEVIES BREAKDOWN:</div>
-          {order.taxScheme === 'STANDARD_VAT' ? (
-            <>
-              <div className="flex justify-between">
-                <span>- NHIL (2.5%):</span>
-                <span>{order.nhil.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>- GETFund Levy (2.5%):</span>
-                <span>{order.getfund.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>- COVID-19 Levy (1.0%):</span>
-                <span>{order.covid.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>- Standard VAT (15.0% on Base+Levies):</span>
-                <span>{order.vat.toFixed(2)}</span>
-              </div>
-            </>
-          ) : order.taxScheme === 'FLAT_RATE_VFRS' ? (
-            <>
-              <div className="flex justify-between">
-                <span>- COVID-19 Levy (1.0%):</span>
-                <span>{order.covid.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>- Flat Rate VAT (3.0%):</span>
-                <span>{order.vat.toFixed(2)}</span>
-              </div>
-            </>
-          ) : (
-            <div className="italic text-gray-600">Zero-rated / Presumptive SME Exempt</div>
-          )}
-          <div className="flex justify-between font-bold text-black border-t border-dotted border-gray-300 pt-0.5">
-            <span>Total Taxes & Levies:</span>
+        {config.showItemizedTaxes ? (
+          <div className="py-1.5 border-b border-dashed border-gray-400 space-y-0.5 text-[9px] text-gray-800">
+            <div className="font-bold text-[9px] text-black">GRA FISCAL LEVIES BREAKDOWN:</div>
+            {order.taxScheme === 'STANDARD_VAT' ? (
+              <>
+                <div className="flex justify-between">
+                  <span>- NHIL (2.5%):</span>
+                  <span>{order.nhil.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>- GETFund Levy (2.5%):</span>
+                  <span>{order.getfund.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>- COVID-19 Levy (1.0%):</span>
+                  <span>{order.covid.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>- Standard VAT (15.0% on Base+Levies):</span>
+                  <span>{order.vat.toFixed(2)}</span>
+                </div>
+              </>
+            ) : order.taxScheme === 'FLAT_RATE_VFRS' ? (
+              <>
+                <div className="flex justify-between">
+                  <span>- COVID-19 Levy (1.0%):</span>
+                  <span>{order.covid.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>- Flat Rate VAT (3.0%):</span>
+                  <span>{order.vat.toFixed(2)}</span>
+                </div>
+              </>
+            ) : (
+              <div className="italic text-gray-600">Zero-rated / Presumptive SME Exempt</div>
+            )}
+            <div className="flex justify-between font-bold text-black border-t border-dotted border-gray-300 pt-0.5">
+              <span>Total Taxes & Levies:</span>
+              <span>{order.totalTax.toFixed(2)}</span>
+            </div>
+          </div>
+        ) : (
+          <div className="py-1 border-b border-dashed border-gray-400 text-[9px] flex justify-between font-bold text-black">
+            <span>Statutory Taxes (Included):</span>
             <span>{order.totalTax.toFixed(2)}</span>
           </div>
-        </div>
+        )}
 
         {/* Grand Total */}
         <div className="py-2 border-b-2 border-black flex justify-between items-baseline font-bold text-sm">
@@ -233,7 +257,7 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
         </div>
 
         {/* Akwaaba Club Loyalty Rewards Breakdown */}
-        {(order.loyaltyPointsEarned !== undefined || (order.loyaltyPointsRedeemed !== undefined && order.loyaltyPointsRedeemed > 0) || order.customerLoyaltyBalanceAfter !== undefined) && (
+        {config.showLoyaltyPoints && (order.loyaltyPointsEarned !== undefined || (order.loyaltyPointsRedeemed !== undefined && order.loyaltyPointsRedeemed > 0) || order.customerLoyaltyBalanceAfter !== undefined) && (
           <div className="py-1.5 border-b border-dashed border-gray-400 text-[10px] space-y-0.5">
             <div className="font-bold text-gray-800">AKWAABA CLUB LOYALTY REWARDS:</div>
             {order.loyaltyPointsEarned !== undefined && (
@@ -257,12 +281,14 @@ export const ThermalReceipt: React.FC<ThermalReceiptProps> = ({
           </div>
         )}
 
-        {/* Footer Greetings in Ghanaian Tradition & Return Policy */}
+        {/* Footer Greetings & Return Policy */}
         <div className="pt-2 text-center text-[10px] space-y-1 text-gray-700">
-          <div className="font-bold">Medaase Paa! Thank you for your patronage.</div>
-          <div className="text-[9px] font-semibold text-black border border-dashed border-gray-400 p-1.5 rounded my-1">
-            Goods sold are only returnable within 24 hours along with the receipt.
-          </div>
+          <div className="font-bold">{config.footerMessage || 'Medaase Paa! Thank you for your patronage.'}</div>
+          {config.returnPolicyNotice && (
+            <div className="text-[9px] font-semibold text-black border border-dashed border-gray-400 p-1.5 rounded my-1 leading-normal">
+              {config.returnPolicyNotice}
+            </div>
+          )}
           <div className="text-[8px] text-gray-500 pt-0.5">
             Powered by Akwaaba POS & Retail OS (Offline-Ready)
           </div>

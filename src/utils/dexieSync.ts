@@ -20,6 +20,7 @@ export interface LocalProduct {
   categoryId: string;
   costPrice: number;
   retailPrice: number;
+  wholesalePrice?: number;
   currentStock: number;
   baseUnit: string; // e.g. "PCS", "50kg Sack"
   uomOptions?: Array<{
@@ -72,6 +73,8 @@ export interface SystemUser {
   branchId: string;
   branchName: string;
   pin?: string;
+  password?: string;
+  passwordHash?: string;
   avatarColor?: string;
   phone?: string;
   email?: string;
@@ -88,7 +91,8 @@ export const SYSTEM_USERS: SystemUser[] = [
     role: 'CASHIER',
     branchId: 'branch-accra-01',
     branchName: 'Accra Central Mall Store',
-    pin: '0000',
+    pin: '000000',
+    password: 'Cashier#Kofi2026!',
     avatarColor: '#10B981',
     phone: '0244001122',
     email: 'kofi.b@akwaabapos.gh',
@@ -101,7 +105,8 @@ export const SYSTEM_USERS: SystemUser[] = [
     role: 'BRANCH_MANAGER',
     branchId: 'branch-accra-01',
     branchName: 'Accra Central Mall Store',
-    pin: '1234',
+    pin: '123456',
+    password: 'Manager#Branch2026!',
     avatarColor: '#F59E0B',
     phone: '0208334455',
     email: 'abena.osei@akwaabapos.gh',
@@ -114,7 +119,8 @@ export const SYSTEM_USERS: SystemUser[] = [
     role: 'SUPER_ADMIN',
     branchId: 'branch-accra-01',
     branchName: 'Headquarters & Multi-Store',
-    pin: '9999',
+    pin: '999999',
+    password: 'Admin@Akwaaba2026!',
     avatarColor: '#F59E0B',
     phone: '0249998877',
     email: 'kwame.admin@akwaabapos.gh',
@@ -127,7 +133,8 @@ export const SYSTEM_USERS: SystemUser[] = [
     role: 'GENERAL_MANAGER',
     branchId: 'branch-accra-01',
     branchName: 'Headquarters & Multi-Store',
-    pin: '7777',
+    pin: '777777',
+    password: 'Manager@Akwaaba2026!',
     avatarColor: '#8B5CF6',
     phone: '0244112233',
     email: 'esi.mansa@akwaabapos.gh',
@@ -140,7 +147,8 @@ export const SYSTEM_USERS: SystemUser[] = [
     role: 'INVENTORY_OFFICER',
     branchId: 'branch-accra-01',
     branchName: 'Accra Central Warehouse',
-    pin: '1111',
+    pin: '111111',
+    password: 'Inventory@Akwaaba2026!',
     avatarColor: '#EC4899',
     phone: '0551223344',
     email: 'yaw.frimpong@akwaabapos.gh',
@@ -153,7 +161,8 @@ export const SYSTEM_USERS: SystemUser[] = [
     role: 'AUDITOR',
     branchId: 'branch-accra-01',
     branchName: 'Accra Central Mall Store',
-    pin: '2222',
+    pin: '222222',
+    password: 'Auditor#Akosua2026!',
     avatarColor: '#78716C',
     phone: '0277889900',
     email: 'akosua.addo@akwaabapos.gh',
@@ -171,6 +180,7 @@ export interface LocalCartItem {
   costPrice: number;
   quantity: number;
   unitName: string;
+  orderType?: 'RETAIL' | 'WHOLESALE';
   discountPct: number;
   discountAmount: number;
   lineTotal: number;
@@ -195,6 +205,7 @@ export interface LocalOrder {
   id: string; // UUID
   orderNumber: string;
   receiptNumber: string;
+  orderType?: 'RETAIL' | 'WHOLESALE';
   branchId: string;
   branchName: string;
   cashierId: string;
@@ -207,6 +218,8 @@ export interface LocalOrder {
   items: LocalCartItem[];
   subtotal: number;
   discountTotal: number;
+  discountAppliedByUserId?: string;
+  discountAppliedByUserName?: string;
   taxableBase: number;
   nhil: number;
   getfund: number;
@@ -335,6 +348,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     categoryId: 'cat-provisions',
     costPrice: 820.00,
     retailPrice: 945.00,
+    wholesalePrice: 880.00,
     currentStock: 48,
     baseUnit: '50kg Sack',
     uomOptions: [
@@ -361,6 +375,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     categoryId: 'cat-beverages',
     costPrice: 38.50,
     retailPrice: 48.00,
+    wholesalePrice: 42.00,
     currentStock: 120,
     baseUnit: 'Tin',
     uomOptions: [
@@ -385,6 +400,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     categoryId: 'cat-beverages',
     costPrice: 9.80,
     retailPrice: 13.50,
+    wholesalePrice: 11.50,
     currentStock: 350,
     baseUnit: 'Tin',
     uomOptions: [
@@ -410,6 +426,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     categoryId: 'cat-cooking',
     costPrice: 3.20,
     retailPrice: 4.50,
+    wholesalePrice: 3.80,
     currentStock: 600,
     baseUnit: 'Sachet',
     uomOptions: [
@@ -435,6 +452,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     categoryId: 'cat-cooking',
     costPrice: 145.00,
     retailPrice: 175.00,
+    wholesalePrice: 158.00,
     currentStock: 3, // LOW STOCK: 3 < 10 (Safety Threshold)
     baseUnit: 'Gallon',
     reorderLevel: 10,
@@ -455,6 +473,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     categoryId: 'cat-dairy',
     costPrice: 4.20,
     retailPrice: 6.00,
+    wholesalePrice: 5.00,
     currentStock: 85,
     baseUnit: 'Pouch',
     uomOptions: [
@@ -479,6 +498,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     categoryId: 'cat-snacks',
     costPrice: 14.50,
     retailPrice: 19.50,
+    wholesalePrice: 16.50,
     currentStock: 5, // LOW STOCK: 5 < 20 (Safety Threshold)
     baseUnit: 'Bar',
     reorderLevel: 20,
@@ -548,6 +568,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     categoryId: 'cat-provisions',
     costPrice: 5.50,
     retailPrice: 7.50,
+    wholesalePrice: 6.20,
     currentStock: 300,
     baseUnit: 'Pack',
     uomOptions: [
@@ -569,6 +590,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     categoryId: 'cat-provisions',
     costPrice: 4.80,
     retailPrice: 7.00,
+    wholesalePrice: 5.80,
     currentStock: 95,
     baseUnit: 'Pack',
     uomOptions: [
@@ -593,6 +615,7 @@ export const INITIAL_GHANA_PRODUCTS: LocalProduct[] = [
     categoryId: 'cat-beverages',
     costPrice: 6.50,
     retailPrice: 9.50,
+    wholesalePrice: 7.80,
     currentStock: 140,
     baseUnit: 'Can',
     uomOptions: [

@@ -392,6 +392,120 @@ export const PurchaseOrderModal: React.FC<PurchaseOrderModalProps> = ({
         </div>
 
       </div>
+
+      {/* ========================================================================= */}
+      {/* OFFICIAL INDUSTRY-STANDARD PRINTABLE PURCHASE ORDER DOCUMENT (A4 FORMAT)  */}
+      {/* ========================================================================= */}
+      <div id="official-po-document" className="official-printable-doc hidden print:block text-black bg-white p-8 font-sans">
+        {/* Formal Header & Letterhead */}
+        <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-6">
+          <div>
+            <h1 className="text-2xl font-black tracking-tight text-black uppercase">
+              AKWAABA RETAIL SYSTEMS & WHOLESALE LTD.
+            </h1>
+            <p className="text-xs text-gray-700 font-medium">Headquarters & Central Logistics Distribution</p>
+            <p className="text-xs text-gray-700">Digital Address: GA-183-9022, Accra Central, Ghana</p>
+            <p className="text-xs text-gray-700">Phone: +233 (0) 30 223 9081 / 024 400 1122</p>
+            <p className="text-xs text-gray-700 font-mono font-bold">GRA TIN: C001889201X | VAT REG: YES</p>
+          </div>
+          <div className="text-right">
+            <div className="inline-block border-2 border-black px-4 py-2 text-center bg-gray-50">
+              <span className="block text-[10px] uppercase font-bold tracking-wider text-gray-600">Document Type</span>
+              <span className="text-base font-black text-black">OFFICIAL PURCHASE ORDER</span>
+            </div>
+            <div className="mt-2 text-xs font-mono">
+              <p><strong>PO Number:</strong> {poNumber}</p>
+              <p><strong>Date Issued:</strong> {new Date().toLocaleDateString('en-GB')}</p>
+              <p><strong>Payment Terms:</strong> 14 Days Net</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Vendor & Delivery Information Grid */}
+        <div className="grid grid-cols-2 gap-6 mb-6 text-xs border border-gray-300 p-4 rounded bg-gray-50/50">
+          <div>
+            <h3 className="font-bold uppercase tracking-wider text-gray-600 text-[10px] mb-1">VENDOR / SUPPLIER DETAILS:</h3>
+            <p className="text-sm font-bold text-black">{supplierName}</p>
+            <p className="text-gray-700">Attn: Sales & Wholesale Order Desk</p>
+            <p className="text-gray-700">Ghana Wholesale & Commercial Division</p>
+          </div>
+          <div>
+            <h3 className="font-bold uppercase tracking-wider text-gray-600 text-[10px] mb-1">DELIVER TO / RECEIVING BAY:</h3>
+            <p className="text-sm font-bold text-black">{branchName}</p>
+            <p className="text-gray-700">Goods Inward & Inspection Bay</p>
+            <p className="text-gray-700">Authorized Officer: {currentUser.fullName} ({currentUser.role})</p>
+          </div>
+        </div>
+
+        {/* Items Table */}
+        <table className="w-full text-left text-xs border-collapse border border-gray-300 mb-6">
+          <thead>
+            <tr className="bg-gray-100 border-b border-gray-300 text-[11px] font-bold uppercase">
+              <th className="p-2 border border-gray-300 text-center w-10">#</th>
+              <th className="p-2 border border-gray-300">Item Description</th>
+              <th className="p-2 border border-gray-300">SKU / Code</th>
+              <th className="p-2 border border-gray-300 text-center">UOM</th>
+              <th className="p-2 border border-gray-300 text-center">Safety Level</th>
+              <th className="p-2 border border-gray-300 text-center">Order Qty</th>
+              <th className="p-2 border border-gray-300 text-right">Unit Cost (GHS)</th>
+              <th className="p-2 border border-gray-300 text-right">Total (GHS)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orderItems.map((item, index) => (
+              <tr key={item.productId} className="border-b border-gray-200">
+                <td className="p-2 border border-gray-300 text-center font-mono">{index + 1}</td>
+                <td className="p-2 border border-gray-300 font-semibold">{item.productName}</td>
+                <td className="p-2 border border-gray-300 font-mono text-[10px]">{item.sku}</td>
+                <td className="p-2 border border-gray-300 text-center">{item.unit}</td>
+                <td className="p-2 border border-gray-300 text-center font-mono">{item.safetyThreshold}</td>
+                <td className="p-2 border border-gray-300 text-center font-bold font-mono">{item.recommendedOrder}</td>
+                <td className="p-2 border border-gray-300 text-right font-mono">{formatGhs(item.unitCost)}</td>
+                <td className="p-2 border border-gray-300 text-right font-bold font-mono">{formatGhs(item.totalCost)}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr className="bg-gray-50 border-t-2 border-black font-bold">
+              <td colSpan={7} className="p-2.5 text-right uppercase border border-gray-300">Grand Total Payable (GHS):</td>
+              <td className="p-2.5 text-right font-black text-sm border border-gray-300">{formatGhs(grandTotalCost)}</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        {/* Notes & Special Instructions */}
+        <div className="mb-8 border border-gray-200 p-3 rounded text-xs bg-gray-50">
+          <p className="font-bold text-gray-800 mb-0.5">PURCHASE ORDER NOTES & INSTRUCTIONS:</p>
+          <p className="text-gray-700">{notes}</p>
+        </div>
+
+        {/* 3 Formal Signatures Block */}
+        <div className="grid grid-cols-3 gap-6 pt-6 border-t-2 border-black text-xs">
+          <div className="border-t border-dashed border-gray-400 pt-2">
+            <p className="font-bold text-black uppercase text-[11px]">1. PREPARED BY:</p>
+            <p className="mt-1 font-semibold">{currentUser.fullName}</p>
+            <p className="text-[10px] text-gray-600">{currentUser.role}</p>
+            <p className="text-[10px] text-gray-500 mt-4">Signature & Date: ______________________</p>
+          </div>
+          <div className="border-t border-dashed border-gray-400 pt-2">
+            <p className="font-bold text-black uppercase text-[11px]">2. APPROVED BY:</p>
+            <p className="mt-1 font-semibold">General Manager / Financial Controller</p>
+            <p className="text-[10px] text-gray-600">Executive Authorization</p>
+            <p className="text-[10px] text-gray-500 mt-4">Signature & Date: ______________________</p>
+          </div>
+          <div className="border-t border-dashed border-gray-400 pt-2">
+            <p className="font-bold text-black uppercase text-[11px]">3. RECEIVED & INSPECTED:</p>
+            <p className="mt-1 font-semibold">Warehouse Receiving Bay</p>
+            <p className="text-[10px] text-gray-600">Verification & Quality Control</p>
+            <p className="text-[10px] text-gray-500 mt-4">Official Stamp: ______________________</p>
+          </div>
+        </div>
+
+        {/* Footer Terms */}
+        <div className="mt-8 pt-4 border-t border-gray-300 text-[9.5px] text-gray-500 text-center">
+          <p>This is an official commercial purchase order generated by Akwaaba Retail OS. Original delivery note and valid GRA Tax Invoice must accompany deliveries.</p>
+        </div>
+      </div>
     </div>
   );
 };

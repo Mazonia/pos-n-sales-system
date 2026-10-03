@@ -43,7 +43,10 @@ import {
   CornerDownLeft,
   ImageIcon,
   Check,
+  Layers,
+  Trash2,
 } from 'lucide-react';
+import { getReceiptConfig } from '../../utils/receiptConfig';
 
 interface ParkedCart {
   id: string;
@@ -85,6 +88,44 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+
+  // Order Mode: RETAIL vs WHOLESALE (Strictly isolated - cannot be mixed in one sale)
+  const [orderMode, setOrderMode] = useState<'RETAIL' | 'WHOLESALE'>('RETAIL');
+  const [activeParkedCartId, setActiveParkedCartId] = useState<string | null>(null);
+  const [discountAuthor, setDiscountAuthor] = useState<{ id: string; name: string } | null>(null);
+  const [receiptConfig, setReceiptConfig] = useState(() => getReceiptConfig());
+
+  useEffect(() => {
+    const handleConfigChange = () => setReceiptConfig(getReceiptConfig());
+    window.addEventListener('receiptConfigUpdated', handleConfigChange);
+    return () => window.removeEventListener('receiptConfigUpdated', handleConfigChange);
+  }, []);
+
+  const handleToggleOrderMode = (newMode: 'RETAIL' | 'WHOLESALE') => {
+    if (newMode === orderMode) return;
+    triggerHaptic('selection');
+    if (cart.length > 0) {
+      setCart(prev =>
+        prev.map(item => {
+          const prod = products.find(p => p.id === item.productId);
+          if (!prod) return item;
+          const newUnitPrice =
+            newMode === 'WHOLESALE'
+              ? (prod.wholesalePrice || roundToPesewas(prod.retailPrice * 0.85))
+              : prod.retailPrice;
+          const newLineTotal = roundToPesewas(item.quantity * newUnitPrice - item.discountAmount);
+          return {
+            ...item,
+            unitPrice: newUnitPrice,
+            originalPrice: newUnitPrice,
+            orderType: newMode,
+            lineTotal: Math.max(0, newLineTotal),
+          };
+        })
+      );
+    }
+    setOrderMode(newMode);
+  };
 
   // Product packaging images visibility toggle (persisted in localStorage)
   const [showProductImages, setShowProductImages] = useState<boolean>(() => {
@@ -248,7 +289,12 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
 
   const addToCart = (product: LocalProduct, selectedUom?: { name: string; price: number }) => {
     triggerHaptic('add');
-    const unitPrice = selectedUom ? selectedUom.price : product.retailPrice;
+    const isWholesale = orderMode === 'WHOLESALE';
+    const basePrice = isWholesale
+      ? (product.wholesalePrice || roundToPesewas(product.retailPrice * 0.85))
+      : product.retailPrice;
+
+    const unitPrice = selectedUom ? selectedUom.price : basePrice;
     const unitName = selectedUom ? selectedUom.name : product.baseUnit;
 
     setCart(prev => {
@@ -278,6 +324,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
         costPrice: product.costPrice,
         quantity: 1,
         unitName,
+        orderType: orderMode,
         discountPct: 0,
         discountAmount: 0,
         lineTotal: unitPrice,
@@ -443,9 +490,17 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
 
   const resumeCart = (parked: ParkedCart) => {
     setCart(parked.items);
+    setActiveParkedCartId(parked.id);
     if (parked.customerId) setSelectedCustomerId(parked.customerId);
-    setParkedCarts(prev => prev.filter(c => c.id !== parked.id));
     setShowParkedModal(false);
+  };
+
+  const deleteParkedCart = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setParkedCarts(prev => prev.filter(c => c.id !== id));
+    if (activeParkedCartId === id) {
+      setActiveParkedCartId(null);
+    }
   };
 
   const totalItemCount = cart.reduce((s, i) => s + i.quantity, 0);
@@ -472,6 +527,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
       id: `ord-${Date.now()}-${randSuffix}`,
       orderNumber,
       receiptNumber,
+      orderType: orderMode,
       branchId: 'branch-accra-01',
       branchName,
       cashierId,
@@ -484,6 +540,8 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
       items: cart,
       subtotal: grossSubtotal,
       discountTotal,
+      discountAppliedByUserId: discountTotal > 0 ? (discountAuthor?.id || cashierId) : undefined,
+      discountAppliedByUserName: discountTotal > 0 ? (discountAuthor?.name || cashierName) : undefined,
       taxableBase: taxDetail.taxableBase,
       nhil: taxDetail.nhil,
       getfund: taxDetail.getfund,
@@ -504,8 +562,15 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
     await updateShiftWithSale(activeShiftId, newOrder);
     triggerHaptic('success');
 
+    // Only remove held order from parked list upon completed and confirmed payment
+    if (activeParkedCartId) {
+      setParkedCarts(prev => prev.filter(c => c.id !== activeParkedCartId));
+      setActiveParkedCartId(null);
+    }
+
     setCart([]);
     setSelectedCustomerId('');
+    setDiscountAuthor(null);
     setShowPaymentModal(false);
     setMobileCartOpen(false);
     setCompletedOrder(newOrder);
@@ -521,10 +586,64 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
         isDark ? 'border-[#282B34]' : 'border-slate-300'
       }`}>
         
-        {/* Top Controls: Search Bar & Barcode Quick-Scanner */}
+        {/* Top Controls: Search Bar & Wholesale Switcher */}
         <div className={`p-4 border-b space-y-3 shrink-0 ${
           isDark ? 'border-[#282B34] bg-[#16181F]' : 'border-slate-300 bg-white'
         }`}>
+          {/* Top Bar: Mode Switcher (Retail vs Wholesale) & Quick Status */}
+          <div className="flex items-center justify-between gap-2">
+            <div className={`inline-flex items-center p-1 rounded-xl border ${
+              isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-slate-100 border-slate-300'
+            }`}>
+              <button
+                type="button"
+                onClick={() => handleToggleOrderMode('RETAIL')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${
+                  orderMode === 'RETAIL'
+                    ? 'bg-[#FF4500] text-white shadow-xs'
+                    : isDark ? 'text-stone-400 hover:text-stone-200' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <ShoppingBag className="w-3.5 h-3.5" />
+                <span>Retail Order</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleToggleOrderMode('WHOLESALE')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${
+                  orderMode === 'WHOLESALE'
+                    ? 'bg-[#008285] dark:bg-[#00CED1] text-white dark:text-[#0B0D11] shadow-xs'
+                    : isDark ? 'text-stone-400 hover:text-stone-200' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>Wholesale / Bulk Order</span>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {activeParkedCartId && (
+                <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 px-2 py-0.5 rounded-lg">
+                  <PauseCircle className="w-3 h-3 text-amber-500" />
+                  <span>Resumed Ticket Active</span>
+                </span>
+              )}
+              {/* Product packaging images toggle */}
+              <button
+                type="button"
+                onClick={toggleShowImages}
+                className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                  isDark
+                    ? 'border-[#282B34] text-stone-300 hover:bg-[#20232B]'
+                    : 'border-slate-300 text-slate-700 hover:bg-slate-100 shadow-2xs'
+                }`}
+                title={showProductImages ? 'Hide Product Photos' : 'Show Product Photos'}
+              >
+                {showProductImages ? <EyeOff className="w-3.5 h-3.5 text-[#FF4500]" /> : <Eye className="w-3.5 h-3.5 text-slate-500" />}
+                <span className="hidden lg:inline text-[11px]">{showProductImages ? 'Photos On' : 'Photos Off'}</span>
+              </button>
+            </div>
+          </div>
           <div className="flex items-center gap-2.5">
             {/* Search Input Container with Smart Suggestions Popover */}
             <div ref={searchContainerRef} className="relative flex-1">
@@ -883,6 +1002,15 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
           ) : (
             smartSearchResult.allRanked.map(product => {
               const typoMatch = smartSearchResult.typoMatches.find(m => m.product.id === product.id);
+              const directMatch = smartSearchResult.directMatches.find(m => m.product.id === product.id);
+              let badge: string | undefined = undefined;
+              if (searchQuery.trim()) {
+                if (directMatch) {
+                  badge = `Exact Match for "${searchQuery}"`;
+                } else if (typoMatch) {
+                  badge = `Similar (Matches: ${typoMatch.suggestedWord})`;
+                }
+              }
               return (
                 <ProductCard
                   key={product.id}
@@ -890,7 +1018,8 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                   onAddToCart={addToCart}
                   isDark={isDark}
                   showImage={showProductImages}
-                  suggestedMatchBadge={typoMatch ? `Suggested for "${searchQuery}" (Matches: ${typoMatch.suggestedWord})` : undefined}
+                  orderMode={orderMode}
+                  suggestedMatchBadge={badge}
                 />
               );
             })
@@ -943,6 +1072,8 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
           onInitiateCheckout={() => setShowPaymentModal(true)}
           taxScheme={taxScheme}
           isDark={isDark}
+          orderMode={orderMode}
+          canApplyDiscount={receiptConfig.allowCashierDiscounts || cashierRole !== 'CASHIER'}
         />
       </div>
 
@@ -1025,6 +1156,8 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                 onInitiateCheckout={() => setShowPaymentModal(true)}
                 taxScheme={taxScheme}
                 isDark={isDark}
+                orderMode={orderMode}
+                canApplyDiscount={receiptConfig.allowCashierDiscounts || cashierRole !== 'CASHIER'}
               />
             </div>
           </div>
@@ -1088,28 +1221,59 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
               <p className="text-xs text-[#8B9DB5] py-8 text-center italic">No tickets currently on hold.</p>
             ) : (
               <div className="space-y-2 max-h-72 overflow-y-auto">
-                {parkedCarts.map(c => (
-                  <div key={c.id} className={`p-3 rounded-[14px] border flex items-center justify-between text-xs transition-all duration-200 ${
-                    isDark ? 'border-[rgba(48,62,80,0.35)] bg-[#151B23]/50 hover:bg-[#1C2333]' : 'border-[rgba(209,215,224,0.4)] bg-[#F6F8FA] hover:bg-[#F0F2F5]'
-                  }`}>
-                    <div>
-                      <div className={`font-bold ${isDark ? 'text-white' : 'text-[#0F172A]'}`}>{c.name}</div>
-                      <div className="text-[10px] text-[#8B9DB5]">{c.items.length} items · Held at {c.heldAt}</div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => resumeCart(c)}
-                      className={`px-3 py-[6px] font-bold rounded-[10px] text-xs flex items-center gap-1 transition-all duration-200 active:scale-[0.96] ${
-                        isDark 
-                          ? 'bg-emerald-500 hover:bg-emerald-400 text-[#06080C] shadow-[0_1px_4px_rgba(16,185,129,0.15)]' 
-                          : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                {parkedCarts.map(c => {
+                  const isCurrentActive = activeParkedCartId === c.id;
+                  return (
+                    <div
+                      key={c.id}
+                      className={`p-3 rounded-[14px] border flex items-center justify-between text-xs transition-all duration-200 ${
+                        isCurrentActive
+                          ? 'border-[#008285] dark:border-[#00CED1] bg-teal-500/10'
+                          : isDark
+                          ? 'border-[rgba(48,62,80,0.35)] bg-[#151B23]/50 hover:bg-[#1C2333]'
+                          : 'border-slate-300 bg-[#F6F8FA] hover:bg-[#F0F2F5]'
                       }`}
                     >
-                      <PlayCircle className="w-3.5 h-3.5" />
-                      <span>Resume</span>
-                    </button>
-                  </div>
-                ))}
+                      <div className="flex-1 min-w-0 pr-2">
+                        <div className="flex items-center gap-1.5">
+                          <span className={`font-bold truncate ${isDark ? 'text-white' : 'text-[#0F172A]'}`}>{c.name}</span>
+                          {isCurrentActive && (
+                            <span className="px-1.5 py-0.2 rounded text-[9px] font-black uppercase bg-[#008285] dark:bg-[#00CED1] text-white dark:text-black">
+                              In Ticket
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-slate-500 dark:text-[#8B9DB5]">
+                          {c.items.length} items · Held at {c.heldAt}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => resumeCart(c)}
+                          className={`px-3 py-1.5 font-bold rounded-xl text-xs flex items-center gap-1 transition-all duration-200 active:scale-95 cursor-pointer ${
+                            isCurrentActive
+                              ? 'bg-teal-600 text-white'
+                              : isDark
+                              ? 'bg-emerald-500 hover:bg-emerald-400 text-[#06080C]'
+                              : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                          }`}
+                        >
+                          <PlayCircle className="w-3.5 h-3.5" />
+                          <span>{isCurrentActive ? 'Active' : 'Resume'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={e => deleteParkedCart(c.id, e)}
+                          className="p-1.5 rounded-xl border border-slate-300 dark:border-[#282B34] text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                          title="Discard held order"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

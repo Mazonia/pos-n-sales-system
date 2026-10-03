@@ -26,8 +26,19 @@ import {
   Building,
   ShieldAlert,
   X,
-  Fingerprint
+  Fingerprint,
+  Eye,
+  EyeOff,
+  Shield,
+  Key,
+  Check
 } from 'lucide-react';
+import {
+  sanitizeUserForStorage,
+  validatePasswordComplexity,
+  isPasswordComplex
+} from '../../utils/security';
+import { executeThemeTransition } from '../../utils/themeTransition';
 
 interface LoginPageProps {
   onLoginSuccess: (user: SystemUser) => void;
@@ -44,7 +55,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 }) => {
   const [usersList, setUsersList] = useState<SystemUser[]>(SYSTEM_USERS);
   const [selectedUser, setSelectedUser] = useState<SystemUser>(SYSTEM_USERS[0]);
+  const [authMode, setAuthMode] = useState<'PIN' | 'PASSWORD'>('PIN');
   const [pinInput, setPinInput] = useState<string>('');
+  const [passwordInput, setPasswordInput] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -90,11 +104,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
   const handleKeyPress = (num: string) => {
     triggerHaptic('keypad');
-    if (pinInput.length < 4) {
+    if (pinInput.length < 6) {
       const nextPin = pinInput + num;
       setPinInput(nextPin);
       setErrorMsg('');
-      if (nextPin.length === 4) {
+      if (nextPin.length === 6) {
         verifyPin(nextPin, selectedUser);
       }
     }
@@ -125,9 +139,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       return;
     }
 
-    // 2. Allow configured pin or fallback demo pin
+    // 2. Allow configured 6-digit pin or fallback demo pins
     const isValid =
       pinToTest === user.pin ||
+      pinToTest === '000000' ||
+      pinToTest === '123456' ||
+      pinToTest === '999999' ||
+      pinToTest === '777777' ||
       pinToTest === '1234' ||
       pinToTest === '0000' ||
       pinToTest === '9999' ||
@@ -142,7 +160,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           action: 'USER_LOGIN_AUTHENTICATED',
           userId: user.id,
           userName: `${user.fullName} (${user.role})`,
-          details: `Authenticated login to ${terminalBranch.name} (${terminalBranch.code}) terminal. Non-repudiation session established.`,
+          details: `Authenticated login (6-digit PIN) to ${terminalBranch.name} (${terminalBranch.code}) terminal. Non-repudiation session established.`,
           timestamp: new Date().toISOString(),
         });
       } catch (e) {
@@ -151,14 +169,70 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
       setTimeout(() => {
         setIsSubmitting(false);
-        onLoginSuccess(user);
+        // Security: sanitize credentials before session storage
+        onLoginSuccess(sanitizeUserForStorage(user));
       }, 250);
     } else {
       triggerHaptic('error');
       setTimeout(() => {
         setIsSubmitting(false);
-        setErrorMsg('Invalid Security PIN. Please re-enter or select quick demo PIN.');
+        setErrorMsg('Invalid 6-Digit PIN. Please check or enter the 6-digit security code.');
         setPinInput('');
+      }, 200);
+    }
+  };
+
+  const verifyPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMsg('');
+
+    const terminalAccess = canUserAccessTerminal(selectedUser, terminalBranch);
+    if (!terminalAccess.allowed) {
+      triggerHaptic('error');
+      setIsSubmitting(false);
+      setErrorMsg(terminalAccess.reason || `Workstation Lockout: Operator assigned to "${selectedUser.branchName}".`);
+      return;
+    }
+
+    if (!passwordInput || passwordInput.trim().length < 8) {
+      triggerHaptic('error');
+      setIsSubmitting(false);
+      setErrorMsg('Password must be at least 8 characters long.');
+      return;
+    }
+
+    // Verify against user password or standard demo password
+    const isPasswordValid =
+      (selectedUser.password && passwordInput === selectedUser.password) ||
+      passwordInput === 'Admin@2026!' ||
+      passwordInput === 'Manager@2026!' ||
+      passwordInput === 'Cashier@2026!';
+
+    if (isPasswordValid) {
+      triggerHaptic('success');
+      try {
+        await db.auditLogs.add({
+          id: `audit-login-${Date.now()}`,
+          action: 'USER_LOGIN_AUTHENTICATED',
+          userId: selectedUser.id,
+          userName: `${selectedUser.fullName} (${selectedUser.role})`,
+          details: `Authenticated login (Password Auth) to ${terminalBranch.name} (${terminalBranch.code}) terminal. Non-repudiation session established.`,
+          timestamp: new Date().toISOString(),
+        });
+      } catch (e) {
+        console.error('Audit log write error', e);
+      }
+
+      setTimeout(() => {
+        setIsSubmitting(false);
+        onLoginSuccess(sanitizeUserForStorage(selectedUser));
+      }, 250);
+    } else {
+      triggerHaptic('error');
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setErrorMsg('Invalid password. Passwords require min 8 chars with uppercase, lowercase, number, and special character.');
       }, 200);
     }
   };
@@ -291,9 +365,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           </button>
 
           <button
-            onClick={() => {
+            onClick={(e) => {
               triggerHaptic('tap');
-              onToggleTheme();
+              executeThemeTransition(onToggleTheme, e.clientX, e.clientY);
             }}
             className={`p-2 rounded-[12px] border transition-all duration-200 active:scale-90 ${
               isDark
@@ -529,104 +603,235 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                 </div>
               ) : (
                 <>
-                  {/* PIN Dots Display */}
-                  <div className="flex flex-col items-center justify-center mb-6">
-                    <div className="flex items-center gap-1.5 mb-3">
-                      <Fingerprint className="w-3.5 h-3.5 text-[#8B9DB5]" />
-                      <span className="text-[11px] text-[#8B9DB5] font-medium">Enter 4-Digit Security PIN</span>
-                    </div>
-                    <div className="flex items-center gap-3.5">
-                      {[0, 1, 2, 3].map(idx => {
-                        const isFilled = pinInput.length > idx;
-                        return (
-                          <div
-                            key={idx}
-                            className={`w-11 h-11 rounded-[14px] border flex items-center justify-center transition-all duration-200 ${
-                              isFilled
-                                ? isDark
-                                ? 'border-emerald-500/50 bg-emerald-500/12 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
-                                : 'border-emerald-500/50 bg-emerald-50 shadow-[0_0_8px_rgba(5,150,105,0.06)]'
-                                : isDark
-                                ? 'border-[rgba(48,62,80,0.4)] bg-[#0A0D12]'
-                                : 'border-[rgba(209,215,224,0.5)] bg-[#F6F8FA]'
-                            }`}
-                            style={{ transform: isFilled ? 'scale(1.05)' : 'scale(1)', transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)' }}
-                          >
-                            {isFilled && (
-                              <span className={`w-3 h-3 rounded-full ${isDark ? 'bg-emerald-400' : 'bg-emerald-600'}`} />
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {errorMsg && (
-                      <div className={`mt-3 text-[11px] font-semibold flex items-center gap-1.5 text-center max-w-xs px-3 py-2 rounded-[10px] animate-scale-in ${
-                        isDark ? 'text-rose-400 bg-rose-500/8' : 'text-rose-600 bg-rose-50'
-                      }`}>
-                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                        <span>{errorMsg}</span>
-                      </div>
-                    )}
+                  {/* Auth Mode Switcher: 6-Digit PIN vs Password */}
+                  <div className={`flex items-center p-1 rounded-[14px] border mb-5 max-w-[280px] mx-auto text-xs font-semibold ${
+                    isDark ? 'bg-[#0A0D12] border-[rgba(48,62,80,0.4)]' : 'bg-slate-100 border-slate-300'
+                  }`}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        triggerHaptic('tap');
+                        setAuthMode('PIN');
+                        setErrorMsg('');
+                      }}
+                      className={`flex-1 py-1.5 rounded-[10px] flex items-center justify-center gap-1.5 transition-all duration-200 ${
+                        authMode === 'PIN'
+                          ? isDark
+                            ? 'bg-emerald-500 text-slate-950 font-bold shadow-xs'
+                            : 'bg-white text-emerald-800 font-bold shadow-xs'
+                          : isDark
+                          ? 'text-[#8B9DB5] hover:text-white'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      <Fingerprint className="w-3.5 h-3.5" />
+                      <span>6-Digit PIN</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        triggerHaptic('tap');
+                        setAuthMode('PASSWORD');
+                        setErrorMsg('');
+                      }}
+                      className={`flex-1 py-1.5 rounded-[10px] flex items-center justify-center gap-1.5 transition-all duration-200 ${
+                        authMode === 'PASSWORD'
+                          ? isDark
+                            ? 'bg-emerald-500 text-slate-950 font-bold shadow-xs'
+                            : 'bg-white text-emerald-800 font-bold shadow-xs'
+                          : isDark
+                          ? 'text-[#8B9DB5] hover:text-white'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      <Key className="w-3.5 h-3.5" />
+                      <span>Password</span>
+                    </button>
                   </div>
 
-                  {/* Keypad */}
-                  <div className="max-w-[260px] mx-auto grid grid-cols-3 gap-2">
-                    {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(num => (
+                  {authMode === 'PIN' ? (
+                    <>
+                      {/* 6-PIN Dots Display */}
+                      <div className="flex flex-col items-center justify-center mb-5">
+                        <div className="flex items-center gap-1.5 mb-2.5">
+                          <Fingerprint className="w-3.5 h-3.5 text-[#8B9DB5]" />
+                          <span className="text-[11px] text-[#8B9DB5] font-medium">Enter 6-Digit Security PIN</span>
+                        </div>
+                        <div className="flex items-center gap-2.5">
+                          {[0, 1, 2, 3, 4, 5].map(idx => {
+                            const isFilled = pinInput.length > idx;
+                            return (
+                              <div
+                                key={idx}
+                                className={`w-10 h-10 rounded-[12px] border flex items-center justify-center transition-all duration-200 ${
+                                  isFilled
+                                    ? isDark
+                                      ? 'border-emerald-500/50 bg-emerald-500/12 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
+                                      : 'border-emerald-500/50 bg-emerald-50 shadow-[0_0_8px_rgba(5,150,105,0.06)]'
+                                    : isDark
+                                    ? 'border-[rgba(48,62,80,0.4)] bg-[#0A0D12]'
+                                    : 'border-[rgba(209,215,224,0.5)] bg-[#F6F8FA]'
+                                }`}
+                                style={{ transform: isFilled ? 'scale(1.05)' : 'scale(1)', transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)' }}
+                              >
+                                {isFilled && (
+                                  <span className={`w-2.5 h-2.5 rounded-full ${isDark ? 'bg-emerald-400' : 'bg-emerald-600'}`} />
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {errorMsg && (
+                          <div className={`mt-3 text-[11px] font-semibold flex items-center gap-1.5 text-center max-w-xs px-3 py-2 rounded-[10px] animate-scale-in ${
+                            isDark ? 'text-rose-400 bg-rose-500/8' : 'text-rose-600 bg-rose-50'
+                          }`}>
+                            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                            <span>{errorMsg}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Keypad */}
+                      <div className="max-w-[260px] mx-auto grid grid-cols-3 gap-2">
+                        {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(num => (
+                          <button
+                            key={num}
+                            type="button"
+                            onClick={() => handleKeyPress(num)}
+                            disabled={isSubmitting}
+                            className={`h-[46px] rounded-[14px] border font-mono text-base font-bold transition-all duration-150 active:scale-[0.93] ${
+                              isDark
+                                ? 'border-[rgba(48,62,80,0.4)] bg-[#151B23] hover:bg-[#1C2333] text-white active:bg-emerald-500/15'
+                                : 'border-[rgba(209,215,224,0.5)] bg-white hover:bg-[#F0F2F5] text-slate-900 shadow-[0_1px_2px_rgba(0,0,0,0.04)] active:bg-emerald-50'
+                            }`}
+                          >
+                            {num}
+                          </button>
+                        ))}
+                        
+                        <button
+                          type="button"
+                          onClick={handleClear}
+                          disabled={isSubmitting}
+                          className={`h-[46px] rounded-[14px] border text-[11px] font-semibold transition-all duration-150 active:scale-[0.93] ${
+                            isDark
+                              ? 'border-[rgba(48,62,80,0.3)] bg-[#0A0D12] text-[#8B9DB5] hover:text-white hover:bg-[#151B23]'
+                              : 'border-[rgba(209,215,224,0.4)] bg-[#F6F8FA] text-slate-500 hover:text-black hover:bg-[#F0F2F5]'
+                          }`}
+                        >
+                          Clear
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleKeyPress('0')}
+                          disabled={isSubmitting}
+                          className={`h-[46px] rounded-[14px] border font-mono text-base font-bold transition-all duration-150 active:scale-[0.93] ${
+                            isDark
+                              ? 'border-[rgba(48,62,80,0.4)] bg-[#151B23] hover:bg-[#1C2333] text-white'
+                              : 'border-[rgba(209,215,224,0.5)] bg-white hover:bg-[#F0F2F5] text-slate-900 shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
+                          }`}
+                        >
+                          0
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleBackspace}
+                          disabled={isSubmitting}
+                          className={`h-[46px] rounded-[14px] border flex items-center justify-center transition-all duration-150 active:scale-[0.93] ${
+                            isDark
+                              ? 'border-[rgba(48,62,80,0.3)] bg-[#0A0D12] text-[#8B9DB5] hover:text-white hover:bg-[#151B23]'
+                              : 'border-[rgba(209,215,224,0.4)] bg-[#F6F8FA] text-slate-500 hover:text-black hover:bg-[#F0F2F5]'
+                          }`}
+                        >
+                          <Delete className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    /* Password Auth Form */
+                    <form onSubmit={verifyPassword} className="space-y-4 max-w-[320px] mx-auto animate-fade-slide-in">
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <label className="text-[11px] font-semibold text-[#8B9DB5] flex items-center gap-1.5">
+                            <Lock className="w-3 h-3 text-emerald-500" />
+                            <span>Account Password:</span>
+                          </label>
+                          <span className="text-[10px] text-emerald-500 font-mono">Min 8 chars</span>
+                        </div>
+                        <div className="relative">
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            value={passwordInput}
+                            onChange={e => {
+                              setPasswordInput(e.target.value);
+                              setErrorMsg('');
+                            }}
+                            placeholder="Enter account password..."
+                            className={`w-full px-3 py-2.5 pr-10 rounded-[12px] border text-xs font-mono outline-none transition-all duration-200 focus:ring-2 focus:ring-emerald-500/30 ${
+                              isDark
+                                ? 'bg-[#0A0D12] border-[rgba(48,62,80,0.5)] text-white focus:border-emerald-500'
+                                : 'bg-[#F6F8FA] border-[rgba(209,215,224,0.6)] text-slate-900 focus:border-emerald-500'
+                            }`}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8B9DB5] hover:text-white transition"
+                          >
+                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Password Complexity Validation Checklist */}
+                      <div className={`p-3 rounded-[12px] border text-[10px] space-y-1 ${
+                        isDark ? 'bg-[#0A0D12]/70 border-[rgba(48,62,80,0.3)]' : 'bg-slate-50 border-slate-200'
+                      }`}>
+                        <div className="font-bold text-[#8B9DB5] mb-1">Least Accepted Password Standards:</div>
+                        {[
+                          { label: 'At least 8 characters', met: passwordInput.length >= 8 },
+                          { label: 'Uppercase letter (A-Z)', met: /[A-Z]/.test(passwordInput) },
+                          { label: 'Lowercase letter (a-z)', met: /[a-z]/.test(passwordInput) },
+                          { label: 'Number (0-9)', met: /[0-9]/.test(passwordInput) },
+                          { label: 'Special character (!@#$...)', met: /[^A-Za-z0-9]/.test(passwordInput) },
+                        ].map((rule, idx) => (
+                          <div key={idx} className={`flex items-center gap-1.5 ${rule.met ? 'text-emerald-500 font-semibold' : 'text-slate-400'}`}>
+                            <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[8px] font-bold ${
+                              rule.met ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-500/20 text-slate-400'
+                            }`}>
+                              {rule.met ? '✓' : '•'}
+                            </span>
+                            <span>{rule.label}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {errorMsg && (
+                        <div className={`text-[11px] font-semibold flex items-center gap-1.5 p-2 rounded-[10px] animate-scale-in ${
+                          isDark ? 'text-rose-400 bg-rose-500/8' : 'text-rose-600 bg-rose-50'
+                        }`}>
+                          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                          <span>{errorMsg}</span>
+                        </div>
+                      )}
+
                       <button
-                        key={num}
-                        type="button"
-                        onClick={() => handleKeyPress(num)}
-                        disabled={isSubmitting}
-                        className={`h-[48px] rounded-[14px] border font-mono text-base font-bold transition-all duration-150 active:scale-[0.93] ${
-                          isDark
-                            ? 'border-[rgba(48,62,80,0.4)] bg-[#151B23] hover:bg-[#1C2333] text-white active:bg-emerald-500/15'
-                            : 'border-[rgba(209,215,224,0.5)] bg-white hover:bg-[#F0F2F5] text-slate-900 shadow-[0_1px_2px_rgba(0,0,0,0.04)] active:bg-emerald-50'
+                        type="submit"
+                        disabled={isSubmitting || passwordInput.length < 8}
+                        className={`w-full py-2.5 rounded-[12px] font-bold text-xs flex items-center justify-center gap-2 transition active:scale-[0.98] ${
+                          passwordInput.length >= 8
+                            ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md shadow-emerald-500/20 cursor-pointer'
+                            : 'bg-slate-500/20 text-slate-400 cursor-not-allowed border border-slate-500/20'
                         }`}
                       >
-                        {num}
+                        <Lock className="w-3.5 h-3.5" />
+                        <span>Sign In with Password</span>
                       </button>
-                    ))}
-                    
-                    <button
-                      type="button"
-                      onClick={handleClear}
-                      disabled={isSubmitting}
-                      className={`h-[48px] rounded-[14px] border text-[11px] font-semibold transition-all duration-150 active:scale-[0.93] ${
-                        isDark
-                          ? 'border-[rgba(48,62,80,0.3)] bg-[#0A0D12] text-[#8B9DB5] hover:text-white hover:bg-[#151B23]'
-                          : 'border-[rgba(209,215,224,0.4)] bg-[#F6F8FA] text-slate-500 hover:text-black hover:bg-[#F0F2F5]'
-                      }`}
-                    >
-                      Clear
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleKeyPress('0')}
-                      disabled={isSubmitting}
-                      className={`h-[48px] rounded-[14px] border font-mono text-base font-bold transition-all duration-150 active:scale-[0.93] ${
-                        isDark
-                          ? 'border-[rgba(48,62,80,0.4)] bg-[#151B23] hover:bg-[#1C2333] text-white'
-                          : 'border-[rgba(209,215,224,0.5)] bg-white hover:bg-[#F0F2F5] text-slate-900 shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
-                      }`}
-                    >
-                      0
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleBackspace}
-                      disabled={isSubmitting}
-                      className={`h-[48px] rounded-[14px] border flex items-center justify-center transition-all duration-150 active:scale-[0.93] ${
-                        isDark
-                          ? 'border-[rgba(48,62,80,0.3)] bg-[#0A0D12] text-[#8B9DB5] hover:text-white hover:bg-[#151B23]'
-                          : 'border-[rgba(209,215,224,0.4)] bg-[#F6F8FA] text-slate-500 hover:text-black hover:bg-[#F0F2F5]'
-                      }`}
-                    >
-                      <Delete className="w-4 h-4" />
-                    </button>
-                  </div>
+                    </form>
+                  )}
                 </>
               )}
             </div>
@@ -636,13 +841,20 @@ export const LoginPage: React.FC<LoginPageProps> = ({
               <div className={`mt-6 pt-4 border-t border-dashed flex items-center justify-between text-xs ${
                 isDark ? 'border-[rgba(48,62,80,0.3)]' : 'border-[rgba(209,215,224,0.4)]'
               }`}>
-                <span className="text-[#8B9DB5]">Staff PIN: <strong className="text-emerald-500 font-mono">{selectedUser.pin}</strong></span>
+                <span className="text-[#8B9DB5]">
+                  Staff Demo: <strong className="text-emerald-500 font-mono">{authMode === 'PIN' ? selectedUser.pin : (selectedUser.password || 'Admin@2026!')}</strong>
+                </span>
                 <button
                   type="button"
                   onClick={() => {
-                    const pin = selectedUser.pin || '1234';
-                    setPinInput(pin);
-                    verifyPin(pin, selectedUser);
+                    if (authMode === 'PIN') {
+                      const pin = selectedUser.pin || '000000';
+                      setPinInput(pin);
+                      verifyPin(pin, selectedUser);
+                    } else {
+                      const pwd = selectedUser.password || 'Admin@2026!';
+                      setPasswordInput(pwd);
+                    }
                   }}
                   className={`font-semibold flex items-center gap-1.5 active:scale-[0.96] transition-all duration-200 px-2.5 py-1.5 rounded-[10px] ${
                     isDark 

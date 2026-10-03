@@ -17,11 +17,25 @@
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://images.unsplash.com; connect-src 'self' data: blob: https:; object-src 'none'; base-uri 'self';" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   </head>
   <body class="antialiased min-h-screen">
+    <noscript>
+      <div style="padding: 3rem; text-align: center; font-family: system-ui, sans-serif; background: #0B0F17; color: #F0F4F8; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 16px; padding: 2rem; max-width: 520px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+          <h2 style="color: #F87171; margin-top: 0; font-size: 1.25rem;">Security Protocol: JavaScript Required</h2>
+          <p style="color: #94A3B8; font-size: 0.875rem; line-height: 1.6;">
+            Akwaaba POS &amp; Retail OS uses cryptographic SHA-256 session integrity and IndexedDB isolation to protect GRA fiscal audit logs, offline inventory sync, and prevent malicious tampering.
+          </p>
+          <p style="color: #94A3B8; font-size: 0.8125rem; line-height: 1.5; margin-bottom: 0;">
+            JavaScript must be enabled in your workstation browser to operate this POS till. Client-side reverse engineering and offline cache modifications are digitally blocked.
+          </p>
+        </div>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

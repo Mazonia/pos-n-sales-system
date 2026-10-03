@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { LocalProduct } from '../../utils/dexieSync';
-import { formatGhs } from '../../utils/ghanaTaxEngine';
-import { Plus, ChevronDown, Package, Coffee, Flame, Snowflake, Sparkles, Pill, Check, ImageIcon } from 'lucide-react';
+import { formatGhs, roundToPesewas } from '../../utils/ghanaTaxEngine';
+import { Plus, ChevronDown, Package, Coffee, Flame, Snowflake, Sparkles, Pill, Check, ImageIcon, X, CheckCircle2 } from 'lucide-react';
 
 interface ProductCardProps {
   product: LocalProduct;
@@ -9,6 +9,7 @@ interface ProductCardProps {
   isDark: boolean;
   showImage?: boolean;
   suggestedMatchBadge?: string;
+  orderMode?: 'RETAIL' | 'WHOLESALE';
 }
 
 const getCategoryMeta = (category: string) => {
@@ -68,6 +69,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   isDark,
   showImage = true,
   suggestedMatchBadge,
+  orderMode = 'RETAIL',
 }) => {
   const [showUomMenu, setShowUomMenu] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
@@ -75,6 +77,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const isOutOfStock = product.currentStock <= 0;
   const isLowStock = product.currentStock > 0 && product.currentStock <= 5;
+  const isWholesale = orderMode === 'WHOLESALE';
+
+  // Determine active unit price based on retail vs wholesale mode
+  const effectiveBasePrice = isWholesale
+    ? (product.wholesalePrice || roundToPesewas(product.retailPrice * 0.85))
+    : product.retailPrice;
 
   const { badgeClass, iconBg, Icon } = getCategoryMeta(product.category);
 
@@ -82,15 +90,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     if (isOutOfStock) return;
     setJustAdded(true);
     setTimeout(() => setJustAdded(false), 200);
-    onAddToCart(product);
+    onAddToCart({
+      ...product,
+      retailPrice: effectiveBasePrice,
+    });
   };
 
   const hasValidImage = Boolean(showImage && product.imageUrl && !imageError);
+  const isExactMatch = suggestedMatchBadge?.toLowerCase().includes('exact');
 
   return (
     <div
       onClick={handleCardClick}
-      className={`pos-card group relative flex flex-col justify-between p-3 select-none text-left cursor-pointer transition-all duration-200 h-full overflow-hidden ${
+      className={`pos-card group relative flex flex-col justify-between p-3 select-none text-left cursor-pointer transition-all duration-200 h-full overflow-visible ${
+        showUomMenu ? 'z-40 ring-2 ring-[#008285] dark:ring-[#00CED1]' : 'z-10'
+      } ${
         justAdded ? 'ring-2 ring-[#FF4500] ring-offset-2 scale-[0.985]' : ''
       } ${
         isOutOfStock ? 'opacity-40 pointer-events-none grayscale' : ''
@@ -98,10 +112,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     >
       {/* Top Body Container */}
       <div className="flex-1 min-w-0 flex flex-col">
-        {/* Typo / Mistake Suggestion Banner (if rendered as fuzzy match) */}
+        {/* Match Suggestion Banner */}
         {suggestedMatchBadge && (
-          <div className="mb-2 px-2 py-0.5 rounded-lg bg-[#FF4500]/10 dark:bg-[#FF4500]/15 border border-[#FF4500]/30 text-[#C43400] dark:text-[#FF6E40] text-[10.5px] font-bold flex items-center gap-1.5 shadow-2xs shrink-0">
-            <Sparkles className="w-3 h-3 text-[#FF4500] shrink-0" />
+          <div
+            className={`mb-2 px-2 py-0.5 rounded-lg border text-[10.5px] font-bold flex items-center gap-1.5 shadow-2xs shrink-0 ${
+              isExactMatch
+                ? 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300'
+                : 'bg-amber-50 dark:bg-amber-950/50 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-300'
+            }`}
+          >
+            {isExactMatch ? (
+              <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            ) : (
+              <Sparkles className="w-3 h-3 text-amber-600 dark:text-amber-400 shrink-0" />
+            )}
             <span className="truncate">{suggestedMatchBadge}</span>
           </div>
         )}
@@ -207,47 +231,88 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       {/* Bottom Row: Fixed Pinned Price & Add Action (Always visible & inside the card) */}
       <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-[#282B34] flex items-center justify-between gap-1.5 shrink-0">
         <div className="min-w-0 flex-1 overflow-hidden">
-          <span className="text-[9.5px] uppercase font-bold tracking-wider text-slate-500 dark:text-stone-500 block leading-none mb-0.5">
-            Price
-          </span>
-          <span className="text-[15px] sm:text-[16px] font-black tracking-tight text-[#FF4500] dark:text-[#FF5722] tabular-nums truncate block">
-            {formatGhs(product.retailPrice)}
-          </span>
+          <div className="flex items-center gap-1.5 mb-0.5">
+            <span className="text-[9.5px] uppercase font-bold tracking-wider text-slate-500 dark:text-stone-500 block leading-none">
+              {isWholesale ? 'Wholesale Price' : 'Price'}
+            </span>
+            {isWholesale && (
+              <span className="px-1 py-0.2 rounded text-[8.5px] font-black uppercase tracking-wider bg-teal-500/15 text-[#008285] dark:text-[#00CED1] border border-teal-500/30">
+                Wholesale
+              </span>
+            )}
+          </div>
+          <div className="flex items-baseline gap-1.5 truncate">
+            <span className={`text-[15px] sm:text-[16px] font-black tracking-tight tabular-nums truncate block ${
+              isWholesale ? 'text-[#008285] dark:text-[#00CED1]' : 'text-[#FF4500] dark:text-[#FF5722]'
+            }`}>
+              {formatGhs(effectiveBasePrice)}
+            </span>
+            {isWholesale && product.retailPrice !== effectiveBasePrice && (
+              <span className="text-[11px] line-through text-slate-400 dark:text-stone-500 tabular-nums">
+                {formatGhs(product.retailPrice)}
+              </span>
+            )}
+          </div>
         </div>
 
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex items-center gap-1 shrink-0 relative">
           {product.uomOptions && product.uomOptions.length > 0 && (
             <div className="relative" onClick={e => e.stopPropagation()}>
               <button
                 type="button"
                 onClick={() => setShowUomMenu(!showUomMenu)}
-                className="pos-btn p-1.5 rounded-lg text-xs flex items-center cursor-pointer border border-slate-300 dark:border-[#282B34]"
-                title="Select package unit"
+                className={`pos-btn p-1.5 rounded-lg text-xs flex items-center cursor-pointer border ${
+                  showUomMenu
+                    ? 'border-[#008285] bg-teal-50 dark:bg-teal-950/40 text-[#008285] dark:text-[#00CED1]'
+                    : 'border-slate-300 dark:border-[#282B34]'
+                }`}
+                title="Select package unit / bulk size"
               >
-                <ChevronDown className="w-3.5 h-3.5" />
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showUomMenu ? 'rotate-180 text-[#008285] dark:text-[#00CED1]' : ''}`} />
               </button>
 
+              {/* Elevated Floating Popover for Package Variants */}
               {showUomMenu && (
-                <div className="pos-card absolute bottom-full right-0 mb-2 z-30 w-52 p-1.5 text-xs space-y-1 shadow-lg border border-slate-300 dark:border-[#282B34]">
-                  <div className="px-2 py-1 text-[10px] font-bold text-slate-500 dark:text-stone-400 uppercase tracking-wider">
-                    Package Sizes:
-                  </div>
-                  {product.uomOptions.map(uom => (
+                <div
+                  className="fixed sm:absolute bottom-auto sm:bottom-full right-4 sm:right-0 top-auto sm:mb-2 z-50 w-64 max-w-[90vw] p-2.5 text-xs space-y-1.5 shadow-2xl rounded-2xl border-2 border-slate-400 dark:border-[#383D4D] bg-white dark:bg-[#181A22] backdrop-blur-xl ring-1 ring-black/15 animate-in fade-in slide-in-from-bottom-2 duration-150"
+                  onClick={e => e.stopPropagation()}
+                >
+                  <div className="px-1.5 py-1 text-[10.5px] font-bold text-slate-700 dark:text-stone-300 uppercase tracking-wider border-b border-slate-200 dark:border-[#282B34] flex items-center justify-between">
+                    <span>Available Package Sizes:</span>
                     <button
-                      key={uom.name}
                       type="button"
-                      onClick={() => {
-                        onAddToCart(product, uom);
-                        setShowUomMenu(false);
-                      }}
-                      className="neo-list-item-hover w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex justify-between items-center cursor-pointer"
+                      onClick={() => setShowUomMenu(false)}
+                      className="text-slate-400 hover:text-slate-900 dark:hover:text-white p-0.5 rounded-md transition"
                     >
-                      <span className="truncate">{uom.name}</span>
-                      <span className="font-bold text-[#FF4500] dark:text-[#FF5722] ml-2 tabular-nums">
-                        {formatGhs(uom.price)}
-                      </span>
+                      <X className="w-3.5 h-3.5" />
                     </button>
-                  ))}
+                  </div>
+                  <div className="max-h-48 overflow-y-auto space-y-1 pr-1">
+                    {product.uomOptions.map(uom => {
+                      const uomPrice = isWholesale
+                        ? roundToPesewas(uom.price * (product.wholesalePrice ? product.wholesalePrice / product.retailPrice : 0.88))
+                        : uom.price;
+                      return (
+                        <button
+                          key={uom.name}
+                          type="button"
+                          onClick={() => {
+                            onAddToCart(
+                              { ...product, retailPrice: effectiveBasePrice },
+                              { name: uom.name, price: uomPrice }
+                            );
+                            setShowUomMenu(false);
+                          }}
+                          className="w-full text-left px-3 py-2 rounded-xl text-xs flex justify-between items-center transition bg-slate-50 hover:bg-[#FF4500] hover:text-white dark:bg-[#20232E] dark:hover:bg-[#FF4500] dark:hover:text-white text-slate-900 dark:text-stone-100 font-semibold cursor-pointer border border-slate-200 dark:border-[#2C3040] shadow-2xs"
+                        >
+                          <span className="truncate pr-2">{uom.name}</span>
+                          <span className="font-bold tabular-nums shrink-0">
+                            {formatGhs(uomPrice)}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>
