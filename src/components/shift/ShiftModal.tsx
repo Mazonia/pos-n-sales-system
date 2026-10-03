@@ -168,9 +168,9 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
 
       triggerHaptic('success');
       setZReportResult(report);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error closing shift:', err);
-      alert('Failed to lock till. Please check inputs and try again.');
+      alert(err?.message ? `Failed to lock till: ${err.message}` : 'Failed to lock till. Please check inputs and try again.');
     } finally {
       setIsClosingShift(false);
     }
@@ -571,16 +571,16 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
                         <td className="p-2.5 font-sans font-medium text-purple-800">Bisa Debt Sales (Store Credit)</td>
                         <td className="p-2.5 text-right font-bold text-purple-700">{formatGhs(xReport.debtSales)}</td>
                       </tr>
-                      {xReport.totalPaidIn > 0 && (
+                      {xReport.payInsTotal > 0 && (
                         <tr>
                           <td className="p-2.5 font-sans font-medium text-teal-800">Add: Cash Float Replenishment (Paid-In)</td>
-                          <td className="p-2.5 text-right font-bold text-teal-700">+{formatGhs(xReport.totalPaidIn)}</td>
+                          <td className="p-2.5 text-right font-bold text-teal-700">+{formatGhs(xReport.payInsTotal)}</td>
                         </tr>
                       )}
-                      {xReport.totalPaidOut > 0 && (
+                      {xReport.payOutsTotal > 0 && (
                         <tr>
                           <td className="p-2.5 font-sans font-medium text-rose-800">Less: Petty Expenses / Dumsor Fuel (Paid-Out)</td>
-                          <td className="p-2.5 text-right font-bold text-rose-700">-{formatGhs(xReport.totalPaidOut)}</td>
+                          <td className="p-2.5 text-right font-bold text-rose-700">-{formatGhs(xReport.payOutsTotal)}</td>
                         </tr>
                       )}
                     </tbody>

@@ -322,9 +322,9 @@ export class AkwaabaPosDatabase extends Dexie {
       auditLogs: 'id, action, userId, timestamp',
       purchaseOrders: 'id, poNumber, supplierName, status, createdAt',
     });
-    this.version(3).stores({
+    this.version(4).stores({
       products: 'id, sku, barcode, category, name',
-      orders: 'id, orderNumber, receiptNumber, createdAt, syncStatus, cashierId',
+      orders: 'id, orderNumber, receiptNumber, createdAt, syncStatus, cashierId, shiftId',
       offlineQueue: 'id, orderNumber, createdAt, syncStatus',
       customers: 'id, phone, customerNumber, fullName',
       shifts: 'id, shiftNumber, cashierId, status',

@@ -187,10 +187,10 @@ export async function updateShiftWithSale(shiftId: string, order: LocalOrder): P
  */
 export async function generateXReport(shiftId: string, branchName = 'Accra Central Mall Store'): Promise<ShiftSummaryReport> {
   const shift = await db.shifts.get(shiftId);
-  if (!shift) throw new Error('Shift not found');
+  if (!shift) throw new Error('Shift record not found in database');
 
-  const orders = await db.orders.where('shiftId').equals(shiftId).toArray();
-  const completedOrders = orders.filter(o => o.status === 'COMPLETED');
+  const allOrders = await db.orders.toArray();
+  const completedOrders = (allOrders || []).filter(o => o.shiftId === shiftId && o.status === 'COMPLETED');
 
   // Sum tax collections
   let totalTax = 0;
@@ -200,39 +200,46 @@ export async function generateXReport(shiftId: string, branchName = 'Accra Centr
   let vat = 0;
 
   for (const o of completedOrders) {
-    totalTax += o.totalTax;
-    nhil += o.nhil;
-    getfund += o.getfund;
-    covid += o.covid;
-    vat += o.vat;
+    totalTax += (o.totalTax || 0);
+    nhil += (o.nhil || 0);
+    getfund += (o.getfund || 0);
+    covid += (o.covid || 0);
+    vat += (o.vat || 0);
   }
 
   let payIns = 0;
   let payOuts = 0;
   let safeDrops = 0;
 
-  for (const d of shift.cashDrops) {
-    if (d.type === 'PAY_IN') payIns += d.amount;
-    if (d.type === 'PAY_OUT') payOuts += d.amount;
-    if (d.type === 'SAFE_DEPOSIT') safeDrops += d.amount;
+  const drops = shift.cashDrops || [];
+  for (const d of drops) {
+    if (d.type === 'PAY_IN') payIns += (d.amount || 0);
+    if (d.type === 'PAY_OUT') payOuts += (d.amount || 0);
+    if (d.type === 'SAFE_DEPOSIT') safeDrops += (d.amount || 0);
   }
 
-  const expected = roundToPesewas(shift.openingFloat + shift.cashSales + (payIns - payOuts - safeDrops));
+  const openingFloat = shift.openingFloat || 0;
+  const cashSales = shift.cashSales || 0;
+  const momoSales = shift.momoSales || 0;
+  const cardSales = shift.cardSales || 0;
+  const debtSales = shift.debtSales || 0;
+
+  const expected = roundToPesewas(openingFloat + cashSales + (payIns - payOuts - safeDrops));
 
   return {
-    shiftNumber: shift.shiftNumber,
+    shiftNumber: shift.shiftNumber || `SHF-${Date.now()}`,
     reportType: 'X_REPORT',
     generatedAt: new Date().toISOString(),
-    cashierName: shift.cashierName,
-    cashierId: shift.cashierId,
+    cashierName: shift.cashierName || 'Cashier',
+    cashierId: shift.cashierId || 'usr-001',
     branchName,
-    openedAt: shift.openedAt,
-    openingFloat: shift.openingFloat,
-    cashSales: shift.cashSales,
-    momoSales: shift.momoSales,
-    cardSales: shift.cardSales,
-    debtSales: shift.debtSales,
-    totalRevenue: roundToPesewas(shift.cashSales + shift.momoSales + shift.cardSales + shift.debtSales),
+    openedAt: shift.openedAt || new Date().toISOString(),
+    openingFloat: roundToPesewas(openingFloat),
+    cashSales: roundToPesewas(cashSales),
+    momoSales: roundToPesewas(momoSales),
+    cardSales: roundToPesewas(cardSales),
+    debtSales: roundToPesewas(debtSales),
+    totalRevenue: roundToPesewas(cashSales + momoSales + cardSales + debtSales),
     totalOrders: completedOrders.length,
     payInsTotal: roundToPesewas(payIns),
     payOutsTotal: roundToPesewas(payOuts),
@@ -259,10 +266,11 @@ export async function closeShiftAndGenerateZReport(params: {
   branchName?: string;
 }): Promise<ShiftSummaryReport> {
   const shift = await db.shifts.get(params.shiftId);
-  if (!shift) throw new Error('Shift not found');
+  if (!shift) throw new Error('Shift record not found in database');
 
   const xReport = await generateXReport(params.shiftId, params.branchName);
-  const variance = roundToPesewas(params.countedCashPhysical - xReport.expectedCashInTill);
+  const countedCash = params.countedCashPhysical || 0;
+  const variance = roundToPesewas(countedCash - xReport.expectedCashInTill);
 
   let varianceStatus: 'BALANCED' | 'OVERAGE' | 'SHORTAGE' = 'BALANCED';
   if (variance > 0.05) varianceStatus = 'OVERAGE';
@@ -274,16 +282,17 @@ export async function closeShiftAndGenerateZReport(params: {
   // Update shift record in database
   shift.status = 'CLOSED';
   shift.closedAt = new Date().toISOString();
-  shift.countedCashPhysical = params.countedCashPhysical;
+  shift.countedCashPhysical = countedCash;
   shift.variance = variance;
   shift.zReportNumber = zReportNumber;
+  if (!shift.cashDrops) shift.cashDrops = [];
   await db.shifts.put(shift);
 
   return {
     ...xReport,
     reportType: 'Z_REPORT',
     closedAt: shift.closedAt,
-    countedCashPhysical: params.countedCashPhysical,
+    countedCashPhysical: countedCash,
     cashVariance: variance,
     varianceStatus,
     managerSignatureNeeded: Math.abs(variance) > 5.0, // Variance > GH₵5 requires manager sign-off
