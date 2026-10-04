@@ -1,6 +1,9 @@
 node_modules/
 build/
 dist/
+release/
+release-assets/
+release-android/
 coverage/
 .DS_Store
 *.log
@@ -8,3 +11,16 @@ coverage/
 !.env.example
 dev-dist/
 .playwright-mcp/
+
+# Android & iOS Native build caches
+android/.gradle/
+android/build/
+android/app/build/
+android/.idea/
+android/*.iml
+android/app/*.iml
+ios/App/Pods/
+ios/App/build/
+ios/App/.symlinks/
+*.xcworkspace
+*.xcuserdatad

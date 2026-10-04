@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Akwaaba POS &amp; Retail OS</string>
+    <string name="title_activity_main">Akwaaba POS &amp; Retail OS</string>
+    <string name="package_name">com.akwaaba.pos</string>
+    <string name="custom_url_scheme">com.akwaaba.pos</string>
+</resources>

@@ -66,11 +66,11 @@ Community leaders will follow these Community Impact Guidelines in determining t
 
 ## Reporting Guidelines
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leadership team at:
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to maintainer **Mazonia** directly through the repository issue tracker:
 
-📧 **conduct@akwaaba-os.org** (or by opening a confidential maintainer inquiry).
+👉 **[GitHub Issue Tracker](https://github.com/Mazonia/pos-n-sales-system/issues)**
 
-All complaints will be reviewed and investigated promptly and fairly. All community leaders are obligated to respect the privacy and security of the reporter of any incident.
+All complaints will be reviewed and investigated promptly and fairly with confidentiality.
 
 ---
 

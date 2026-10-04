@@ -5,8 +5,11 @@ import {defineConfig} from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(() => {
+  const isGhPages = process.env.GITHUB_PAGES === 'true';
+  const base = isGhPages ? '/pos-n-sales-system/' : './';
+
   return {
-    base: '/pos-n-sales-system/',
+    base,
     plugins: [
       react(),
       tailwindcss(),
@@ -14,7 +17,7 @@ export default defineConfig(() => {
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icon.svg', 'pwa-192x192.png', 'pwa-512x512.png'],
         manifest: {
-          id: '/',
+          id: isGhPages ? '/pos-n-sales-system/' : '/',
           name: 'Akwaaba POS & Retail OS',
           short_name: 'AkwaabaPOS',
           description: 'Enterprise Cloud & Offline-First POS, GRA Tax Compliance & Inventory Management System for Ghana.',
@@ -22,29 +25,29 @@ export default defineConfig(() => {
           background_color: '#090B0E',
           display: 'standalone',
           orientation: 'any',
-          start_url: '/',
-          scope: '/',
+          start_url: isGhPages ? '/pos-n-sales-system/' : './',
+          scope: isGhPages ? '/pos-n-sales-system/' : './',
           icons: [
             {
-              src: '/pwa-192x192.png',
+              src: 'pwa-192x192.png',
               sizes: '192x192',
               type: 'image/png',
               purpose: 'any',
             },
             {
-              src: '/pwa-512x512.png',
+              src: 'pwa-512x512.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any',
             },
             {
-              src: '/pwa-maskable-512x512.png',
+              src: 'pwa-maskable-512x512.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'maskable',
             },
             {
-              src: '/icon.svg',
+              src: 'icon.svg',
               sizes: '512x512',
               type: 'image/svg+xml',
               purpose: 'any',

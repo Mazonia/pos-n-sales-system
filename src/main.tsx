@@ -6,7 +6,9 @@ import { initGlobalEmojiSanitizer } from './utils/emojiSanitizer';
 
 // Initialize global emoji sanitization for all input fields across the POS application
 initGlobalEmojiSanitizer();
-if ('serviceWorker' in navigator) {
+
+const isElectron = typeof window !== 'undefined' && Boolean(window.electronAPI?.isElectron);
+if (!isElectron && 'serviceWorker' in navigator) {
   registerSW({
     immediate: true,
     onNeedRefresh() {

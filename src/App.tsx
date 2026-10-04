@@ -25,8 +25,11 @@ import { StockSafetyNotification } from './components/notifications/StockSafetyN
 import { FinancialDashboard } from './components/dashboard/FinancialDashboard';
 import { EmployeeManagementView } from './components/staff/EmployeeManagementView';
 import { PwaInstallBanner, PwaInstallNavbarButton } from './components/pwa/PwaInstallBanner';
+import { PlatformDownloadModal } from './components/pos/PlatformDownloadModal';
+import { detectPlatform } from './utils/platform';
 import { triggerHaptic } from './utils/haptics';
 import {
+  Download,
   ShoppingBag,
   BookOpen,
   DollarSign,
@@ -168,6 +171,10 @@ export default function App() {
   // Purchase Order Draft Modal State (for Safety Threshold Replenishment)
   const [showPoModal, setShowPoModal] = useState<boolean>(false);
   const [poTargetProducts, setPoTargetProducts] = useState<LocalProduct[]>([]);
+
+  // Multi-Platform App Downloads Modal State
+  const [showPlatformModal, setShowPlatformModal] = useState<boolean>(false);
+  const [currentPlatform] = useState(() => detectPlatform());
 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -479,6 +486,27 @@ export default function App() {
             </button>
           )}
 
+          {/* Multi-Platform App Downloads Button */}
+          <button
+            type="button"
+            onClick={() => {
+              triggerHaptic('tap');
+              setShowPlatformModal(true);
+            }}
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer ${
+              isDark
+                ? 'border-orange-500/30 bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 shadow-[0_0_12px_rgba(255,69,0,0.1)]'
+                : 'border-orange-300 bg-orange-50 text-orange-600 hover:bg-orange-100 shadow-2xs'
+            }`}
+            title="Download Akwaaba POS for Windows (.exe), Mac (.dmg), Android Tablets & iPads"
+          >
+            <Download className="w-3.5 h-3.5 text-[#FF4500]" />
+            <span className="hidden md:inline font-bold">Download Apps</span>
+            <span className="text-[9.5px] px-1.5 py-0.5 rounded font-mono font-black uppercase bg-[#FF4500]/15 text-[#FF4500] dark:bg-[#FF4500]/25 dark:text-orange-400 border border-[#FF4500]/20">
+              {currentPlatform.type === 'windows' ? '.EXE' : currentPlatform.type === 'android' ? 'APK' : currentPlatform.type === 'mac' ? 'DMG' : 'ALL'}
+            </span>
+          </button>
+
           {/* Theme Switcher Toggle */}
           <button
             type="button"
@@ -567,6 +595,28 @@ export default function App() {
                     </span>
                   </button>
                 )}
+
+                {/* Multi-Platform App Downloads Link */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPlatformModal(true);
+                    setUserMenuOpen(false);
+                  }}
+                  className={`w-full text-left p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between mb-2 transition-all border active:scale-[0.98] cursor-pointer ${
+                    isDark
+                      ? 'bg-[#1E222B] border-[#282B34] text-stone-200 hover:bg-[#252A36]'
+                      : 'bg-orange-50/50 border-orange-200/80 text-slate-800 hover:bg-orange-100/50'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Download className="w-3.5 h-3.5 text-orange-500" />
+                    <span>Download Native Apps</span>
+                  </div>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-orange-500/15 text-orange-400">
+                    .exe / .dmg / Tablet
+                  </span>
+                </button>
 
                 {/* Switch User Helper */}
                 <div className="space-y-1 mb-2.5">
@@ -841,6 +891,12 @@ export default function App() {
           </form>
         </div>
       )}
+
+      {/* Multi-Platform Download Center Modal */}
+      <PlatformDownloadModal
+        isOpen={showPlatformModal}
+        onClose={() => setShowPlatformModal(false)}
+      />
 
     </div>
   );

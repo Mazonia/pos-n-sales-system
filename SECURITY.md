@@ -16,9 +16,9 @@ We actively maintain and provide security patches for the following versions of 
 The Akwaaba POS & Retail OS team takes software security and merchant trust seriously. If you discover a security vulnerability—especially concerning financial calculations, cryptographic GRA signatures, customer data, or offline IndexedDB manipulation—please report it responsibly through private channels.
 
 ### How to Report:
-1. **Do NOT open a public GitHub issue** describing the security vulnerability.
-2. Email the maintainers directly at:
-   📧 **security@akwaaba-os.org**
+1. Open a confidential inquiry or issue report on the project repository:
+   👉 **[GitHub Security & Issues](https://github.com/Mazonia/pos-n-sales-system/issues)**
+2. Built & Maintained by: **Mazonia**
 3. Include the following details in your report:
    - A clear description of the vulnerability.
    - Exact steps or script to reproduce the issue.

@@ -5,9 +5,15 @@
 [![React](https://img.shields.io/badge/React-19.0-blue.svg)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-8.3-646CFF.svg)](https://vitejs.dev)
+[![Windows](https://img.shields.io/badge/Windows-.exe-0078D6.svg?logo=windows)](PLATFORMS.md#-1-windows-desktop-exe)
+[![macOS](https://img.shields.io/badge/macOS-.dmg-000000.svg?logo=apple)](PLATFORMS.md#-2-macos-desktop-dmg)
+[![Android](https://img.shields.io/badge/Android-Tablet%20APK-3DDC84.svg?logo=android)](PLATFORMS.md#-3-android-tablet-apk)
+[![iPadOS](https://img.shields.io/badge/iPadOS-Tablet-999999.svg?logo=apple)](PLATFORMS.md#-4-apple-ipad-ipados)
 [![PWA Ready](https://img.shields.io/badge/PWA-Offline--First-orange.svg)](https://web.dev/progressive-web-apps/)
 [![GRA VSDC](https://img.shields.io/badge/GRA%20VSDC-Compliant-008285.svg)](#-gra-vsdc-compliance--ghana-tax-engine)
 [![Dumsor Resilient](https://img.shields.io/badge/Dumsor-Resilient-FF4500.svg)](#-dumsor-power-outage-resilience--cold-store-spoilage)
+
+> **📦 Multi-Platform Support**: Download native binaries for Windows (`.exe`), macOS (`.dmg`), and Android tablets (`.apk`) directly from the [GitHub Releases](https://github.com/Mazonia/pos-n-sales-system/releases) page. See the full [Multi-Platform Guide](PLATFORMS.md).
 
 ---
 
