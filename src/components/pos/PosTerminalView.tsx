@@ -421,20 +421,21 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
   };
 
   const handleApplyDiscount = () => {
-    const isHighDiscount = discountPercentInput > 5;
+    const clampedPct = Math.min(100, Math.max(0, discountPercentInput || 0));
+    const isHighDiscount = clampedPct > 5;
     if (isHighDiscount && cashierRole === 'CASHIER') {
       setPinModalConfig({
         isOpen: true,
         title: 'High Discount Authorization',
-        description: `Discounts above 5% require Manager PIN approval (Requested: ${discountPercentInput}%).`,
+        description: `Discounts above 5% require Manager PIN approval (Requested: ${clampedPct}%).`,
         onAuthorize: () => {
-          applyDiscountCalculation(discountPercentInput);
+          applyDiscountCalculation(clampedPct);
           setShowDiscountModal(false);
           setPinModalConfig(null);
         },
       });
     } else {
-      applyDiscountCalculation(discountPercentInput);
+      applyDiscountCalculation(clampedPct);
       setShowDiscountModal(false);
     }
   };
@@ -1539,7 +1540,10 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                 min="0"
                 max="100"
                 value={discountPercentInput}
-                onChange={e => setDiscountPercentInput(parseFloat(e.target.value) || 0)}
+                onChange={e => {
+                  const val = parseFloat(e.target.value);
+                  setDiscountPercentInput(isNaN(val) ? 0 : Math.min(100, Math.max(0, val)));
+                }}
                 className={`w-full px-3 py-2.5 rounded-[12px] text-xl font-mono tabular-nums text-center outline-none border transition-all duration-200 focus:ring-2 ${
                   isDark ? 'bg-[#0A0D12] border-[rgba(48,62,80,0.5)] text-white focus:border-emerald-500 focus:ring-emerald-500/20' : 'bg-[#F6F8FA] border-[rgba(209,215,224,0.5)] text-[#0F172A] focus:border-emerald-500 focus:ring-emerald-500/15'
                 }`}

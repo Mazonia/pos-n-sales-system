@@ -266,20 +266,21 @@ export const PosTerminal: React.FC<PosTerminalProps> = ({
   };
 
   const handleApplyDiscount = () => {
-    const isHighDiscount = discountPercentInput > 5;
+    const clampedPct = Math.min(100, Math.max(0, discountPercentInput || 0));
+    const isHighDiscount = clampedPct > 5;
     if (isHighDiscount && cashierRole === 'CASHIER') {
       setPinModalConfig({
         isOpen: true,
         title: 'High Discount Authorization',
-        description: `Discounts above 5% require Manager PIN approval (Requested: ${discountPercentInput}%).`,
+        description: `Discounts above 5% require Manager PIN approval (Requested: ${clampedPct}%).`,
         onAuthorize: () => {
-          applyDiscountCalculation(discountPercentInput);
+          applyDiscountCalculation(clampedPct);
           setShowDiscountModal(false);
           setPinModalConfig(null);
         },
       });
     } else {
-      applyDiscountCalculation(discountPercentInput);
+      applyDiscountCalculation(clampedPct);
       setShowDiscountModal(false);
     }
   };
@@ -930,7 +931,10 @@ export const PosTerminal: React.FC<PosTerminalProps> = ({
                 min="0"
                 max="100"
                 value={discountPercentInput}
-                onChange={e => setDiscountPercentInput(parseFloat(e.target.value) || 0)}
+                onChange={e => {
+                  const val = parseFloat(e.target.value);
+                  setDiscountPercentInput(isNaN(val) ? 0 : Math.min(100, Math.max(0, val)));
+                }}
                 className="w-full px-3 py-2 bg-black/40 border border-white/10 rounded-xl text-lg font-mono text-center outline-none"
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">%</span>

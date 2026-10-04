@@ -331,14 +331,14 @@ export default function App() {
     switch (role) {
       case 'CASHIER':
         return [
-          { id: 'POS', label: 'Register', icon: ShoppingBag },
+          { id: 'POS', label: 'Checkout', icon: ShoppingBag },
           { id: 'FINANCIALS', label: 'Sales', icon: TrendingUp },
           { id: 'BISA', label: 'Customers', icon: BookOpen },
         ];
       case 'INVENTORY_OFFICER':
         return [
           { id: 'INVENTORY', label: 'Inventory', icon: Boxes, badge: lowStockProducts.length > 0 ? lowStockProducts.length : null },
-          { id: 'POS', label: 'Register', icon: ShoppingBag },
+          { id: 'POS', label: 'Checkout', icon: ShoppingBag },
           { id: 'FINANCIALS', label: 'Valuation', icon: TrendingUp },
         ];
       case 'AUDITOR':
@@ -353,7 +353,7 @@ export default function App() {
       case 'SUPER_ADMIN':
       default:
         return [
-          { id: 'POS', label: 'Register', icon: ShoppingBag },
+          { id: 'POS', label: 'Checkout', icon: ShoppingBag },
           { id: 'INVENTORY', label: 'Inventory', icon: Boxes, badge: lowStockProducts.length > 0 ? lowStockProducts.length : null },
           { id: 'FINANCIALS', label: 'Sales', icon: TrendingUp },
           { id: 'BISA', label: 'Customers', icon: BookOpen },
