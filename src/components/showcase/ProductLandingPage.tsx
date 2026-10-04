@@ -41,7 +41,10 @@ import {
   UserCheck,
   Send,
   HelpCircle,
-  Truck
+  Truck,
+  ShoppingBag,
+  EyeOff,
+  Package
 } from 'lucide-react';
 import { formatGhs, roundToPesewas, TaxSchemeType } from '../../utils/ghanaTaxEngine';
 
@@ -62,6 +65,7 @@ interface DemoProduct {
   stock: number;
   tag: string;
   expiryDays: number;
+  imageUrl?: string;
 }
 
 export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
@@ -80,6 +84,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
   const [orderMode, setOrderMode] = useState<'RETAIL' | 'WHOLESALE'>('RETAIL');
   const [taxScheme, setTaxScheme] = useState<TaxSchemeType>('STANDARD_VAT');
   const [discountApplied, setDiscountApplied] = useState(false);
+  const [showImages, setShowImages] = useState(true);
 
   // Spoilage Module Interactive State
   const [outageHours, setOutageHours] = useState(6);
@@ -115,6 +120,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
         stock: 38,
         tag: 'Bulk Provision',
         expiryDays: 140,
+        imageUrl: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=400&q=80',
       },
       quantity: 1,
     },
@@ -129,6 +135,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
         stock: 64,
         tag: 'Fast Mover',
         expiryDays: 85,
+        imageUrl: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=400&q=80',
       },
       quantity: 2,
     },
@@ -150,6 +157,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
       stock: 38,
       tag: 'Bulk Provision',
       expiryDays: 140,
+      imageUrl: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=400&q=80',
     },
     {
       id: 'p2',
@@ -161,6 +169,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
       stock: 64,
       tag: 'Fast Mover',
       expiryDays: 85,
+      imageUrl: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=400&q=80',
     },
     {
       id: 'p3',
@@ -172,6 +181,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
       stock: 120,
       tag: 'High Velocity',
       expiryDays: 22,
+      imageUrl: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=400&q=80',
     },
     {
       id: 'p4',
@@ -183,6 +193,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
       stock: 190,
       tag: 'Deconstructed',
       expiryDays: 120,
+      imageUrl: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=400&q=80',
     },
     {
       id: 'p5',
@@ -194,6 +205,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
       stock: 240,
       tag: 'Critical Shelf',
       expiryDays: 14,
+      imageUrl: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=400&q=80',
     },
     {
       id: 'p6',
@@ -205,6 +217,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
       stock: 85,
       tag: 'Breakfast',
       expiryDays: 62,
+      imageUrl: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=400&q=80',
     },
   ];
 
@@ -644,27 +657,28 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
             </div>
           ) : deviceFrame === 'TABLET_PORTRAIT' ? (
             /* ═══ 2. BESPOKE TABLET & MOBILE PORTRAIT TILL WORKSTATION ═══ */
-            <div className="flex flex-col min-h-[580px] max-h-[700px] overflow-hidden select-none">
+            <div className="flex flex-col min-h-[580px] max-h-[720px] overflow-hidden select-none">
               
               {/* Native Mobile Status Bar & Cashier Presence */}
               <div className={`px-4 py-2.5 border-b flex items-center justify-between text-[11px] shrink-0 ${
                 isDark ? 'bg-[#101216] border-[#282B34] text-gray-300' : 'bg-slate-100 border-slate-300 text-slate-700'
               }`}>
-                <div className="flex items-center gap-1.5 font-bold font-mono">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Till #01 &bull; Makola Central</span>
+                <div className="flex items-center gap-2 font-bold font-mono">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-xs" />
+                  <span className="tracking-tight text-xs font-black text-[#FF4500]">AKWAABA POS</span>
+                  <span className="text-gray-400 font-normal">| Till #01</span>
                 </div>
                 <div className="flex items-center gap-2 font-mono text-[10px]">
-                  <span className="px-1.5 py-0.5 rounded bg-[#FF4500]/15 text-[#FF4500] font-bold">Kofi M.</span>
-                  <span>100% Offline OK</span>
+                  <span className="px-2 py-0.5 rounded-lg bg-[#FF4500]/15 text-[#FF4500] font-bold">Kofi M.</span>
+                  <span className="text-emerald-400 font-semibold">100% Offline OK</span>
                 </div>
               </div>
 
-              {/* Mode & Tax Pill Strip for Portrait */}
+              {/* Mode, Tax Pill Strip & Photos Toggle for Portrait */}
               <div className={`px-3.5 py-2 border-b flex items-center justify-between gap-2 shrink-0 ${
                 isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-slate-200'
               }`}>
-                <div className="flex items-center gap-1 text-[11px]">
+                <div className="flex items-center gap-1.5 text-[11px]">
                   <button
                     type="button"
                     onClick={() => setOrderMode('RETAIL')}
@@ -689,13 +703,29 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
                   </button>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setTaxScheme(taxScheme === 'STANDARD_VAT' ? 'FLAT_RATE_VFRS' : 'STANDARD_VAT')}
-                  className="px-2.5 py-1 rounded-lg font-mono text-[10px] font-bold border border-cyan-500/40 bg-cyan-500/10 text-cyan-400 cursor-pointer"
-                >
-                  {taxScheme === 'STANDARD_VAT' ? 'GRA Std 21.9%' : 'GRA Flat 4.0%'}
-                </button>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setShowImages(!showImages)}
+                    className={`px-2 py-1 rounded-lg border text-[10px] font-semibold flex items-center gap-1 transition cursor-pointer ${
+                      isDark
+                        ? 'border-[#282B34] text-stone-300 hover:bg-[#20232B]'
+                        : 'border-slate-300 text-slate-700 hover:bg-slate-100 shadow-2xs'
+                    }`}
+                    title={showImages ? 'Hide Product Photos' : 'Show Product Photos'}
+                  >
+                    {showImages ? <EyeOff className="w-3 h-3 text-[#FF4500]" /> : <Eye className="w-3 h-3 text-slate-500" />}
+                    <span className="font-bold">{showImages ? 'Photos' : 'Text'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setTaxScheme(taxScheme === 'STANDARD_VAT' ? 'FLAT_RATE_VFRS' : 'STANDARD_VAT')}
+                    className="px-2 py-1 rounded-lg font-mono text-[10px] font-bold border border-cyan-500/40 bg-cyan-500/10 text-cyan-400 cursor-pointer"
+                  >
+                    {taxScheme === 'STANDARD_VAT' ? 'GRA 21.9%' : 'Flat 4%'}
+                  </button>
+                </div>
               </div>
 
               {/* Portrait Content Area depending on activeModule */}
@@ -718,12 +748,23 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
                       return (
                         <div
                           key={prod.id}
-                          className={`p-3 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
+                          className={`p-2.5 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
                             isDark
                               ? 'bg-[#121316] border-[#282B34] hover:border-[#FF4500]/60'
                               : 'bg-white border-slate-200 hover:border-[#FF4500]/60 shadow-xs'
                           }`}
                         >
+                          {/* Product Packaging Image Thumbnail */}
+                          {showImages && prod.imageUrl && (
+                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden shrink-0 border border-slate-700/20 bg-black/20">
+                              <img
+                                src={prod.imageUrl}
+                                alt={prod.name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 mb-0.5">
                               <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-[#FF4500]/15 text-[#FF4500]">
@@ -1062,6 +1103,33 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
                     💳 Pay MoMo
                   </button>
                 </div>
+              </div>
+
+              {/* Tablet Portrait Touch Navigation Bar */}
+              <div className={`p-1.5 border-t shrink-0 flex items-center justify-around gap-1 ${
+                isDark ? 'bg-[#101216] border-[#282B34]' : 'bg-slate-100 border-slate-300'
+              }`}>
+                {[
+                  { id: 'TILL', label: 'Till POS', icon: ShoppingBag },
+                  { id: 'FIFO', label: 'FIFO Shelf', icon: Flame },
+                  { id: 'DUMSOR', label: 'Dumsor Outage', icon: Zap },
+                  { id: 'UOM', label: 'Sack Decon', icon: Package },
+                  { id: 'DEBT', label: 'Bisa Debt', icon: CreditCard },
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => handleSwitchModule(tab.id as any)}
+                    className={`flex-1 py-1.5 px-1 rounded-xl flex flex-col items-center justify-center gap-0.5 transition cursor-pointer ${
+                      activeModule === tab.id
+                        ? 'bg-[#FF4500] text-white font-bold shadow-xs'
+                        : isDark ? 'text-gray-400 hover:text-white' : 'text-slate-600 hover:text-black'
+                    }`}
+                  >
+                    <tab.icon className="w-3.5 h-3.5" />
+                    <span className="text-[9px] leading-tight font-medium">{tab.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
           ) : activeModule === 'FIFO' ? (
@@ -1447,7 +1515,22 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
                 {/* Product Catalog Quick-Add Grid */}
                 <div className="lg:col-span-7 space-y-2.5">
                   <div className="flex items-center justify-between text-xs font-semibold text-[#9CA3AF]">
-                    <span>Touch / Click Product to Add to Cart:</span>
+                    <div className="flex items-center gap-2">
+                      <span>Touch / Click Product to Add to Cart:</span>
+                      <button
+                        type="button"
+                        onClick={() => setShowImages(!showImages)}
+                        className={`px-2 py-0.5 rounded-lg border text-[10px] font-bold flex items-center gap-1 transition cursor-pointer ${
+                          isDark
+                            ? 'border-[#282B34] text-stone-300 hover:bg-[#20232B]'
+                            : 'border-slate-300 text-slate-700 hover:bg-slate-100 shadow-2xs'
+                        }`}
+                        title={showImages ? 'Hide Product Photos' : 'Show Product Photos'}
+                      >
+                        {showImages ? <EyeOff className="w-3 h-3 text-[#FF4500]" /> : <Eye className="w-3 h-3 text-slate-500" />}
+                        <span>{showImages ? 'Photos On' : 'Photos Off'}</span>
+                      </button>
+                    </div>
                     <span className="font-mono text-[11px] text-[#00CED1]">Barcode Gun Wedge Active</span>
                   </div>
 
@@ -1460,27 +1543,50 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
                         <div
                           key={prod.id}
                           onClick={() => handleAddToCart(prod)}
-                          className={`p-3 rounded-2xl border transition-all cursor-pointer select-none flex flex-col justify-between hover:scale-[1.02] active:scale-95 ${
+                          className={`p-3 rounded-2xl border transition-all cursor-pointer select-none flex flex-col justify-between hover:scale-[1.02] active:scale-95 group ${
                             isDark 
                               ? 'bg-[#121316] border-[#282B34] hover:border-[#FF4500]' 
                               : 'bg-white border-[#CBD5E1] hover:border-[#FF4500] shadow-xs'
                           }`}
                         >
                           <div>
-                            <div className="flex items-center justify-between mb-1.5">
-                              <span className="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase bg-[#FF4500]/10 text-[#FF4500]">
-                                {prod.tag}
-                              </span>
-                              <span className="text-[10px] text-[#9CA3AF] font-mono">{prod.uom}</span>
-                            </div>
+                            {/* Product Packaging Image */}
+                            {showImages && prod.imageUrl && (
+                              <div className="h-24 sm:h-28 w-full overflow-hidden rounded-xl relative mb-2 bg-black/20 border border-slate-700/20">
+                                <img
+                                  src={prod.imageUrl}
+                                  alt={prod.name}
+                                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                />
+                                <span className="absolute top-1.5 left-1.5 text-[9px] px-1.5 py-0.5 rounded font-bold uppercase bg-black/70 backdrop-blur-xs text-white">
+                                  {prod.tag}
+                                </span>
+                                <span className="absolute bottom-1.5 right-1.5 text-[9px] px-1.5 py-0.5 rounded font-mono font-bold bg-[#FF4500] text-white">
+                                  Stock: {prod.stock}
+                                </span>
+                              </div>
+                            )}
+
+                            {!showImages && (
+                              <div className="flex items-center justify-between mb-1.5">
+                                <span className="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase bg-[#FF4500]/10 text-[#FF4500]">
+                                  {prod.tag}
+                                </span>
+                                <span className="text-[10px] text-[#9CA3AF] font-mono">{prod.uom}</span>
+                              </div>
+                            )}
+
                             <h4 className="font-bold text-xs leading-snug line-clamp-2">{prod.name}</h4>
+                            {showImages && (
+                              <span className="text-[10px] text-[#9CA3AF] font-mono mt-0.5 block">{prod.uom}</span>
+                            )}
                           </div>
 
-                          <div className="mt-3 pt-2 border-t border-slate-700/20 flex items-center justify-between">
+                          <div className="mt-2.5 pt-2 border-t border-slate-700/20 flex items-center justify-between">
                             <span className="font-mono font-extrabold text-xs text-[#FF4500]">
                               {formatGhs(finalPrice)}
                             </span>
-                            <span className="w-5 h-5 rounded-full bg-[#FF4500]/15 text-[#FF4500] flex items-center justify-center font-bold text-xs">
+                            <span className="w-5 h-5 rounded-full bg-[#FF4500]/15 text-[#FF4500] flex items-center justify-center font-bold text-xs group-hover:bg-[#FF4500] group-hover:text-white transition-colors">
                               +
                             </span>
                           </div>

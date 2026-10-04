@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.akwaaba.pos',
-  appName: 'Akwaaba POS & Retail OS',
+  appName: 'Akwaaba POS',
   webDir: 'dist',
   server: {
     androidScheme: 'https',

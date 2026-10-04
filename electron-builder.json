@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
   "appId": "com.akwaaba.pos",
-  "productName": "Akwaaba POS & Retail OS",
+  "productName": "Akwaaba POS",
   "copyright": "Copyright © 2026 Mazonia",
   "npmRebuild": false,
   "nodeGypRebuild": false,
@@ -23,39 +23,36 @@
       {
         "target": "nsis",
         "arch": ["x64"]
-      },
-      {
-        "target": "portable",
-        "arch": ["x64"]
       }
     ],
     "icon": "public/icon.png",
-    "requestedExecutionLevel": "asInvoker"
+    "requestedExecutionLevel": "asInvoker",
+    "artifactName": "Akwaaba-POS-Setup-${version}.${ext}"
   },
   "nsis": {
     "oneClick": false,
     "allowToChangeInstallationDirectory": true,
     "createDesktopShortcut": true,
     "createStartMenuShortcut": true,
-    "shortcutName": "Akwaaba POS & Retail OS"
+    "shortcutName": "Akwaaba POS",
+    "uninstallDisplayName": "Akwaaba POS",
+    "runAfterFinish": true
   },
   "mac": {
     "target": [
       {
         "target": "dmg",
         "arch": ["x64", "arm64"]
-      },
-      {
-        "target": "zip",
-        "arch": ["x64", "arm64"]
       }
     ],
     "icon": "public/icon.png",
-    "category": "public.app-category.business"
+    "category": "public.app-category.business",
+    "artifactName": "Akwaaba-POS-${version}-${arch}.${ext}"
   },
   "linux": {
     "target": ["AppImage", "deb"],
     "icon": "public/icon.png",
-    "category": "Office"
+    "category": "Office",
+    "artifactName": "Akwaaba-POS-${version}.${ext}"
   }
 }

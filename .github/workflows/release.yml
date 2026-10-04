@@ -70,7 +70,7 @@ jobs:
       - name: Build Web Bundle
         run: npm run build
 
-      - name: Build macOS .dmg & .zip
+      - name: Build macOS .dmg Universal & ARM64
         run: npx electron-builder --mac
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -79,9 +79,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-binaries
-          path: |
-            release/*.dmg
-            release/*.zip
+          path: release/*.dmg
 
   # -------------------------------------------------------------
   # 3. Android Tablet (.apk)

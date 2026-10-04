@@ -20,14 +20,14 @@
 
 Download official binaries directly or launch on any device:
 
-| Platform | Installer Type | Direct Download Link | Target Devices |
+| Platform | Installer Type | Direct Download Link | Target Devices & Short Description |
 |---|---|---|---|
-| 🪟 **Windows Desktop** | NSIS Setup (`.exe`) | [⬇️ **Download Windows Installer (111 MB)**](https://github.com/Mazonia/pos-n-sales-system/releases/download/v1.0.0/Akwaaba.POS.Retail.OS.Setup.1.0.0.exe) | Windows 10, 11 (64-bit PC Counter Tills) |
-| 🪟 **Windows Desktop** | Portable (`.exe`) | [⬇️ **Download Windows Portable (111 MB)**](https://github.com/Mazonia/pos-n-sales-system/releases/download/v1.0.0/Akwaaba.POS.Retail.OS.1.0.0.exe) | Flash Drive / Zero-Install Counter Stations |
-| 🍎 **macOS Desktop** | Universal (`.dmg`) | [⬇️ **Download macOS Universal (.dmg)**](https://github.com/Mazonia/pos-n-sales-system/releases/tag/v1.0.0) | Apple Silicon (M1-M4) & Intel Macs |
-| 📱 **Apple iPad (iPadOS)** | Safari Fullscreen PWA | [📱 **iPad Installation Guide**](#-apple-ipad-ipados-setup--touch-workstation) | iPad, iPad Air, iPad Pro 10.2"-12.9" (Swivel Touch Stands) |
-| 🤖 **Android Tablet** | Standalone (`.apk`) | [⬇️ **Download Android APK Package**](https://github.com/Mazonia/pos-n-sales-system/releases/tag/v1.0.0) | Android Tablets 10"-12" (Swivel Countertop Stands) |
-| 🌐 **Web PWA** | Instant Launch | [🚀 **Launch Web Showcase & Terminal**](https://mazonia.github.io/pos-n-sales-system/#/showcase) | Any Modern Browser (Chrome, Safari, Edge, Firefox) |
+| 🪟 **Windows Desktop** | NSIS Installer (`.exe`) | [⬇️ **Download Windows Installer**](https://github.com/Mazonia/pos-n-sales-system/releases/download/v1.0.0/Akwaaba.POS.Retail.OS.Setup.1.0.0.exe) | Standard installer for Windows 10 & 11 PCs. Installs to `Akwaaba POS` with desktop & start menu shortcuts. |
+| 🍎 **Apple Mac (Apple Silicon)** | Native DMG (`.dmg`) | [⬇️ **Download Mac M1-M4 DMG**](https://github.com/Mazonia/pos-n-sales-system/releases/download/v1.0.0/Akwaaba.POS.Retail.OS-1.0.0-arm64.dmg) | Native package optimized for Apple Silicon (M1, M2, M3, M4). Drag & drop to Applications. |
+| 🍎 **Apple Mac (Intel Core)** | Universal DMG (`.dmg`) | [⬇️ **Download Mac Intel DMG**](https://github.com/Mazonia/pos-n-sales-system/releases/download/v1.0.0/Akwaaba.POS.Retail.OS-1.0.0.dmg) | Universal macOS installer for Intel-based MacBooks and iMacs. |
+| 🤖 **Android Tablet / Phone** | Standalone APK (`.apk`) | [⬇️ **Download Android APK**](https://github.com/Mazonia/pos-n-sales-system/releases/download/v1.0.0/AkwaabaPOS-Tablet-Debug.apk) | Standalone package with 360° sensor auto-rotation for countertop swivel stands and mobile tellers. |
+| 📱 **Apple iPad (iPadOS)** | Instant Safari PWA | [📱 **iPad Installation Guide**](#-apple-ipad-ipados-setup--touch-workstation) | No download required! Open Safari, visit `#/showcase`, tap Share, and choose "Add to Home Screen". |
+| 🌐 **Web PWA** | Instant Launch | [🚀 **Launch Web Showcase & Terminal**](https://mazonia.github.io/pos-n-sales-system/#/showcase) | Instant access in any modern browser (Chrome, Safari, Edge) with offline IndexedDB precaching. |
 
 > 📱 **iPad Counter Setup**: Open Safari on your iPad, go to `https://mazonia.github.io/pos-n-sales-system/`, tap the **Share** button, and select **Add to Home Screen** for a fullscreen, offline-ready native touch till with zero browser chrome.
 

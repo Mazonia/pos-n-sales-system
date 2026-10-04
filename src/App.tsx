@@ -650,7 +650,7 @@ export default function App() {
                 triggerHaptic('tap');
                 setShowBackupModal(true);
               }}
-              className={`p-2.5 rounded-xl border transition-all active:scale-90 cursor-pointer ${
+              className={`hidden sm:flex p-2.5 rounded-xl border transition-all active:scale-90 cursor-pointer ${
                 isDark
                   ? 'border-[#282B34] text-stone-300 hover:text-orange-400 hover:bg-[#20232B]'
                   : 'border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-orange-600'
@@ -979,7 +979,7 @@ export default function App() {
       )}
 
       {/* MAIN VIEWPORT with page transition */}
-      <main className={`flex-1 flex overflow-hidden transition-all duration-200 ${
+      <main className={`flex-1 flex overflow-hidden transition-all duration-200 pb-16 lg:pb-0 ${
         pageTransition ? 'opacity-0 scale-[0.99]' : 'opacity-100 scale-100'
       }`}>
         {activeTab === 'POS' && (
