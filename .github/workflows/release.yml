@@ -105,8 +105,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Set Android Environment & Accept Licenses
+        run: |
+          echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+          yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
       - name: Install Dependencies
         run: npm ci --legacy-peer-deps || npm install --legacy-peer-deps
@@ -172,27 +175,32 @@ jobs:
     name: Publish GitHub Release
     needs: [build-windows, build-macos, build-android, build-web]
     runs-on: ubuntu-latest
+    if: always() && !cancelled()
     steps:
       - name: Download Windows Binaries
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: windows-binaries
           path: release-assets/windows
 
       - name: Download macOS Binaries
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: macos-binaries
           path: release-assets/macos
 
       - name: Download Android APK
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: android-apk
           path: release-assets/android
 
       - name: Download Web Build
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: web-build
           path: release-assets/web

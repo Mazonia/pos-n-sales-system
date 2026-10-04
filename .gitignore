@@ -24,3 +24,6 @@ ios/App/build/
 ios/App/.symlinks/
 *.xcworkspace
 *.xcuserdatad
+*.zip
+macos-binaries/
+

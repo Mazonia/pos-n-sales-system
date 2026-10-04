@@ -16,19 +16,20 @@
 
 ---
 
-## 📥 Direct Downloads (No Releases Page Visit Required)
+## 📥 Downloads
 
-Download official binaries directly from this README or visit the [GitHub Releases Hub](https://github.com/Mazonia/pos-n-sales-system/releases/tag/v1.0.0):
+Download official binaries directly or launch on any device:
 
 | Platform | Installer Type | Direct Download Link | Target Devices |
 |---|---|---|---|
 | 🪟 **Windows Desktop** | NSIS Setup (`.exe`) | [⬇️ **Download Windows Installer (111 MB)**](https://github.com/Mazonia/pos-n-sales-system/releases/download/v1.0.0/Akwaaba.POS.Retail.OS.Setup.1.0.0.exe) | Windows 10, 11 (64-bit PC Counter Tills) |
 | 🪟 **Windows Desktop** | Portable (`.exe`) | [⬇️ **Download Windows Portable (111 MB)**](https://github.com/Mazonia/pos-n-sales-system/releases/download/v1.0.0/Akwaaba.POS.Retail.OS.1.0.0.exe) | Flash Drive / Zero-Install Counter Stations |
-| 🍎 **macOS Desktop** | Universal (`.dmg`) | [⬇️ **View macOS Universal Release**](https://github.com/Mazonia/pos-n-sales-system/releases/tag/v1.0.0) | Apple Silicon (M1-M4) & Intel Macs |
+| 🍎 **macOS Desktop** | Universal (`.dmg`) | [⬇️ **Download macOS Universal (.dmg)**](https://github.com/Mazonia/pos-n-sales-system/releases/tag/v1.0.0) | Apple Silicon (M1-M4) & Intel Macs |
+| 📱 **Apple iPad (iPadOS)** | Safari Fullscreen PWA | [📱 **iPad Installation Guide**](PLATFORMS.md#-4-apple-ipad-ipados) | iPad, iPad Air, iPad Pro 10.2"-12.9" (Swivel Touch Stands) |
 | 🤖 **Android Tablet** | Standalone (`.apk`) | [⬇️ **Download Android APK Package**](https://github.com/Mazonia/pos-n-sales-system/releases/tag/v1.0.0) | Android Tablets 10"-12" (Swivel Countertop Stands) |
-| 🌐 **Web PWA** | Instant Launch | [🚀 **Launch Web Version Immediately**](https://mazonia.github.io/pos-n-sales-system/) | Any Modern Browser (Chrome, Safari, Edge, Firefox) |
+| 🌐 **Web PWA** | Instant Launch | [🚀 **Launch Web Version Immediately**](https://mazonia.github.io/pos-n-sales-system/#/showcase) | Any Modern Browser (Chrome, Safari, Edge, Firefox) |
 
-> 💡 **Tip**: Windows users can simply click **Download Windows Installer** above to get the full executable setup directly into their Downloads folder.
+> 📱 **iPad Setup**: Open Safari on your iPad, go to `https://mazonia.github.io/pos-n-sales-system/#/pos`, tap the **Share** button, and select **Add to Home Screen** for a fullscreen, offline-ready native touch till.
 
 ---
 
