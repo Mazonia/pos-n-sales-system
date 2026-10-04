@@ -1,5 +1,6 @@
 # 🇬🇭 Akwaaba POS & Retail OS
 ### *Next-Generation Offline-First Ghanaian Retail Operating System*
+**Engineered & Developed by Mazonia**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
 [![React](https://img.shields.io/badge/React-19.0-blue.svg)](https://react.dev)
@@ -13,24 +14,24 @@
 [![GRA VSDC](https://img.shields.io/badge/GRA%20VSDC-Compliant-008285.svg)](#-gra-vsdc-compliance--ghana-tax-engine)
 [![Dumsor Resilient](https://img.shields.io/badge/Dumsor-Resilient-FF4500.svg)](#-dumsor-power-outage-resilience--cold-store-spoilage)
 
-> **📦 Multi-Platform Support**: Download native binaries for Windows (`.exe`), macOS (`.dmg`), and Android tablets (`.apk`) directly from the [GitHub Releases](https://github.com/Mazonia/pos-n-sales-system/releases) page. See the full [Multi-Platform Guide](PLATFORMS.md).
+> **📦 Multi-Platform Releases**: Pre-packaged binary installers for Windows (`.exe`), macOS (`.dmg`), and Android tablets (`.apk`) are published under [GitHub Releases](https://github.com/Mazonia/pos-n-sales-system/releases). See our full [Multi-Platform Guide](PLATFORMS.md).
 
 ---
 
 ## 🌟 Overview
 
-**Akwaaba POS & Retail OS** is an enterprise-grade, offline-first Point of Sale and retail management operating system engineered specifically for the dynamic retail ecosystem of Ghana—from bustling open-air commerce in Makola and Adum to supermarkets, pharmacies, cold stores, and multi-branch retail chains across Accra, Kumasi, and Takoradi.
+**Akwaaba POS & Retail OS** is an enterprise-grade, offline-first Point of Sale and retail management operating system engineered specifically for the dynamic retail ecosystem of Ghana—from bustling open-air commerce in Makola, Kejetia, and Adum to supermarkets, pharmacies, cold stores, and multi-branch retail chains across Accra, Kumasi, and Takoradi.
 
 Unlike generic Western POS software, Akwaaba OS is purpose-built to solve the physical constraints of African retail: intermittent grid power (*Dumsor*), erratic cellular internet, multi-tier VAT and levy structures (GRA VSDC), high-frequency Mobile Money (MoMo) payments, bulk-to-retail fractional breakdown (e.g., deconstructing 50kg rice sacks into *olonkas*), and first-in first-out (FIFO) perishable spoilage tracking.
 
 ---
 
-## 🚀 Key Features
+## 🚀 Key Capabilities & Modules
 
 ### 🇬🇭 GRA VSDC Compliance & Ghana Tax Engine
-- **Full Statutory Calculations**: Real-time computation of VAT Standard Rate (15%), NHIL (2.5%), GETFund (2.5%), COVID-19 Health Recovery Levy (1%), and 3% VAT Flat Rate Scheme.
+- **Full Statutory Calculations**: Real-time computation of VAT Standard Rate (15%), NHIL (2.5%), GETFund (2.5%), COVID-19 Health Recovery Levy (1%), and 3% VAT Flat Rate Scheme (VFRS).
 - **Cryptographic Fiscal Signature**: Offline mock generation and online sync of GRA VSDC (Virtual Sales Data Controller) QR codes and fiscal audit signatures printed directly on thermal receipts.
-- **Official Print Portals**: Pixel-perfect printable documents for Thermal 80mm receipts, A4 Purchase Orders, Inter-Branch Waybills, and Spoilage Certificates.
+- **Official Print Portals**: Pixel-perfect printable documents for Thermal 80mm receipts, 58mm compact rolls, A4 Purchase Orders, Inter-Branch Waybills, and Spoilage Certificates.
 
 ### ⚡ Dumsor Power-Outage Resilience & Cold-Store Spoilage
 - **Local-First IndexedDB Engine**: Powered by Dexie.js; transactions, cash registers, cart states, and stock levels persist seamlessly even if power drops instantly.
@@ -47,20 +48,55 @@ Unlike generic Western POS software, Akwaaba OS is purpose-built to solve the ph
 - **Unit of Measure (UOM) Breakdown Engine**: Deconstruct bulk wholesale sacks (e.g. Royal Feast 50kg Rice) into fractional loose consumer portions (*olonka*, single kg, cup) with atomic stock deduction and audit logging.
 - **Multi-Branch Warehousing & Transfers**: Dispatch and verify cargo manifests between Accra Hub, Kumasi Adum, and Takoradi Harbour with official waybill manifests.
 
-### 🔔 Safety Stock & Automated Replenishment
-- **Safety Stock Sentinel**: Dynamic notifications when inventory dips below minimum safety thresholds.
-- **One-Click PO Generation**: Auto-populate Purchase Orders for all deficit items and export official vouchers for suppliers.
+### 🔄 Multi-Orientation Tablet & Screen Scaling Support
+- **Full Sensor Screen Rotation**: Configured for Android tablets and iPads to freely rotate between landscape, portrait, reverse-landscape, and reverse-portrait for swivel counter stands.
+- **Ergonomic Tablet Navigation Bar**: Centered touch dock with quick tools drawer and haptic tactile feedback.
 
-### 🔒 Enterprise Role-Based Access Control (RBAC) & Audit Trails
-- **Granular Roles**: Cashier, Supervisor, Inventory Officer, Branch Manager, General Manager, and Super Admin.
-- **Immutable Audit Logging**: Every price override, stock write-off, refund, safe drop, and till closure is immutably timestamped and attributed.
-- **Fast 4-Digit PIN Switching**: Swift cashier handover without full session re-authentication.
+### 🔔 Custom Audio & Notification Engine (Zero Browser Alerts)
+- **Zero Browser Native Alerts**: All native `alert()`, `confirm()`, and `prompt()` dialogs are replaced with animated custom modals and toast stacks.
+- **Web Audio Synthesizer**: Pure Web Audio API tone synthesis for transaction chimes, cash drawer sounds, and warnings with zero external MP3 dependencies.
+- **Granular User Preferences**: Cashiers and managers can customize audio, vibration, and channels (Sales, Inventory, Shifts, Security, Downtime).
 
-### 🎨 Fluid Ink-Spreading Theme Animation
-- **Physical Ink-Spread Effect**: Circular expanding canvas clip-path animation radiating outwards from the theme toggle switch across the page corners.
+---
 
-### ⌨️ Cashier Shortcut Protection
-- **Modifier-Protected Hotkeys**: High-speed keyboard operation (`Ctrl+K` for Product Search, `Alt+W` for Wholesale mode, `F4` for Hold/Recall, `Space` for Quick Pay) designed to prevent accidental interruption during barcode scanner input.
+## 🛠️ Installation Wizard & Legal Terms
+
+On initial startup, Akwaaba POS runs an interactive **Onboarding Wizard**:
+1. **Store Identity**: Business name, branch workstation assignment, and GRA Tax Scheme.
+2. **Hardware Configuration (Optional / Skip to defaults)**: 80mm vs 58mm paper width, USB scanner gun vs camera, ESC/POS vs Bluetooth printer.
+3. **Statutory Legal Agreement & Developer Liability Disclaimer**:
+   - **Developer ("Mazonia") Non-Liability Disclaimer**:
+     - *(a)* Physical cash shortages, staff theft, or unverified till reconciliation discrepancies;
+     - *(b)* Perishable food spoilage, freezer defrosting, or inventory decay resulting from electrical power outages (Dumsor) or backup generator downtime;
+     - *(c)* Third-party hardware malfunctions, ESC/POS printhead defects, thermal paper jams, or local Bluetooth drops;
+     - *(d)* Erroneous price overrides, manual discount errors, or mistaken cost values entered by cashiers or branch operators;
+     - *(e)* Tax penalties, surcharge assessments, or audit fines issued by the Ghana Revenue Authority (GRA) resulting from merchant tax misclassification.
+   - **Merchant Sole Custody**:
+     - *(a)* Physical cash counts, drawer denomination auditing, safe deposits, and bank deposits;
+     - *(b)* Verifying Mobile Money (MTN, Telecel, AT) transaction IDs and balances on physical SIM handsets prior to dispensing merchandise;
+     - *(c)* Confidentiality of Supervisor, Manager, and Administrator 4-digit and 6-digit PIN codes;
+     - *(d)* Creating frequent database backups (.akwaaba.json snapshots) via the Disaster Recovery center;
+     - *(e)* Maintaining statutory compliance with the Value Added Tax Act, 2013 (Act 870).
+4. **Opening Cash Float**: Initial float entered or deferred until cashier shift opening.
+
+---
+
+## 💾 Enterprise Backup & Disaster Recovery
+
+- **Rolling Local Auto-Backups**: Automatically captures encrypted state snapshots upon shift closures, safe drops, and Z-Reports.
+- **Manual Full Export**: Generates `.akwaaba.json` backup archives containing products, inventory, customers, shifts, audit logs, and offline queues.
+- **Tamper-Evident SHA-256 Digest**: Validates backup data integrity with Web Crypto SHA-256 prior to restoration.
+- **PIN-Protected Restore**: Requires Manager or Super Admin PIN verification.
+
+---
+
+## 🌐 Feature Showcase Website
+
+Akwaaba POS includes an interactive showcase web view (`ProductLandingPage`) where prospective merchants and evaluators can explore:
+- Comprehensive overview of all core retail challenges solved.
+- Live simulated POS terminal interface.
+- Binary download links for all supported platforms.
+- Accessible directly from the User Menu or at `#showcase`.
 
 ---
 
@@ -71,57 +107,16 @@ Unlike generic Western POS software, Akwaaba OS is purpose-built to solve the ph
 | **Core Framework** | [React 19](https://react.dev/) + [TypeScript 5](https://www.typescriptlang.org/) |
 | **Build Tooling** | [Vite 8](https://vitejs.dev/) with Rolldown bundling & HMR |
 | **Offline Persistence** | [Dexie.js](https://dexie.org/) (IndexedDB wrapper) with background sync queue |
-| **Styling & Design System** | [Tailwind CSS v4](https://tailwindcss.com/) with custom Ghanaian luxury retail palette |
+| **Styling & Design System** | Tailwind CSS v4 with custom African luxury retail palette (`#121316`, `#1A1C22`, `#282B34`, `#FF4500`, `#00CED1`, `#EBEEF2`) |
+| **Desktop Runtime** | Electron 44 + electron-builder with hardened IPC |
+| **Mobile Runtime** | Capacitor 8 (Android & iOS) with full-sensor orientation |
 | **PWA & Service Worker** | [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) + [Workbox](https://developer.chrome.com/docs/workbox/) |
-| **Icons & Typography** | [Lucide React](https://lucide.dev/), serif & mono tabular numerals |
-| **Printing System** | React Portals with CSS print stylesheets for 80mm POS & A4 Documents |
-
----
-
-## 📁 Repository Structure
-
-```
-akwaaba-pos-&-retail-os/
-├── public/                 # Static assets, PWA icons, web manifest
-├── src/
-│   ├── components/
-│   │   ├── audit/          # System audit log & activity monitors
-│   │   ├── barcode/        # Barcode printing & label studio
-│   │   ├── common/         # OfficialPrintPortal & modal wrappers
-│   │   ├── debt/           # Bisa Customer Credit & Debt Book
-│   │   ├── inventory/      # Stock levels, FIFO, UOM breakdown, Transfers, Dumsor
-│   │   ├── notifications/  # Stock safety notifications & alert banners
-│   │   ├── orders/         # Completed orders, fiscal receipts & refunds
-│   │   ├── pos/            # POS Terminal, Cart, Product Cards, Keypad
-│   │   ├── reports/        # Executive analytics, X/Z-Reports, GRA tax reports
-│   │   └── shift/          # Till management, Cash drops, Z-Report closing
-│   ├── utils/
-│   │   ├── dexieSync.ts    # IndexedDB schema, models & offline order engine
-│   │   ├── emojiSanitizer.ts # Strict text sanitizer for thermal printers
-│   │   ├── ghanaTaxEngine.ts # GRA VSDC calculation formulas & GHS formatting
-│   │   ├── posAudio.ts     # Sound effects for barcode scans, cash drawer & alerts
-│   │   └── themeTransition.ts # Liquid ink-spreading view transition animation
-│   ├── App.tsx             # Root application shell & routing
-│   ├── index.css           # Global design tokens, print CSS & view transitions
-│   └── main.tsx            # Application entry point & PWA registration
-├── CODE_OF_CONDUCT.md      # Contributor Covenant with Ghanaian hospitality
-├── CONTRIBUTING.md         # Contribution guidelines & PR checklist
-├── LICENSE                 # MIT License
-├── package.json            # Scripts & project dependencies
-├── SECURITY.md             # Security disclosure policy & standards
-├── tsconfig.json           # Strict TypeScript configuration
-└── vite.config.ts          # Vite build configuration & PWA manifest
-```
+| **Audio Engine** | Web Audio API Synthesizer (Zero MP3 dependencies) |
 
 ---
 
 ## ⚡ Quick Start
 
-### 1. Prerequisites
-- **Node.js**: Version 18.0.0 or higher
-- **Package Manager**: `npm`, `pnpm`, or `bun`
-
-### 2. Installation
 ```bash
 # Clone the repository
 git clone https://github.com/Mazonia/pos-n-sales-system.git
@@ -129,79 +124,24 @@ cd pos-n-sales-system
 
 # Install dependencies
 npm install
-```
 
-### 3. Environment Configuration
-Copy `.env.example` to `.env.local`:
-```bash
-cp .env.example .env.local
-```
+# Run automated system audit (24 tests)
+npm test
 
-Configure your environment variables:
-```env
-VITE_APP_TITLE="Akwaaba POS & Retail OS"
-VITE_DEFAULT_BRANCH="Accra Central Mall Store"
-VITE_GRA_TIN="C0029482190"
-VITE_ENABLE_VSDC_MOCK=true
-```
-
-### 4. Run Development Server
-```bash
+# Run development server
 npm run dev
-```
-Open your browser at `http://localhost:3000/pos-n-sales-system/` to access the terminal.
 
-### 5. Production Build
-```bash
+# Run production build
 npm run build
-npm run preview
 ```
-
----
-
-## 🖨️ Thermal Printer & Hardware Integration
-
-Akwaaba POS supports standard ESC/POS 80mm thermal receipt printers via browser print APIs, Electron native print, and raw serial ports:
-- **Receipt Dimensions**: Optimized for standard 80mm (576 dots) continuous thermal rolls and 58mm compact mobile printers.
-- **Emoji Sanitization**: Built-in `stripEmojis` filter automatically strips unsupported Unicode symbols before outputting to legacy thermal printheads, preventing garbled output.
-- **Barcode Scanners**: Operates plug-and-play with any USB or Bluetooth HID barcode scanner emitting standard Enter key termination.
-
----
-
-## 🛠️ Installation Wizard & First-Run Setup
-
-On initial startup across any platform, Akwaaba POS runs an interactive **Installation & Setup Wizard** that guides merchants through:
-1. **Store Identity & Tax Scheme**: Business naming, workstation assignment, and statutory GRA tax profile selection (Standard VAT 21.9%, Flat Rate 4%, or SME Exempt).
-2. **Hardware Configuration**: Receipt roll width (80mm vs 58mm), auto-print toggles, and audio-haptic feedback settings.
-3. **Terms of Service & Developer Liability Disclaimer**: Strict legal terms outlining merchant accountability for cash reconciliation, physical till management, local hardware, and statutory tax compliance, while establishing non-liability for developer **Mazonia**. Merchants must accept before accessing POS features.
-4. **Opening Cash Float**: Establishing the initial cash drawer float for cashier reconciliation.
-
----
-
-## 💾 Enterprise Backup & Disaster Recovery
-
-Akwaaba POS incorporates a multi-tiered disaster recovery system:
-- **Rolling Local Auto-Backups**: Automatically captures encrypted state snapshots upon cashier shift closure, safe drops, and end-of-day Z-Reports.
-- **Manual Enterprise Export**: Exports portable `.akwaaba.json` backup archives containing products, inventory, customers, shifts, audit logs, and offline queues.
-- **Cryptographic SHA-256 Tamper Evident Verification**: Each backup is stamped with a SHA-256 digest to prevent data corruption or unauthorized ledger tampering during restore.
-- **PIN-Protected Restore**: Requires Supervisor or Super Admin authentication to restore state.
-
----
-
-## 🔔 Universal Custom Notifications & Audio Engine
-
-Zero browser-native alerts, prompts, or confirms:
-- **Web Audio Synthesizer**: Pure Web Audio API chime synthesis for transaction confirmations, barcode scans, cash drawer triggers, and warnings (zero external MP3 dependencies).
-- **Physical Haptic Feedback**: Dynamic vibration waveforms for touch devices (Android tablets & iPads).
-- **Granular User Preferences**: Cashiers and managers can independently toggle audio, vibration, volume levels, and alert categories via the top header bell icon.
 
 ---
 
 ## 📬 Support & Issue Complaints
 
-Because there are currently no developer email addresses assigned for this project, all bug reports, technical inquiries, and feature suggestions must be submitted directly through our official GitHub Issues tracker:
+Because there are currently no developer email addresses assigned for this project, all bug reports, technical inquiries, and user complaints must be filed directly through GitHub Issues:
 
-👉 **[Submit Issue / Complaint on GitHub](https://github.com/Mazonia/pos-n-sales-system/issues)**
+👉 **[Submit Complaint / Issue on GitHub](https://github.com/Mazonia/pos-n-sales-system/issues)**
 
 ---
 

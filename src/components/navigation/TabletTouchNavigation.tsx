@@ -7,11 +7,9 @@ import {
   Database, 
   Bell, 
   Download, 
-  ShieldCheck, 
   Menu, 
   X,
-  Smartphone,
-  Tablet
+  Sparkles
 } from 'lucide-react';
 import { triggerHaptic } from '../../utils/haptics';
 
@@ -43,12 +41,12 @@ export const TabletTouchNavigation: React.FC<TabletTouchNavigationProps> = ({
 
   return (
     <>
-      {/* Floating Bottom Navigation Bar for Tablets & Mobile */}
-      <div className="lg:hidden fixed bottom-3 left-3 right-3 z-40">
+      {/* Floating Bottom Navigation Bar for Tablets & Mobile (Constrained & Ergonomic in Both Orientations) */}
+      <div className="lg:hidden fixed bottom-3 inset-x-0 mx-auto max-w-md px-3 z-40 pointer-events-auto">
         <div className={`p-1.5 rounded-2xl border backdrop-blur-xl shadow-2xl flex items-center justify-between gap-1.5 ${
           isDark 
-            ? 'bg-slate-900/95 border-slate-700/80 text-white' 
-            : 'bg-white/95 border-slate-300 text-slate-900 shadow-xl'
+            ? 'bg-[#16181F]/95 border-[#282B34] text-[#F4F4F6]' 
+            : 'bg-white/95 border-[#CBD5E1] text-[#0F172A] shadow-xl'
         }`}>
           {/* Main POS Navigation Tabs */}
           <div className="flex items-center gap-1 flex-1">
@@ -63,12 +61,12 @@ export const TabletTouchNavigation: React.FC<TabletTouchNavigationProps> = ({
                     triggerHaptic('tap');
                     onTabChange(tab.id);
                   }}
-                  className={`flex-1 py-2.5 px-2 rounded-xl flex flex-col items-center justify-center gap-1 transition-all active:scale-95 touch-manipulation cursor-pointer ${
+                  className={`flex-1 py-2 px-1.5 rounded-xl flex flex-col items-center justify-center gap-1 transition-all active:scale-95 touch-manipulation cursor-pointer ${
                     isActive
-                      ? 'bg-[#FF4500] text-white font-bold shadow-md shadow-orange-500/25'
+                      ? 'bg-[#FF4500] text-white font-bold shadow-md shadow-[#FF4500]/25'
                       : isDark
-                      ? 'text-slate-400 hover:text-white hover:bg-slate-800'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      ? 'text-[#9CA3AF] hover:text-white hover:bg-[#1A1C22]'
+                      : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#EBEEF2]'
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" strokeWidth={isActive ? 2.5 : 2} />
@@ -87,10 +85,10 @@ export const TabletTouchNavigation: React.FC<TabletTouchNavigationProps> = ({
             }}
             className={`p-2.5 rounded-xl border flex items-center justify-center transition active:scale-95 touch-manipulation cursor-pointer ${
               toolsDrawerOpen
-                ? 'bg-orange-500 text-white border-orange-500'
+                ? 'bg-[#FF4500] text-white border-[#FF4500]'
                 : isDark
-                ? 'border-slate-700 bg-slate-800/80 text-orange-400'
-                : 'border-slate-300 bg-slate-100 text-orange-600'
+                ? 'border-[#282B34] bg-[#121316] text-[#FF4500]'
+                : 'border-[#CBD5E1] bg-[#EBEEF2] text-[#FF4500]'
             }`}
             aria-label="Open Tablet Quick Tools"
           >
@@ -106,18 +104,19 @@ export const TabletTouchNavigation: React.FC<TabletTouchNavigationProps> = ({
             className="fixed inset-0" 
             onClick={() => setToolsDrawerOpen(false)} 
           />
-          <div className={`relative p-5 rounded-t-3xl border-t shadow-2xl space-y-3 animate-slide-in-bottom ${
-            isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+          <div className={`relative p-5 rounded-t-3xl border-t shadow-2xl space-y-3 animate-slide-in-bottom max-w-xl mx-auto w-full ${
+            isDark ? 'bg-[#16181F] border-[#282B34] text-[#F4F4F6]' : 'bg-white border-[#CBD5E1] text-[#0F172A]'
           }`}>
-            <div className="w-12 h-1 bg-slate-700 rounded-full mx-auto mb-2" />
+            <div className={`w-12 h-1 rounded-full mx-auto mb-2 ${isDark ? 'bg-[#282B34]' : 'bg-[#CBD5E1]'}`} />
             
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-              <span className="font-bold text-xs uppercase tracking-wider text-slate-400">
-                Tablet Quick Actions &bull; Built by Mazonia
+            <div className={`flex items-center justify-between pb-2 border-b ${isDark ? 'border-[#282B34]' : 'border-[#CBD5E1]'}`}>
+              <span className={`font-bold text-xs uppercase tracking-wider ${isDark ? 'text-[#9CA3AF]' : 'text-[#64748B]'}`}>
+                Tablet Tools &bull; Engineered by Mazonia
               </span>
               <button 
+                type="button"
                 onClick={() => setToolsDrawerOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white"
+                className={`p-1 rounded-lg transition ${isDark ? 'text-[#9CA3AF] hover:text-white' : 'text-[#64748B] hover:text-black'}`}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -130,11 +129,15 @@ export const TabletTouchNavigation: React.FC<TabletTouchNavigationProps> = ({
                   setToolsDrawerOpen(false);
                   onOpenBackup();
                 }}
-                className="p-3 rounded-2xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700 flex flex-col items-center gap-1.5 transition text-center cursor-pointer active:scale-95"
+                className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 transition text-center cursor-pointer active:scale-95 ${
+                  isDark 
+                    ? 'bg-[#121316] hover:bg-[#1A1C22] border-[#282B34]' 
+                    : 'bg-[#EBEEF2]/60 hover:bg-[#EBEEF2] border-[#CBD5E1]'
+                }`}
               >
-                <Database className="w-5 h-5 text-orange-400" />
-                <span className="text-[11px] font-bold text-white">Backups</span>
-                <span className="text-[9px] text-slate-400">Auto &amp; Export</span>
+                <Database className="w-5 h-5 text-[#FF4500]" />
+                <span className="text-[11px] font-bold">Backups</span>
+                <span className={`text-[9px] ${isDark ? 'text-[#9CA3AF]' : 'text-[#64748B]'}`}>Auto &amp; Export</span>
               </button>
 
               <button
@@ -143,11 +146,15 @@ export const TabletTouchNavigation: React.FC<TabletTouchNavigationProps> = ({
                   setToolsDrawerOpen(false);
                   onOpenNotifications();
                 }}
-                className="p-3 rounded-2xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700 flex flex-col items-center gap-1.5 transition text-center cursor-pointer active:scale-95"
+                className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 transition text-center cursor-pointer active:scale-95 ${
+                  isDark 
+                    ? 'bg-[#121316] hover:bg-[#1A1C22] border-[#282B34]' 
+                    : 'bg-[#EBEEF2]/60 hover:bg-[#EBEEF2] border-[#CBD5E1]'
+                }`}
               >
-                <Bell className="w-5 h-5 text-emerald-400" />
-                <span className="text-[11px] font-bold text-white">Chimes</span>
-                <span className="text-[9px] text-slate-400">Audio &amp; Haptics</span>
+                <Bell className="w-5 h-5 text-[#00CED1]" />
+                <span className="text-[11px] font-bold">Chimes</span>
+                <span className={`text-[9px] ${isDark ? 'text-[#9CA3AF]' : 'text-[#64748B]'}`}>Audio &amp; Haptics</span>
               </button>
 
               <button
@@ -156,11 +163,15 @@ export const TabletTouchNavigation: React.FC<TabletTouchNavigationProps> = ({
                   setToolsDrawerOpen(false);
                   onOpenDownloads();
                 }}
-                className="p-3 rounded-2xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700 flex flex-col items-center gap-1.5 transition text-center cursor-pointer active:scale-95"
+                className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 transition text-center cursor-pointer active:scale-95 ${
+                  isDark 
+                    ? 'bg-[#121316] hover:bg-[#1A1C22] border-[#282B34]' 
+                    : 'bg-[#EBEEF2]/60 hover:bg-[#EBEEF2] border-[#CBD5E1]'
+                }`}
               >
-                <Download className="w-5 h-5 text-cyan-400" />
-                <span className="text-[11px] font-bold text-white">Installers</span>
-                <span className="text-[9px] text-slate-400">.exe / .dmg / APK</span>
+                <Download className="w-5 h-5 text-[#FF4500]" />
+                <span className="text-[11px] font-bold">Installers</span>
+                <span className={`text-[9px] ${isDark ? 'text-[#9CA3AF]' : 'text-[#64748B]'}`}>.exe / .dmg / APK</span>
               </button>
             </div>
           </div>

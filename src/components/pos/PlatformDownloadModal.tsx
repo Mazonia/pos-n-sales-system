@@ -21,6 +21,7 @@ import { detectPlatform, getPlatformDownloads, PlatformDownload, GITHUB_REPO_URL
 interface PlatformDownloadModalProps {
   isOpen: boolean;
   onClose: () => void;
+  isDark?: boolean;
 }
 
 export const PlatformDownloadModal: React.FC<PlatformDownloadModalProps> = ({ isOpen, onClose }) => {

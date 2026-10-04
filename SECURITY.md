@@ -11,51 +11,57 @@ We actively maintain and provide security patches for the following versions of 
 
 ---
 
-## Reporting a Vulnerability
+## Reporting a Security Vulnerability or Bug
 
-The Akwaaba POS & Retail OS team takes software security and merchant trust seriously. If you discover a security vulnerability—especially concerning financial calculations, cryptographic GRA signatures, customer data, or offline IndexedDB manipulation—please report it responsibly through private channels.
+The developer (**Mazonia**) takes software security, financial arithmetic accuracy, and merchant data protection seriously.
 
-### How to Report:
-1. Open a confidential inquiry or issue report on the project repository:
-   👉 **[GitHub Security & Issues](https://github.com/Mazonia/pos-n-sales-system/issues)**
-2. Built & Maintained by: **Mazonia**
-3. Include the following details in your report:
-   - A clear description of the vulnerability.
-   - Exact steps or script to reproduce the issue.
-   - Potential impact on merchant operations, till balances, or consumer privacy.
-   - Any suggested remediations or mitigations.
+> [!IMPORTANT]
+> **No Developer Emails Currently Assigned**: Because there are no developer emails assigned for this project, all vulnerability disclosures, technical complaints, and bug reports must be submitted through our official GitHub repository issue tracker:
+> 
+> 👉 **[Submit Report on GitHub Issues](https://github.com/Mazonia/pos-n-sales-system/issues)**
 
-### Response Timeline:
-- **Initial Response**: Within 48 hours of receipt.
-- **Triage & Assessment**: Within 5 business days.
-- **Remediation & Patch**: A fix will be developed, tested against offline IndexedDB edge cases, and deployed via a coordinated security advisory.
+When filing a security or audit inquiry:
+1. Provide a detailed summary of the vulnerability.
+2. Outline exact reproduction steps or proof-of-concept scripts.
+3. State the operational impact (e.g. cart manipulation, till discrepancy, or session exposure).
+4. Do NOT disclose active merchant database credentials or production customer personal information.
 
 ---
 
-## Security Principles & Merchant Protection
+## Security Architecture & Merchant Protection
 
-When deploying Akwaaba POS in physical storefronts, merchants and administrators must adhere to the following baseline security practices:
+Akwaaba POS implements enterprise-grade cybersecurity controls across all operating systems:
 
-### 1. Terminal Locking & PIN Confidentiality
-- Every cashier is assigned a distinct 4-digit numeric PIN.
-- Never share manager or supervisor PINs with frontline cashiers.
-- Configure terminal inactivity timeouts to prevent unauthorized walk-up transactions when a till is left unattended.
+### 1. Zero Plaintext Credentials in Storage
+- In accordance with enterprise standards, user PINs, passwords, and password hashes are automatically stripped before user sessions are committed to browser `localStorage` or session cache (`sanitizeUserForStorage`).
+- Passwords enforce strict enterprise complexity: minimum 8 characters with at least one uppercase letter, one lowercase letter, one digit, and one special symbol.
 
-### 2. Physical & Local Storage Safety
-- IndexedDB stores local transaction queues, customer contact numbers, and offline sales ledgers.
-- Terminals must be deployed on password-protected operating system accounts.
-- In shared cybercafé or multi-user environments, always clear browser application cache when retiring hardware.
+### 2. Electron Desktop IPC Hardening
+- Windows and macOS desktop packages run with `nodeIntegration: false` and `contextIsolation: true`.
+- Native window handlers enforce strict protocol validation (`http:` and `https:` only) to prevent malicious protocol execution or command injection.
 
-### 3. Payment Card & Mobile Money Data Hygiene
-- **Never store or print raw customer payment card CVV or full PANs** on thermal receipts. Receipts must only reflect the last 4 digits of card numbers and mobile network transaction references.
-- Mobile Money transaction references received via SMS should always be verified against the merchant till drawer balance or operator USSD notification before goods release.
+### 3. Anti-Tampering & Disaster Recovery Hashing
+- Enterprise database exports (`.akwaaba.json`) compute an authenticating SHA-256 integrity digest via the Web Crypto API.
+- Restorations compare file contents against the recorded digest to reject corrupted or modified files.
+- Restorations require Manager or Super Admin PIN authorization.
 
-### 4. Fiscal Audit Trail Protection
-- All stock adjustments, spoilage write-offs, discount overrides, and till reconciliations are permanently committed to the immutable local audit log (`db.auditLogs`).
-- Tampering with local IndexedDB records is detectable during cloud synchronization and end-of-day Z-Report reconciliation.
+### 4. Non-Repudiation Audit Trails
+- Price overrides, stock spoilage write-offs, safe drops, and till closures generate immutable audit records in IndexedDB with operator timestamps and workstation IDs.
 
 ---
 
-## Attribution & Bounty
+## Developer Non-Liability & Merchant Responsibility
 
-We deeply appreciate security researchers and ethical hackers who help safeguard Ghanaian retail merchants. Valid vulnerability reporters will be credited in our release security advisories.
+Merchants acknowledge that software is provided by **Mazonia** on an "as-is" basis. Business owners maintain sole custody for:
+- Physical cash register counts, cash security, and bank deposits.
+- Verifying Mobile Money (MTN, Telecel, AT) transaction IDs on official SIM handsets prior to goods handover.
+- Keeping 4-digit and 6-digit Supervisor, Manager, and Admin PINs confidential.
+- Statutory compliance with the Value Added Tax Act, 2013 (Act 870) and Ghana Revenue Authority (GRA) regulations.
+
+Developer **Mazonia** is not liable for cash shortages, freezer defrost losses resulting from Dumsor (power cuts), or third-party printer hardware failures.
+
+---
+
+## Author & Engineering
+
+Engineered and maintained by **Mazonia**.

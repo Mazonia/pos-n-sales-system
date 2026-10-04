@@ -31,6 +31,7 @@ import { NotificationPreferencesModal } from './components/notifications/Notific
 import { InstallationWizardModal } from './components/onboarding/InstallationWizardModal';
 import { BackupManagerModal } from './components/backup/BackupManagerModal';
 import { TabletTouchNavigation } from './components/navigation/TabletTouchNavigation';
+import { ProductLandingPage } from './components/showcase/ProductLandingPage';
 import { detectPlatform } from './utils/platform';
 import { triggerHaptic } from './utils/haptics';
 import {
@@ -116,6 +117,7 @@ export default function App() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [pageTransition, setPageTransition] = useState(false);
+  const [showLandingPage, setShowLandingPage] = useState<boolean>(() => typeof window !== 'undefined' && window.location.hash === '#showcase');
 
   // Dynamic System Users List (Loaded from Dexie & synced)
   const [systemUsersList, setSystemUsersList] = useState<SystemUser[]>(SYSTEM_USERS);
@@ -333,15 +335,45 @@ export default function App() {
     }, 150);
   };
 
+  // If showcase website view is active
+  if (showLandingPage) {
+    return (
+      <>
+        <ProductLandingPage
+          onLaunchPos={() => {
+            if (typeof window !== 'undefined') window.location.hash = '';
+            setShowLandingPage(false);
+          }}
+          onOpenDownloads={() => setShowPlatformModal(true)}
+          isDark={isDark}
+          onToggleTheme={() => setIsDark(!isDark)}
+        />
+        <PlatformDownloadModal
+          isOpen={showPlatformModal}
+          onClose={() => setShowPlatformModal(false)}
+          isDark={isDark}
+        />
+      </>
+    );
+  }
+
   // If user is not authenticated, render the dedicated Non-Repudiation Login Page
   if (!currentUser) {
     return (
-      <LoginPage
-        onLoginSuccess={handleLoginSuccess}
-        branchName={branchName}
-        isDark={isDark}
-        onToggleTheme={() => setIsDark(!isDark)}
-      />
+      <>
+        <LoginPage
+          onLoginSuccess={handleLoginSuccess}
+          branchName={branchName}
+          isDark={isDark}
+          onToggleTheme={() => setIsDark(!isDark)}
+          onOpenShowcase={() => setShowLandingPage(true)}
+        />
+        <PlatformDownloadModal
+          isOpen={showPlatformModal}
+          onClose={() => setShowPlatformModal(false)}
+          isDark={isDark}
+        />
+      </>
     );
   }
 
@@ -499,27 +531,6 @@ export default function App() {
             </button>
           )}
 
-          {/* Multi-Platform App Downloads Button */}
-          <button
-            type="button"
-            onClick={() => {
-              triggerHaptic('tap');
-              setShowPlatformModal(true);
-            }}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer ${
-              isDark
-                ? 'border-orange-500/30 bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 shadow-[0_0_12px_rgba(255,69,0,0.1)]'
-                : 'border-orange-300 bg-orange-50 text-orange-600 hover:bg-orange-100 shadow-2xs'
-            }`}
-            title="Download Akwaaba POS for Windows (.exe), Mac (.dmg), Android Tablets & iPads"
-          >
-            <Download className="w-3.5 h-3.5 text-[#FF4500]" />
-            <span className="hidden md:inline font-bold">Download Apps</span>
-            <span className="text-[9.5px] px-1.5 py-0.5 rounded font-mono font-black uppercase bg-[#FF4500]/15 text-[#FF4500] dark:bg-[#FF4500]/25 dark:text-orange-400 border border-[#FF4500]/20">
-              {currentPlatform.type === 'windows' ? '.EXE' : currentPlatform.type === 'android' ? 'APK' : currentPlatform.type === 'mac' ? 'DMG' : 'ALL'}
-            </span>
-          </button>
-
           {/* Notification & Sound Settings */}
           <button
             type="button"
@@ -644,6 +655,28 @@ export default function App() {
                     </span>
                   </button>
                 )}
+
+                {/* Feature Showcase Website Link */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowLandingPage(true);
+                    setUserMenuOpen(false);
+                  }}
+                  className={`w-full text-left p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between mb-2 transition-all border active:scale-[0.98] cursor-pointer ${
+                    isDark
+                      ? 'bg-[#1E222B] border-[#282B34] text-stone-200 hover:bg-[#252A36]'
+                      : 'bg-orange-50/50 border-orange-200/80 text-slate-800 hover:bg-orange-100/50'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5 text-[#FF4500]" />
+                    <span>Feature Showcase Website</span>
+                  </div>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#FF4500]/15 text-[#FF4500] dark:text-[#FF5722]">
+                    Showcase
+                  </span>
+                </button>
 
                 {/* Multi-Platform App Downloads Link */}
                 <button

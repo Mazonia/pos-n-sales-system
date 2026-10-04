@@ -45,6 +45,7 @@ interface LoginPageProps {
   branchName: string;
   isDark: boolean;
   onToggleTheme: () => void;
+  onOpenShowcase?: () => void;
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({
@@ -52,6 +53,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   branchName,
   isDark,
   onToggleTheme,
+  onOpenShowcase,
 }) => {
   const [usersList, setUsersList] = useState<SystemUser[]>(SYSTEM_USERS);
   const [selectedUser, setSelectedUser] = useState<SystemUser>(SYSTEM_USERS[0]);
@@ -363,6 +365,25 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             <Settings className="w-3.5 h-3.5 text-amber-500" />
             <span className="hidden sm:inline">Set PC Branch</span>
           </button>
+
+          {onOpenShowcase && (
+            <button
+              type="button"
+              onClick={() => {
+                triggerHaptic('tap');
+                onOpenShowcase();
+              }}
+              className={`px-3 py-[7px] rounded-[12px] border text-[11px] font-bold flex items-center gap-1.5 transition-all duration-200 active:scale-[0.96] cursor-pointer ${
+                isDark
+                  ? 'border-[#FF4500]/40 bg-[#FF4500]/10 text-[#FF5722] hover:bg-[#FF4500]/20'
+                  : 'border-orange-300 bg-orange-50 text-[#C43400] hover:bg-orange-100 shadow-2xs'
+              }`}
+              title="Explore Features & Capabilities Website"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#FF4500]" />
+              <span className="hidden sm:inline">Explore Showcase</span>
+            </button>
+          )}
 
           <button
             type="button"
