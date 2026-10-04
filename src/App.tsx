@@ -1190,6 +1190,10 @@ export default function App() {
       <InstallationWizardModal
         isOpen={showWizardModal}
         onComplete={() => setShowWizardModal(false)}
+        onExitToShowcase={() => {
+          setShowWizardModal(false);
+          navigateTo(true);
+        }}
         isDark={isDark}
       />
 

@@ -25,12 +25,14 @@ import { restoreFullBackup } from '../../utils/backupManager';
 interface InstallationWizardModalProps {
   isOpen: boolean;
   onComplete: () => void;
+  onExitToShowcase?: () => void;
   isDark?: boolean;
 }
 
 export const InstallationWizardModal: React.FC<InstallationWizardModalProps> = ({
   isOpen,
   onComplete,
+  onExitToShowcase,
   isDark = true,
 }) => {
   // Setup Flow Mode: 'NEW_STORE' or 'LINK_EXISTING'
@@ -186,31 +188,45 @@ export const InstallationWizardModal: React.FC<InstallationWizardModalProps> = (
               </div>
             </div>
             
-            {/* Setup Mode Switcher (New Store vs Link Existing Store) */}
-            <div className="flex items-center rounded-xl p-0.5 border border-[#282B34] bg-[#1A1C22]">
-              <button
-                type="button"
-                onClick={() => setSetupMode('NEW_STORE')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                  setupMode === 'NEW_STORE'
-                    ? 'bg-[#FF4500] text-white shadow-xs'
-                    : 'text-[#9CA3AF] hover:text-white'
-                }`}
-              >
-                New Store
-              </button>
-              <button
-                type="button"
-                onClick={() => setSetupMode('LINK_EXISTING')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
-                  setupMode === 'LINK_EXISTING'
-                    ? 'bg-[#008B8B] text-white shadow-xs'
-                    : 'text-[#9CA3AF] hover:text-white'
-                }`}
-              >
-                <Database className="w-3 h-3" />
-                <span>Link Existing</span>
-              </button>
+            {/* Action buttons & Setup Mode Switcher */}
+            <div className="flex items-center gap-2">
+              {onExitToShowcase && (
+                <button
+                  type="button"
+                  onClick={onExitToShowcase}
+                  className="px-2.5 py-1.5 rounded-xl border border-dashed text-xs font-semibold flex items-center gap-1.5 transition text-slate-400 hover:text-white hover:border-[#FF4500] hover:bg-[#FF4500]/10 cursor-pointer"
+                  title="Return to Product Showcase & Downloads"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Showcase</span>
+                </button>
+              )}
+
+              <div className="flex items-center rounded-xl p-0.5 border border-[#282B34] bg-[#1A1C22]">
+                <button
+                  type="button"
+                  onClick={() => setSetupMode('NEW_STORE')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                    setupMode === 'NEW_STORE'
+                      ? 'bg-[#FF4500] text-white shadow-xs'
+                      : 'text-[#9CA3AF] hover:text-white'
+                  }`}
+                >
+                  New Store
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSetupMode('LINK_EXISTING')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+                    setupMode === 'LINK_EXISTING'
+                      ? 'bg-[#008B8B] text-white shadow-xs'
+                      : 'text-[#9CA3AF] hover:text-white'
+                  }`}
+                >
+                  <Database className="w-3 h-3" />
+                  <span>Link Existing</span>
+                </button>
+              </div>
             </div>
           </div>
 
