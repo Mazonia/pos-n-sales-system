@@ -45,9 +45,18 @@ function createMainWindow() {
     mainWindow.loadFile(indexPath);
   }
 
-  // Open target="_blank" links in default external browser
+  // Open target="_blank" links securely in default external browser (Strict HTTPS/HTTP protocol validation)
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+        shell.openExternal(url);
+      } else {
+        console.warn('[Security Pentest] Blocked unauthorized protocol open attempt:', url);
+      }
+    } catch (e) {
+      console.warn('[Security Pentest] Blocked malformed URL:', url);
+    }
     return { action: 'deny' };
   });
 

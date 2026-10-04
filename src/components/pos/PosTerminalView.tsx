@@ -20,6 +20,7 @@ import { performSmartSearch, SmartSearchResult } from '../../utils/smartSearch';
 import { updateShiftWithSale } from '../../utils/shiftManager';
 import { triggerHaptic } from '../../utils/haptics';
 import { stripEmojis } from '../../utils/emojiSanitizer';
+import { notify } from '../../utils/notificationSystem';
 import { ProductCard } from './ProductCard';
 import { CartLedger } from './CartLedger';
 import { PaymentModal } from './PaymentModal';
@@ -359,11 +360,11 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
   const handleInitiatePriceOverride = () => {
     if (!priceOverrideItem) return;
     if (overrideInputPrice < 0) {
-      alert('Override price cannot be negative.');
+      notify.warning('Invalid Price', 'Override price cannot be negative.');
       return;
     }
     if (!overrideReason.trim()) {
-      alert('Please specify a mandatory justification / reason for this price override.');
+      notify.warning('Justification Required', 'Please specify a mandatory justification / reason for this price override.');
       return;
     }
 

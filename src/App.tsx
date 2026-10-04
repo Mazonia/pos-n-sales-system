@@ -26,6 +26,11 @@ import { FinancialDashboard } from './components/dashboard/FinancialDashboard';
 import { EmployeeManagementView } from './components/staff/EmployeeManagementView';
 import { PwaInstallBanner, PwaInstallNavbarButton } from './components/pwa/PwaInstallBanner';
 import { PlatformDownloadModal } from './components/pos/PlatformDownloadModal';
+import { UniversalToastContainer } from './components/notifications/UniversalToastContainer';
+import { NotificationPreferencesModal } from './components/notifications/NotificationPreferencesModal';
+import { InstallationWizardModal } from './components/onboarding/InstallationWizardModal';
+import { BackupManagerModal } from './components/backup/BackupManagerModal';
+import { TabletTouchNavigation } from './components/navigation/TabletTouchNavigation';
 import { detectPlatform } from './utils/platform';
 import { triggerHaptic } from './utils/haptics';
 import {
@@ -175,6 +180,14 @@ export default function App() {
   // Multi-Platform App Downloads Modal State
   const [showPlatformModal, setShowPlatformModal] = useState<boolean>(false);
   const [currentPlatform] = useState(() => detectPlatform());
+
+  // Enterprise Modals State (Notifications, Backups, Setup Wizard)
+  const [showNotificationPrefsModal, setShowNotificationPrefsModal] = useState<boolean>(false);
+  const [showBackupModal, setShowBackupModal] = useState<boolean>(false);
+  const [showWizardModal, setShowWizardModal] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('akwaaba_setup_completed') !== 'true';
+  });
 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -507,6 +520,42 @@ export default function App() {
             </span>
           </button>
 
+          {/* Notification & Sound Settings */}
+          <button
+            type="button"
+            onClick={() => {
+              triggerHaptic('tap');
+              setShowNotificationPrefsModal(true);
+            }}
+            className={`p-2.5 rounded-xl border transition-all active:scale-90 cursor-pointer ${
+              isDark
+                ? 'border-[#282B34] text-stone-300 hover:text-emerald-400 hover:bg-[#20232B]'
+                : 'border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-emerald-600'
+            }`}
+            title="Notification, Sound & Haptic Settings"
+          >
+            <Bell className="w-4 h-4" />
+          </button>
+
+          {/* Backup & Disaster Recovery (for Managers & Super Admins) */}
+          {(currentUser.role === 'SUPER_ADMIN' || currentUser.role === 'GENERAL_MANAGER' || currentUser.role === 'BRANCH_MANAGER') && (
+            <button
+              type="button"
+              onClick={() => {
+                triggerHaptic('tap');
+                setShowBackupModal(true);
+              }}
+              className={`p-2.5 rounded-xl border transition-all active:scale-90 cursor-pointer ${
+                isDark
+                  ? 'border-[#282B34] text-stone-300 hover:text-orange-400 hover:bg-[#20232B]'
+                  : 'border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-orange-600'
+              }`}
+              title="Disaster Recovery & Backup Center"
+            >
+              <Database className="w-4 h-4" />
+            </button>
+          )}
+
           {/* Theme Switcher Toggle */}
           <button
             type="button"
@@ -617,6 +666,97 @@ export default function App() {
                     .exe / .dmg / Tablet
                   </span>
                 </button>
+
+                {/* Backup & Disaster Recovery Link */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowBackupModal(true);
+                    setUserMenuOpen(false);
+                  }}
+                  className={`w-full text-left p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between mb-2 transition-all border active:scale-[0.98] cursor-pointer ${
+                    isDark
+                      ? 'bg-[#1E222B] border-[#282B34] text-stone-200 hover:bg-[#252A36]'
+                      : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Database className="w-3.5 h-3.5 text-orange-400" />
+                    <span>Backup &amp; Disaster Recovery</span>
+                  </div>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-700/60 text-slate-300">
+                    SHA-256
+                  </span>
+                </button>
+
+                {/* Notification Settings Link */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowNotificationPrefsModal(true);
+                    setUserMenuOpen(false);
+                  }}
+                  className={`w-full text-left p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between mb-2 transition-all border active:scale-[0.98] cursor-pointer ${
+                    isDark
+                      ? 'bg-[#1E222B] border-[#282B34] text-stone-200 hover:bg-[#252A36]'
+                      : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Bell className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Audio Chimes &amp; Haptics</span>
+                  </div>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400">
+                    Web Audio
+                  </span>
+                </button>
+
+                {/* Setup & Installation Wizard Re-run */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowWizardModal(true);
+                    setUserMenuOpen(false);
+                  }}
+                  className={`w-full text-left p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between mb-2 transition-all border active:scale-[0.98] cursor-pointer ${
+                    isDark
+                      ? 'bg-[#1E222B] border-[#282B34] text-stone-200 hover:bg-[#252A36]'
+                      : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Setup &amp; Legal Wizard</span>
+                  </div>
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400">
+                    Re-run
+                  </span>
+                </button>
+
+                {/* GitHub Support & Complaint Center Link */}
+                <a
+                  href="https://github.com/Mazonia/pos-n-sales-system/issues"
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`w-full text-left p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between mb-2 transition-all border cursor-pointer ${
+                    isDark
+                      ? 'bg-[#1E222B] border-[#282B34] text-stone-200 hover:bg-[#252A36]'
+                      : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Lock className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Report Issue / Support</span>
+                  </div>
+                  <span className="text-[10px] text-cyan-400 font-mono">
+                    GitHub Issues
+                  </span>
+                </a>
+
+                {/* Developer Attribution */}
+                <div className="px-2.5 py-1.5 text-center text-[10px] text-slate-500 dark:text-stone-400 font-semibold border-t border-slate-800/60 my-1">
+                  Built by <strong className="text-orange-400">Mazonia</strong>
+                </div>
 
                 {/* Switch User Helper */}
                 <div className="space-y-1 mb-2.5">
@@ -896,6 +1036,41 @@ export default function App() {
       <PlatformDownloadModal
         isOpen={showPlatformModal}
         onClose={() => setShowPlatformModal(false)}
+      />
+
+      {/* Tablet & iPad Bottom Touch Navigation */}
+      <TabletTouchNavigation
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        onOpenBackup={() => setShowBackupModal(true)}
+        onOpenNotifications={() => setShowNotificationPrefsModal(true)}
+        onOpenDownloads={() => setShowPlatformModal(true)}
+        isDark={isDark}
+      />
+
+      {/* Universal Custom Toast & Dialog System (No native alerts anywhere) */}
+      <UniversalToastContainer isDark={isDark} />
+
+      {/* Notification Preferences Modal */}
+      <NotificationPreferencesModal
+        isOpen={showNotificationPrefsModal}
+        onClose={() => setShowNotificationPrefsModal(false)}
+        isDark={isDark}
+      />
+
+      {/* Installation & Legal Onboarding Wizard */}
+      <InstallationWizardModal
+        isOpen={showWizardModal}
+        onComplete={() => setShowWizardModal(false)}
+        isDark={isDark}
+      />
+
+      {/* Backup & Disaster Recovery Center */}
+      <BackupManagerModal
+        isOpen={showBackupModal}
+        onClose={() => setShowBackupModal(false)}
+        currentUser={currentUser}
+        isDark={isDark}
       />
 
     </div>

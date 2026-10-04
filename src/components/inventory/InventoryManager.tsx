@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LocalProduct, LocalPurchaseOrder, db } from '../../utils/dexieSync';
 import { formatGhs } from '../../utils/ghanaTaxEngine';
+import { notify } from '../../utils/notificationSystem';
 import { StockSafetyNotification } from '../notifications/StockSafetyNotification';
 import {
   Boxes,
@@ -210,7 +211,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
   const handleExecuteUomBreakdown = async () => {
     if (!selectedProductForUom) return;
     if (selectedProductForUom.currentStock < sacksToBreak) {
-      alert(`Insufficient stock. Available: ${selectedProductForUom.currentStock} ${selectedProductForUom.baseUnit}`);
+      notify.error('Insufficient Stock', `Available: ${selectedProductForUom.currentStock} ${selectedProductForUom.baseUnit}. Cannot break down ${sacksToBreak} units.`);
       return;
     }
 
@@ -227,10 +228,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
     });
 
     window.dispatchEvent(new CustomEvent('productsUpdated'));
-    setBreakdownSuccessMsg(
-      `Fractional breakdown completed: ${sacksToBreak} ${selectedProductForUom.baseUnit} of ${selectedProductForUom.name} deconstructed into loose shelf units.`
-    );
-    setTimeout(() => setBreakdownSuccessMsg(''), 4500);
+    notify.success('UOM Breakdown Completed', `Deconstructed ${sacksToBreak} ${selectedProductForUom.baseUnit} of ${selectedProductForUom.name} into loose shelf inventory.`);
     onRefresh();
   };
 
@@ -239,7 +237,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
     if (!prod) return;
 
     if (prod.currentStock < adjQuantity) {
-      alert(`Cannot write off ${adjQuantity}. Current stock is only ${prod.currentStock} ${prod.baseUnit}.`);
+      notify.error('Adjustment Exceeds Stock', `Cannot write off ${adjQuantity} ${prod.baseUnit}. Current inventory is only ${prod.currentStock} ${prod.baseUnit}.`);
       return;
     }
 
@@ -280,8 +278,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
     });
 
     window.dispatchEvent(new CustomEvent('productsUpdated'));
-    setAdjSuccessMsg(`Successfully written off ${adjQuantity} ${prod.baseUnit} (Loss: ${formatGhs(lossValue)}). Inventory updated to ${newStock}.`);
-    setTimeout(() => setAdjSuccessMsg(''), 4500);
+    notify.warning('Spoilage Loss Recorded', `Written off ${adjQuantity} ${prod.baseUnit} of ${prod.name} (Loss: ${formatGhs(lossValue)}). Logged to GRA audit registry.`);
     onRefresh();
   };
 
@@ -290,7 +287,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
     if (!prod) return;
 
     if (prod.currentStock < transferQty) {
-      alert(`Cannot transfer ${transferQty} units. Only ${prod.currentStock} ${prod.baseUnit} available in stock!`);
+      notify.error('Insufficient Stock for Transfer', `Cannot transfer ${transferQty} units. Only ${prod.currentStock} ${prod.baseUnit} available in origin warehouse.`);
       return;
     }
 

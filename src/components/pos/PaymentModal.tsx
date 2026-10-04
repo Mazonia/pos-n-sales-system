@@ -3,6 +3,7 @@ import { LocalCustomer, LocalOrderPayment } from '../../utils/dexieSync';
 import { formatGhs, roundToPesewas } from '../../utils/ghanaTaxEngine';
 import { triggerHaptic } from '../../utils/haptics';
 import { stripEmojis } from '../../utils/emojiSanitizer';
+import { notify } from '../../utils/notificationSystem';
 import {
   Banknote,
   Smartphone,
@@ -178,7 +179,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
     const availableCredit = currentCustomer.creditLimit - currentCustomer.currentDebt;
     if (availableCredit <= 0) {
-      alert(`Customer ${currentCustomer.fullName} has exhausted their credit limit of ${formatGhs(currentCustomer.creditLimit)}.`);
+      notify.warning('Credit Limit Exhausted', `Customer ${currentCustomer.fullName} has exhausted their credit limit of ${formatGhs(currentCustomer.creditLimit)}.`);
       return;
     }
 
@@ -218,7 +219,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
   const handleCompleteSale = () => {
     if (remainingDue > 0.05) {
-      alert(`Balance remaining: ${formatGhs(remainingDue)}. Please tender the full amount.`);
+      notify.warning('Payment Incomplete', `Balance remaining: ${formatGhs(remainingDue)}. Please tender the full amount.`);
       return;
     }
     onConfirmPayments(payments, currentCustomer);

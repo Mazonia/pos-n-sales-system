@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { usePwaInstall } from './usePwaInstall';
 import { triggerHaptic } from '../../utils/haptics';
+import { notify } from '../../utils/notificationSystem';
 import {
   Download,
   Smartphone,
@@ -136,7 +137,7 @@ export const PwaInstallBanner: React.FC<PwaInstallBannerProps> = ({ isDark }) =>
             <button
               onClick={() => {
                 triggerHaptic('tap');
-                alert('Akwaaba POS is equipped with an active Service Worker! To install on your desktop or mobile browser, look for the install icon in your address bar or menu.');
+                notify.info('PWA Installation Ready', 'Akwaaba POS is equipped with an active Service Worker! To install on your desktop or mobile browser, look for the install icon in your address bar or browser menu.');
               }}
               className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 touch-manipulation ${
                 isDark ? 'border-[#282B34] text-stone-300 hover:bg-[#20232B]' : 'border-slate-300 bg-slate-50 text-slate-700 hover:bg-slate-100 shadow-2xs'

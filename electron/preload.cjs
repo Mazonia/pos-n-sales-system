@@ -19,8 +19,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
   maximize: () => ipcRenderer.send('window:maximize'),
   close: () => ipcRenderer.send('window:close'),
   
-  // External browser link handling
-  openExternal: (url) => shell.openExternal(url),
+  // External browser link handling (Hardened protocol check)
+  openExternal: (url) => {
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+        return shell.openExternal(url);
+      }
+    } catch (e) {
+      console.warn('[Security] Refused to open invalid URL:', url);
+    }
+    return Promise.reject(new Error('Invalid URL protocol. Only http/https permitted.'));
+  },
   
   // System info
   getSystemInfo: () => ipcRenderer.invoke('system:get-info'),

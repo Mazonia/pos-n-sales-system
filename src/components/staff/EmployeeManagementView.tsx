@@ -7,6 +7,7 @@ import {
   deleteEmployee,
   db
 } from '../../utils/dexieSync';
+import { notify, showConfirmModal } from '../../utils/notificationSystem';
 import {
   Users,
   UserPlus,
@@ -401,30 +402,34 @@ export const EmployeeManagementView: React.FC<EmployeeManagementViewProps> = ({
   const handleToggleStatus = async (user: SystemUser) => {
     if (!isAuthorized) return;
     if (user.id === currentUser.id) {
-      alert('You cannot suspend your own active operator account.');
+      notify.error('Action Prohibited', 'You cannot suspend your own active operator account.');
       return;
     }
 
     const nextStatus = user.status === 'SUSPENDED' ? 'ACTIVE' : 'SUSPENDED';
     await updateEmployee(user.id, { status: nextStatus }, currentUser);
     await loadUsersList();
-    showToast(`Account for ${user.fullName} is now ${nextStatus}.`);
+    notify.success('Account Status Updated', `Account for ${user.fullName} is now ${nextStatus}.`);
   };
 
   const handleDeleteUser = async (user: SystemUser) => {
     if (!isAuthorized) return;
     if (user.id === currentUser.id) {
-      alert('You cannot delete your own active operator account.');
+      notify.error('Action Prohibited', 'You cannot delete your own active operator account.');
       return;
     }
 
-    if (
-      confirm(`Are you sure you want to permanently remove employee account '${user.fullName}' (@${user.username})? This action will be audited.`)
-    ) {
-      await deleteEmployee(user.id, currentUser);
-      await loadUsersList();
-      showToast(`Account for ${user.fullName} removed.`);
-    }
+    showConfirmModal({
+      title: 'Delete Employee Account',
+      message: `Are you sure you want to permanently remove employee account '${user.fullName}' (@${user.username})? This action will be audited and logged to the local cryptographic journal.`,
+      confirmText: 'Delete Account',
+      isDestructive: true,
+      onConfirm: async () => {
+        await deleteEmployee(user.id, currentUser);
+        await loadUsersList();
+        notify.success('Account Deleted', `Account for ${user.fullName} has been removed.`);
+      },
+    });
   };
 
   const showToast = (msg: string) => {

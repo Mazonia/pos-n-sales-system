@@ -13,6 +13,7 @@ import {
   getComputedRateMetrics,
   CustomGraTaxRates
 } from '../../utils/ghanaTaxEngine';
+import { notify } from '../../utils/notificationSystem';
 import {
   Landmark,
   ShieldCheck,
@@ -163,7 +164,7 @@ export const GraReports: React.FC<GraReportsProps> = ({
 
   const handleOpenConfirm = (action: 'SAVE' | 'RESET') => {
     if (!isAuthorized) {
-      alert('Access Denied: Only Super Admin and General Manager are authorized to edit tax rates.');
+      notify.error('Access Denied', 'Only Super Admin and General Manager are authorized to edit statutory tax rates.');
       return;
     }
     setPendingAction(action);

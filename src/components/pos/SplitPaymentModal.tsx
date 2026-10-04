@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LocalCustomer, LocalOrderPayment } from '../../utils/dexieSync';
 import { formatGhs, roundToPesewas } from '../../utils/ghanaTaxEngine';
+import { notify } from '../../utils/notificationSystem';
 import {
   Banknote,
   Smartphone,
@@ -146,7 +147,7 @@ export const SplitPaymentModal: React.FC<SplitPaymentModalProps> = ({
 
     const availableCredit = currentCustomer.creditLimit - currentCustomer.currentDebt;
     if (availableCredit <= 0) {
-      alert(`Customer ${currentCustomer.fullName} has reached credit limit of ${formatGhs(currentCustomer.creditLimit)}.`);
+      notify.warning('Credit Limit Reached', `Customer ${currentCustomer.fullName} has reached credit limit of ${formatGhs(currentCustomer.creditLimit)}.`);
       return;
     }
 
@@ -165,7 +166,7 @@ export const SplitPaymentModal: React.FC<SplitPaymentModalProps> = ({
 
   const handleCompleteSale = () => {
     if (remainingDue > 0.05) {
-      alert(`Remaining balance: ${formatGhs(remainingDue)}. Please tender the full amount.`);
+      notify.warning('Payment Incomplete', `Remaining balance: ${formatGhs(remainingDue)}. Please tender the full amount.`);
       return;
     }
     onConfirmPayments(payments, currentCustomer);

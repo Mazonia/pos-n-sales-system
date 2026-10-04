@@ -9,6 +9,7 @@ import {
   DenominationBreakdown
 } from '../../utils/shiftManager';
 import { formatGhs } from '../../utils/ghanaTaxEngine';
+import { notify } from '../../utils/notificationSystem';
 import {
   DollarSign,
   ArrowDownCircle,
@@ -170,7 +171,7 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
       setZReportResult(report);
     } catch (err: any) {
       console.error('Error closing shift:', err);
-      alert(err?.message ? `Failed to lock till: ${err.message}` : 'Failed to lock till. Please check inputs and try again.');
+      notify.error('Failed to Lock Till', err?.message ? err.message : 'Please verify cashier denominations and manager PIN.');
     } finally {
       setIsClosingShift(false);
     }
