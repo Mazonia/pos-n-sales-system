@@ -25,11 +25,11 @@ Download official binaries directly or launch on any device:
 | 🪟 **Windows Desktop** | NSIS Setup (`.exe`) | [⬇️ **Download Windows Installer (111 MB)**](https://github.com/Mazonia/pos-n-sales-system/releases/download/v1.0.0/Akwaaba.POS.Retail.OS.Setup.1.0.0.exe) | Windows 10, 11 (64-bit PC Counter Tills) |
 | 🪟 **Windows Desktop** | Portable (`.exe`) | [⬇️ **Download Windows Portable (111 MB)**](https://github.com/Mazonia/pos-n-sales-system/releases/download/v1.0.0/Akwaaba.POS.Retail.OS.1.0.0.exe) | Flash Drive / Zero-Install Counter Stations |
 | 🍎 **macOS Desktop** | Universal (`.dmg`) | [⬇️ **Download macOS Universal (.dmg)**](https://github.com/Mazonia/pos-n-sales-system/releases/tag/v1.0.0) | Apple Silicon (M1-M4) & Intel Macs |
-| 📱 **Apple iPad (iPadOS)** | Safari Fullscreen PWA | [📱 **iPad Installation Guide**](PLATFORMS.md#-4-apple-ipad-ipados) | iPad, iPad Air, iPad Pro 10.2"-12.9" (Swivel Touch Stands) |
+| 📱 **Apple iPad (iPadOS)** | Safari Fullscreen PWA | [📱 **iPad Installation Guide**](#-apple-ipad-ipados-setup--touch-workstation) | iPad, iPad Air, iPad Pro 10.2"-12.9" (Swivel Touch Stands) |
 | 🤖 **Android Tablet** | Standalone (`.apk`) | [⬇️ **Download Android APK Package**](https://github.com/Mazonia/pos-n-sales-system/releases/tag/v1.0.0) | Android Tablets 10"-12" (Swivel Countertop Stands) |
-| 🌐 **Web PWA** | Instant Launch | [🚀 **Launch Web Version Immediately**](https://mazonia.github.io/pos-n-sales-system/#/showcase) | Any Modern Browser (Chrome, Safari, Edge, Firefox) |
+| 🌐 **Web PWA** | Instant Launch | [🚀 **Launch Web Showcase & Terminal**](https://mazonia.github.io/pos-n-sales-system/#/showcase) | Any Modern Browser (Chrome, Safari, Edge, Firefox) |
 
-> 📱 **iPad Setup**: Open Safari on your iPad, go to `https://mazonia.github.io/pos-n-sales-system/#/pos`, tap the **Share** button, and select **Add to Home Screen** for a fullscreen, offline-ready native touch till.
+> 📱 **iPad Counter Setup**: Open Safari on your iPad, go to `https://mazonia.github.io/pos-n-sales-system/`, tap the **Share** button, and select **Add to Home Screen** for a fullscreen, offline-ready native touch till with zero browser chrome.
 
 ---
 
@@ -42,6 +42,12 @@ Unlike generic Western POS software, Akwaaba OS is purpose-built to solve the ph
 ---
 
 ## 🚀 Key Capabilities & Modules
+
+### 📱 Apple iPad (iPadOS) Setup & Touch Workstation
+- **Instant Fullscreen Counter Setup**: On your iPad (iPad 10.2", iPad Air, iPad Pro 11"/12.9"), open Apple Safari, navigate to `https://mazonia.github.io/pos-n-sales-system/`, tap the **Share** button, and choose **Add to Home Screen**. The app launches full-screen with zero browser address bars or navigation clutter.
+- **Offline Dexie.js Persistence**: WebKit IndexedDB caches the complete product catalog, cashier shifts, Bisa customer debts, and pending sales receipts for 100% offline checkout during network cuts.
+- **Swivel & Tilt Touch Ergonomics**: Fully responsive layout with centered bottom touch dock, quick tools drawer, and haptic feedback designed for counter stands and swivel teller mounts.
+- **Thermal Printer & Barcode Support**: Connect 80mm and 58mm thermal receipt printers via Web Bluetooth / AirPrint, and scan item barcodes directly using the iPad camera or Bluetooth 2D scanner gun.
 
 ### 🇬🇭 GRA VSDC Compliance & Ghana Tax Engine
 - **Full Statutory Calculations**: Real-time computation of VAT Standard Rate (15%), NHIL (2.5%), GETFund (2.5%), COVID-19 Health Recovery Levy (1%), and 3% VAT Flat Rate Scheme (VFRS).

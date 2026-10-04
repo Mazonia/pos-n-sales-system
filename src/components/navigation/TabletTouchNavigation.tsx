@@ -19,6 +19,7 @@ interface TabletTouchNavigationProps {
   onOpenBackup: () => void;
   onOpenNotifications: () => void;
   onOpenDownloads: () => void;
+  onOpenShowcase?: () => void;
   isDark?: boolean;
 }
 
@@ -28,6 +29,7 @@ export const TabletTouchNavigation: React.FC<TabletTouchNavigationProps> = ({
   onOpenBackup,
   onOpenNotifications,
   onOpenDownloads,
+  onOpenShowcase,
   isDark = true,
 }) => {
   const [toolsDrawerOpen, setToolsDrawerOpen] = React.useState(false);
@@ -122,7 +124,7 @@ export const TabletTouchNavigation: React.FC<TabletTouchNavigationProps> = ({
               </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-2.5 pt-1">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
               <button
                 type="button"
                 onClick={() => {
@@ -173,6 +175,25 @@ export const TabletTouchNavigation: React.FC<TabletTouchNavigationProps> = ({
                 <span className="text-[11px] font-bold">Installers</span>
                 <span className={`text-[9px] ${isDark ? 'text-[#9CA3AF]' : 'text-[#64748B]'}`}>.exe / .dmg / APK</span>
               </button>
+
+              {onOpenShowcase && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setToolsDrawerOpen(false);
+                    onOpenShowcase();
+                  }}
+                  className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 transition text-center cursor-pointer active:scale-95 ${
+                    isDark 
+                      ? 'bg-[#121316] hover:bg-[#1A1C22] border-[#282B34]' 
+                      : 'bg-[#EBEEF2]/60 hover:bg-[#EBEEF2] border-[#CBD5E1]'
+                  }`}
+                >
+                  <Sparkles className="w-5 h-5 text-[#FF5722]" />
+                  <span className="text-[11px] font-bold">Showcase</span>
+                  <span className={`text-[9px] ${isDark ? 'text-[#9CA3AF]' : 'text-[#64748B]'}`}>Product Site</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

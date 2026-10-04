@@ -114,10 +114,10 @@ jobs:
       - name: Install Dependencies
         run: npm ci --legacy-peer-deps || npm install --legacy-peer-deps
 
-      - name: Build Web Bundle & Sync Capacitor
+      - name: Build Web Bundle & Sync Capacitor Android
         run: |
           npm run build
-          npm run cap:sync
+          npm run cap:sync:android
 
       - name: Build Android APK
         run: |
@@ -177,41 +177,16 @@ jobs:
     runs-on: ubuntu-latest
     if: always() && !cancelled()
     steps:
-      - name: Download Windows Binaries
+      - name: Download All Artifacts
         uses: actions/download-artifact@v4
-        continue-on-error: true
         with:
-          name: windows-binaries
-          path: release-assets/windows
-
-      - name: Download macOS Binaries
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: macos-binaries
-          path: release-assets/macos
-
-      - name: Download Android APK
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: android-apk
-          path: release-assets/android
-
-      - name: Download Web Build
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: web-build
-          path: release-assets/web
+          path: release-assets
+          merge-multiple: true
 
       - name: Organize Release Files
         run: |
           mkdir -p final-release
-          cp release-assets/windows/* final-release/ 2>/dev/null || true
-          cp release-assets/macos/* final-release/ 2>/dev/null || true
-          cp release-assets/android/* final-release/ 2>/dev/null || true
-          cp release-assets/web/* final-release/ 2>/dev/null || true
+          find release-assets -type f \( -name "*.exe" -o -name "*.dmg" -o -name "*.apk" -o -name "*.zip" \) -exec cp {} final-release/ \; || true
           ls -la final-release
 
       - name: Create or Update GitHub Release

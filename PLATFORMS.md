@@ -60,11 +60,23 @@ The Android tablet edition is powered by **Capacitor** with the native project l
   The generated `.apk` will be at `android/app/build/outputs/apk/debug/app-debug.apk`. You can directly copy this APK to any Android tablet via USB or WhatsApp and install it.
 
 ### 4. Apple iPad (`iPadOS`)
-The iPad edition is located in `/ios` and configured for iPadOS multitasking and high-resolution Retina display.
+The iPad edition is optimized for countertop swivel stands, mobile floor tellers, and high-DPI Retina touchscreens.
+
+#### Method A: Direct Countertop Setup via Apple Safari (Zero Mac or Xcode Required)
+For retail merchants deploying iPads directly to checkout counters:
+1. Open **Apple Safari** on the iPad.
+2. Navigate to `https://mazonia.github.io/pos-n-sales-system/` (or your local network server IP).
+3. Tap the Safari **Share** icon (square with arrow pointing upwards).
+4. Tap **"Add to Home Screen"** and confirm.
+5. Tap the **Akwaaba POS** icon on your home screen. The app will launch in native standalone full-screen mode with zero browser address bar or tabs.
+6. WebKit IndexedDB caches the full catalog and transactions for 100% offline checkout during internet downtime.
+
+#### Method B: Native iPadOS Xcode Compilation (`/ios`)
+For developers building native `.ipa` archives or deploying via Apple Business Manager / TestFlight:
 - **Sync Web Assets**:
   ```bash
   npm run build
-  npm run cap:sync
+  npm run cap:sync:ios
   ```
 - **Open in Xcode**:
   ```bash

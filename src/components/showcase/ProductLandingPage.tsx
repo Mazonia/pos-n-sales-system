@@ -642,6 +642,428 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
                 </div>
               </div>
             </div>
+          ) : deviceFrame === 'TABLET_PORTRAIT' ? (
+            /* ═══ 2. BESPOKE TABLET & MOBILE PORTRAIT TILL WORKSTATION ═══ */
+            <div className="flex flex-col min-h-[580px] max-h-[700px] overflow-hidden select-none">
+              
+              {/* Native Mobile Status Bar & Cashier Presence */}
+              <div className={`px-4 py-2.5 border-b flex items-center justify-between text-[11px] shrink-0 ${
+                isDark ? 'bg-[#101216] border-[#282B34] text-gray-300' : 'bg-slate-100 border-slate-300 text-slate-700'
+              }`}>
+                <div className="flex items-center gap-1.5 font-bold font-mono">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Till #01 &bull; Makola Central</span>
+                </div>
+                <div className="flex items-center gap-2 font-mono text-[10px]">
+                  <span className="px-1.5 py-0.5 rounded bg-[#FF4500]/15 text-[#FF4500] font-bold">Kofi M.</span>
+                  <span>100% Offline OK</span>
+                </div>
+              </div>
+
+              {/* Mode & Tax Pill Strip for Portrait */}
+              <div className={`px-3.5 py-2 border-b flex items-center justify-between gap-2 shrink-0 ${
+                isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-slate-200'
+              }`}>
+                <div className="flex items-center gap-1 text-[11px]">
+                  <button
+                    type="button"
+                    onClick={() => setOrderMode('RETAIL')}
+                    className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${
+                      orderMode === 'RETAIL'
+                        ? 'bg-[#FF4500] text-white shadow-xs'
+                        : isDark ? 'text-gray-400 bg-black/30' : 'text-slate-600 bg-slate-100'
+                    }`}
+                  >
+                    Retail
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOrderMode('WHOLESALE')}
+                    className={`px-3 py-1 rounded-lg font-bold transition cursor-pointer ${
+                      orderMode === 'WHOLESALE'
+                        ? 'bg-[#008B8B] text-white shadow-xs'
+                        : isDark ? 'text-gray-400 bg-black/30' : 'text-slate-600 bg-slate-100'
+                    }`}
+                  >
+                    Wholesale
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setTaxScheme(taxScheme === 'STANDARD_VAT' ? 'FLAT_RATE_VFRS' : 'STANDARD_VAT')}
+                  className="px-2.5 py-1 rounded-lg font-mono text-[10px] font-bold border border-cyan-500/40 bg-cyan-500/10 text-cyan-400 cursor-pointer"
+                >
+                  {taxScheme === 'STANDARD_VAT' ? 'GRA Std 21.9%' : 'GRA Flat 4.0%'}
+                </button>
+              </div>
+
+              {/* Portrait Content Area depending on activeModule */}
+              <div className="flex-1 overflow-y-auto p-3.5 space-y-3">
+                {activeModule === 'TILL' ? (
+                  /* ─── PORTRAIT TILL PRODUCTS LIST ─── */
+                  <div className="space-y-2.5 pb-20">
+                    <div className="flex items-center justify-between text-xs font-semibold px-0.5">
+                      <span className="text-gray-400">Tap Product to Add:</span>
+                      <span className="text-[#FF4500] font-mono text-[11px] font-bold">
+                        {cart.reduce((acc, c) => acc + c.quantity, 0)} in Cart
+                      </span>
+                    </div>
+
+                    {demoProducts.map((prod) => {
+                      const price = orderMode === 'WHOLESALE' ? prod.wholesalePrice : prod.retailPrice;
+                      const finalPrice = discountApplied ? price * 0.70 : price;
+                      const inCart = cart.find(c => c.product.id === prod.id);
+
+                      return (
+                        <div
+                          key={prod.id}
+                          className={`p-3 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
+                            isDark
+                              ? 'bg-[#121316] border-[#282B34] hover:border-[#FF4500]/60'
+                              : 'bg-white border-slate-200 hover:border-[#FF4500]/60 shadow-xs'
+                          }`}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                              <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-[#FF4500]/15 text-[#FF4500]">
+                                {prod.tag}
+                              </span>
+                              <span className="text-[10px] text-gray-400 font-mono">{prod.uom}</span>
+                            </div>
+                            <h4 className="font-bold text-sm leading-snug truncate text-slate-900 dark:text-stone-100">
+                              {prod.name}
+                            </h4>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="font-mono font-extrabold text-sm text-[#FF4500]">
+                                {formatGhs(finalPrice)}
+                              </span>
+                              <span className="text-[10px] text-gray-400">Stock: {prod.stock}</span>
+                            </div>
+                          </div>
+
+                          {/* Large, Easy-Touch Stepper */}
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            {inCart ? (
+                              <div className="flex items-center gap-1 p-0.5 rounded-xl border border-[#282B34] bg-black/40">
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateQty(prod.id, -1)}
+                                  className="w-8 h-8 rounded-lg bg-slate-800 text-white font-bold flex items-center justify-center text-xs active:scale-90 cursor-pointer"
+                                >
+                                  -
+                                </button>
+                                <span className="font-mono font-bold text-xs px-2 min-w-[20px] text-center">
+                                  {inCart.quantity}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateQty(prod.id, 1)}
+                                  className="w-8 h-8 rounded-lg bg-[#FF4500] text-white font-bold flex items-center justify-center text-xs active:scale-90 cursor-pointer"
+                                >
+                                  +
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => handleAddToCart(prod)}
+                                className="px-3.5 py-2 rounded-xl font-bold text-xs bg-[#FF4500] hover:bg-[#E03E00] text-white flex items-center gap-1 shadow-sm active:scale-95 cursor-pointer"
+                              >
+                                <span>+ Add</span>
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : activeModule === 'FIFO' ? (
+                  /* ─── PORTRAIT FIFO STACKED CARDS ─── */
+                  <div className="space-y-3 pb-8">
+                    <div className="p-3 rounded-xl border border-amber-500/30 bg-amber-500/10 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <Flame className="w-5 h-5 text-amber-500 shrink-0" />
+                        <div>
+                          <div className="font-bold text-xs text-amber-400">FIFO Shelf Rotation</div>
+                          <div className="text-[10px] text-gray-400">&lt;30 days urgent clearance</div>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setDiscountApplied(!discountApplied)}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition cursor-pointer ${
+                          discountApplied ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'
+                        }`}
+                      >
+                        {discountApplied ? '✓ 30% Active' : 'Apply -30%'}
+                      </button>
+                    </div>
+
+                    {demoProducts.map((p) => {
+                      const isCritical = p.expiryDays <= 30;
+                      const isWarning = p.expiryDays > 30 && p.expiryDays <= 90;
+                      const currentPrice = discountApplied ? p.retailPrice * 0.70 : p.retailPrice;
+
+                      return (
+                        <div
+                          key={p.id}
+                          className={`p-3.5 rounded-2xl border space-y-2 ${
+                            isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-white border-slate-200 shadow-xs'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <h4 className="font-bold text-sm leading-snug text-slate-900 dark:text-stone-100">
+                                {p.name}
+                              </h4>
+                              <span className="text-[10px] text-gray-500 font-mono">LOT-{p.id.toUpperCase()}-2026</span>
+                            </div>
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 ${
+                              isCritical
+                                ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                                : isWarning
+                                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                            }`}>
+                              {p.expiryDays} days left
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-700/20">
+                            <div>
+                              <span className="text-gray-500 line-through text-[11px] mr-2">
+                                GH₵ {p.retailPrice.toFixed(2)}
+                              </span>
+                              <strong className="font-mono font-black text-sm text-[#FF4500]">
+                                GH₵ {currentPrice.toFixed(2)}
+                              </strong>
+                              {discountApplied && <span className="text-[10px] text-emerald-400 ml-1">(-30%)</span>}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleAddToCart(p);
+                                setActiveModule('TILL');
+                              }}
+                              className="px-3 py-1.5 rounded-xl bg-[#FF4500]/15 hover:bg-[#FF4500]/25 text-[#FF4500] text-xs font-bold border border-[#FF4500]/30 cursor-pointer"
+                            >
+                              Push to Till
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : activeModule === 'DUMSOR' ? (
+                  /* ─── PORTRAIT DUMSOR LOSS AUDIT ─── */
+                  <div className="space-y-3 pb-8">
+                    <div className="p-3.5 rounded-xl border border-rose-500/30 bg-rose-500/10 flex items-center gap-2.5">
+                      <Zap className="w-5 h-5 text-rose-500 shrink-0" />
+                      <div>
+                        <div className="font-bold text-xs text-rose-400">Cold-Store Dumsor Defrost Logger</div>
+                        <div className="text-[10px] text-gray-300">GRA Tax-Deductible Loss Audit</div>
+                      </div>
+                    </div>
+
+                    <div className={`p-4 rounded-2xl border space-y-3 ${
+                      isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-white border-slate-200'
+                    }`}>
+                      <div className="flex justify-between items-center text-xs font-bold">
+                        <span>Outage Duration:</span>
+                        <span className="font-mono text-[#FF4500] text-sm">{outageHours} Hours</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="1"
+                        max="24"
+                        value={outageHours}
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          setOutageHours(val);
+                          setFreezerTemp(Number((-18 + val * 0.95).toFixed(1)));
+                        }}
+                        className="w-full accent-[#FF4500] cursor-pointer"
+                      />
+
+                      <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono space-y-1">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Freezer Core Temp:</span>
+                          <span className={`font-bold ${freezerTemp > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                            {freezerTemp > 0 ? `+${freezerTemp}°C (DEFROST RISK)` : `${freezerTemp}°C (SAFE)`}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Estimated Spoilage:</span>
+                          <span className="font-bold text-rose-400">GH₵ {(outageHours * 475.00).toFixed(2)}</span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setSpoilageCertified(!spoilageCertified)}
+                        className={`w-full py-2.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center justify-center gap-1.5 ${
+                          spoilageCertified
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-rose-600 hover:bg-rose-500 text-white'
+                        }`}
+                      >
+                        <FileText className="w-3.5 h-3.5" />
+                        <span>{spoilageCertified ? '✓ GRA Loss Certificate Signed' : 'Sign Spoilage Loss Certificate'}</span>
+                      </button>
+                    </div>
+                  </div>
+                ) : activeModule === 'UOM' ? (
+                  /* ─── PORTRAIT UOM BULK BREAKDOWN ─── */
+                  <div className="space-y-3 pb-8">
+                    <div className="p-3.5 rounded-xl border border-teal-500/30 bg-teal-500/10 flex items-center gap-2.5">
+                      <Boxes className="w-5 h-5 text-teal-400 shrink-0" />
+                      <div>
+                        <div className="font-bold text-xs text-teal-300">50kg Bulk Sack Breakdown</div>
+                        <div className="text-[10px] text-gray-300">Deconstruct into 18 Olonkas</div>
+                      </div>
+                    </div>
+
+                    <div className={`p-4 rounded-2xl border space-y-3 ${
+                      isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-white border-slate-200'
+                    }`}>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold">Wholesale Sacks:</span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setSacksToBreak(Math.max(1, sacksToBreak - 1))}
+                            className="w-7 h-7 rounded-lg bg-[#282B34] text-white font-bold flex items-center justify-center cursor-pointer"
+                          >
+                            -
+                          </button>
+                          <span className="font-mono text-sm font-bold">{sacksToBreak} Sack</span>
+                          <button
+                            type="button"
+                            onClick={() => setSacksToBreak(sacksToBreak + 1)}
+                            className="w-7 h-7 rounded-lg bg-[#282B34] text-white font-bold flex items-center justify-center cursor-pointer"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="text-xs font-mono space-y-1.5 p-3 rounded-xl bg-slate-900 border border-slate-800">
+                        <div className="flex justify-between text-gray-400">
+                          <span>Cost (50kg Sack):</span>
+                          <span>GH₵ {(sacksToBreak * 875.00).toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between text-emerald-400 font-bold">
+                          <span>Loose Olonkas:</span>
+                          <span>{sacksToBreak * 18} Olonkas</span>
+                        </div>
+                        <div className="flex justify-between text-[#FF4500] font-bold">
+                          <span>Projected Retail:</span>
+                          <span>GH₵ {(sacksToBreak * 18 * 55.00).toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between text-emerald-400 font-black pt-1 border-t border-slate-800">
+                          <span>Net Margin:</span>
+                          <span>+GH₵ {(sacksToBreak * (18 * 55.00 - 875.00)).toFixed(2)}</span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleAddToCart(demoProducts[3]);
+                          setActiveModule('TILL');
+                        }}
+                        className="w-full py-2.5 rounded-xl text-xs font-bold bg-teal-600 hover:bg-teal-500 text-white transition cursor-pointer"
+                      >
+                        Commit Breakdown &amp; Push to Till
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  /* ─── PORTRAIT BISA CUSTOMER CREDIT ─── */
+                  <div className="space-y-3 pb-8">
+                    <div className="p-3.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 flex items-center gap-2.5">
+                      <CreditCard className="w-5 h-5 text-indigo-400 shrink-0" />
+                      <div>
+                        <div className="font-bold text-xs text-indigo-300">Bisa Debt Ledger</div>
+                        <div className="text-[10px] text-gray-300">Customer Credit &amp; SMS Prompts</div>
+                      </div>
+                    </div>
+
+                    <div className={`p-4 rounded-2xl border space-y-3 ${
+                      isDark ? 'bg-[#121316] border-[#282B34]' : 'bg-white border-slate-200'
+                    }`}>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-bold text-sm">Madam Akosua Serwaa</h4>
+                          <span className="text-[10px] text-gray-400">Stall #14 &bull; 0244987654</span>
+                        </div>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                          Overdue 42d
+                        </span>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono space-y-1">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Owed Balance:</span>
+                          <strong className="text-rose-400 font-bold">GH₵ 1,450.00</strong>
+                        </div>
+                        <div className="flex justify-between text-gray-400">
+                          <span>Credit Limit:</span>
+                          <span>GH₵ 2,000.00</span>
+                        </div>
+                        <div className="flex justify-between text-emerald-400">
+                          <span>Last Payment:</span>
+                          <span>GH₵ 300 (MoMo)</span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => alert('Simulated SMS sent: "Akwaaba Supermarket: Respected Madam Akosua, please be reminded of your outstanding balance GH₵ 1,450.00. Thank you."')}
+                        className="w-full py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition cursor-pointer flex items-center justify-center gap-1.5"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        <span>Send SMS Payment Prompt</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* DOCKED STICKY BOTTOM ACTION SHEET (PORTRAIT REGISTER DOCK) */}
+              <div className={`p-3 border-t shrink-0 flex items-center justify-between gap-2.5 ${
+                isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-slate-200 shadow-lg'
+              }`}>
+                <div>
+                  <div className="text-[10px] text-gray-400 font-mono">
+                    {cart.reduce((acc, c) => acc + c.quantity, 0)} Items &bull; {taxScheme === 'STANDARD_VAT' ? 'Std Tax' : 'Flat Tax'}
+                  </div>
+                  <div className="font-mono font-black text-base text-[#FF4500]">
+                    {formatGhs(grandTotal)}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setDeviceFrame('RECEIPT')}
+                    className={`px-3 py-2 rounded-xl text-xs font-bold border transition cursor-pointer ${
+                      isDark ? 'border-slate-700 bg-slate-800 text-white' : 'border-slate-300 bg-slate-100 text-slate-800'
+                    }`}
+                  >
+                    🧾 Slip
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowMomoModal(true)}
+                    className="px-4 py-2 rounded-xl text-xs font-bold bg-[#FF4500] hover:bg-[#E03E00] text-white transition active:scale-95 shadow-md shadow-[#FF4500]/25 cursor-pointer"
+                  >
+                    💳 Pay MoMo
+                  </button>
+                </div>
+              </div>
+            </div>
           ) : activeModule === 'FIFO' ? (
             /* ═══ 2. FIFO EXPIRY SENTINEL SIMULATOR ═══ */
             <div className="p-4 sm:p-6 space-y-4">
@@ -1396,62 +1818,98 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
             </a>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Windows NSIS Setup */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* 1. Windows Desktop (.exe) */}
             <div className={`p-5 rounded-2xl border flex flex-col justify-between ${
               isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-[#CBD5E1]'
             }`}>
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <Laptop className="w-5 h-5 text-[#FF4500]" />
-                  <span className="font-mono text-xs font-bold text-[#00CED1]">.exe (Installer)</span>
+                  <span className="font-mono text-xs font-bold text-[#00CED1]">.exe (Installer &amp; Portable)</span>
                 </div>
-                <h4 className="font-bold text-sm mb-1">Windows Setup</h4>
+                <h4 className="font-bold text-sm mb-1">Windows PC Desktop</h4>
                 <p className={`text-xs mb-3 ${isDark ? 'text-[#9CA3AF]' : 'text-[#64748B]'}`}>
-                  Full NSIS installer with desktop shortcut and silent ESC/POS hardware print drivers.
+                  Full NSIS installer and zero-install portable executable with desktop shortcuts and silent ESC/POS hardware print drivers.
                 </p>
                 <span className="inline-block text-[10px] font-mono text-emerald-400 font-bold mb-3">v1.0.0 Ready (111 MB)</span>
               </div>
-              <div className="pt-3 border-t border-slate-700/30 flex items-center justify-between">
+              <div className="pt-3 border-t border-slate-700/30 flex items-center gap-2">
                 <a
                   href="https://github.com/Mazonia/pos-n-sales-system/releases/download/v1.0.0/Akwaaba.POS.Retail.OS.Setup.1.0.0.exe"
                   className="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#FF4500] hover:bg-[#E03E00] text-white flex items-center gap-1.5 cursor-pointer shadow-sm"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Download .exe</span>
+                  <span>Setup.exe</span>
                 </a>
-                <span className="text-[10px] text-gray-500 font-mono">Win 10/11</span>
-              </div>
-            </div>
-
-            {/* Windows Portable Executable */}
-            <div className={`p-5 rounded-2xl border flex flex-col justify-between ${
-              isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-[#CBD5E1]'
-            }`}>
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <Laptop className="w-5 h-5 text-[#00CED1]" />
-                  <span className="font-mono text-xs font-bold text-[#00CED1]">.exe (Portable)</span>
-                </div>
-                <h4 className="font-bold text-sm mb-1">Windows Portable</h4>
-                <p className={`text-xs mb-3 ${isDark ? 'text-[#9CA3AF]' : 'text-[#64748B]'}`}>
-                  Zero-install single executable. Run directly from flash drive or desktop till workstation.
-                </p>
-                <span className="inline-block text-[10px] font-mono text-emerald-400 font-bold mb-3">v1.0.0 Ready (111 MB)</span>
-              </div>
-              <div className="pt-3 border-t border-slate-700/30 flex items-center justify-between">
                 <a
                   href="https://github.com/Mazonia/pos-n-sales-system/releases/download/v1.0.0/Akwaaba.POS.Retail.OS.1.0.0.exe"
                   className="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#008B8B] hover:bg-[#007A7C] text-white flex items-center gap-1.5 cursor-pointer shadow-sm"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Download Portable</span>
+                  <span>Portable</span>
                 </a>
-                <span className="text-[10px] text-gray-500 font-mono">Flash Drive</span>
               </div>
             </div>
 
-            {/* Android Tablet APK */}
+            {/* 2. Apple macOS (.dmg) */}
+            <div className={`p-5 rounded-2xl border flex flex-col justify-between ${
+              isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-[#CBD5E1]'
+            }`}>
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <Laptop className="w-5 h-5 text-purple-400" />
+                  <span className="font-mono text-xs font-bold text-purple-400">.dmg (macOS)</span>
+                </div>
+                <h4 className="font-bold text-sm mb-1">macOS Universal</h4>
+                <p className={`text-xs mb-3 ${isDark ? 'text-[#9CA3AF]' : 'text-[#64748B]'}`}>
+                  Universal macOS disk image (.dmg) with native hardware acceleration for Apple Silicon (M1-M4) and Intel Macs.
+                </p>
+                <span className="inline-block text-[10px] font-mono text-emerald-400 font-bold mb-3">v1.0.0 Universal DMG</span>
+              </div>
+              <div className="pt-3 border-t border-slate-700/30 flex items-center justify-between">
+                <a
+                  href="https://github.com/Mazonia/pos-n-sales-system/releases/tag/v1.0.0"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white flex items-center gap-1.5 cursor-pointer shadow-sm"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download .dmg</span>
+                </a>
+                <span className="text-[10px] text-gray-500 font-mono">macOS 12+</span>
+              </div>
+            </div>
+
+            {/* 3. Apple iPad (iPadOS) */}
+            <div className={`p-5 rounded-2xl border flex flex-col justify-between ${
+              isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-[#CBD5E1]'
+            }`}>
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <Tablet className="w-5 h-5 text-[#00CED1]" />
+                  <span className="font-mono text-xs font-bold text-[#00CED1]">iPadOS (Retina Touch)</span>
+                </div>
+                <h4 className="font-bold text-sm mb-1">Apple iPad &bull; iPadOS</h4>
+                <p className={`text-xs mb-3 ${isDark ? 'text-[#9CA3AF]' : 'text-[#64748B]'}`}>
+                  Open Safari, tap Share &rarr; "Add to Home Screen" for instant fullscreen touch till with offline WebKit storage.
+                </p>
+                <span className="inline-block text-[10px] font-mono text-cyan-400 font-bold mb-3">Swivel Touch Stand</span>
+              </div>
+              <div className="pt-3 border-t border-slate-700/30 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={onLaunchPos}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white flex items-center gap-1.5 cursor-pointer shadow-sm"
+                >
+                  <Tablet className="w-3.5 h-3.5" />
+                  <span>Launch on iPad</span>
+                </button>
+                <span className="text-[10px] text-gray-500 font-mono">iPadOS 16+</span>
+              </div>
+            </div>
+
+            {/* 4. Android Tablet APK */}
             <div className={`p-5 rounded-2xl border flex flex-col justify-between ${
               isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-[#CBD5E1]'
             }`}>
@@ -1471,16 +1929,16 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
                   href="https://github.com/Mazonia/pos-n-sales-system/releases/tag/v1.0.0"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-600 hover:border-slate-400 text-gray-300 flex items-center gap-1.5 cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-1.5 cursor-pointer shadow-sm"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Release Hub</span>
+                  <span>Download .apk</span>
                 </a>
                 <span className="text-[10px] text-gray-500 font-mono">Tablets 10"-12"</span>
               </div>
             </div>
 
-            {/* Web PWA Instant Access */}
+            {/* 5. Web PWA Instant Access */}
             <div className={`p-5 rounded-2xl border flex flex-col justify-between ${
               isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-[#CBD5E1]'
             }`}>
@@ -1505,6 +1963,34 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
                   <span>Launch Web POS</span>
                 </button>
                 <span className="text-[10px] text-gray-500 font-mono">Zero Flash</span>
+              </div>
+            </div>
+
+            {/* 6. Disaster Recovery & Local Backups */}
+            <div className={`p-5 rounded-2xl border flex flex-col justify-between ${
+              isDark ? 'bg-[#16181F] border-[#282B34]' : 'bg-white border-[#CBD5E1]'
+            }`}>
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <Database className="w-5 h-5 text-amber-400" />
+                  <span className="font-mono text-xs font-bold text-amber-400">.json (SHA-256)</span>
+                </div>
+                <h4 className="font-bold text-sm mb-1">Disaster Recovery Snapshots</h4>
+                <p className={`text-xs mb-3 ${isDark ? 'text-[#9CA3AF]' : 'text-[#64748B]'}`}>
+                  Export full store state snapshots with tamper-evident Web Crypto SHA-256 digests. Restore on any till machine.
+                </p>
+                <span className="inline-block text-[10px] font-mono text-amber-400 font-bold mb-3">Encrypted Local Backup</span>
+              </div>
+              <div className="pt-3 border-t border-slate-700/30 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={onLaunchPos}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold border border-amber-500/40 text-amber-400 hover:bg-amber-500/10 flex items-center gap-1.5 cursor-pointer shadow-sm"
+                >
+                  <Database className="w-3.5 h-3.5" />
+                  <span>Open Backup Center</span>
+                </button>
+                <span className="text-[10px] text-gray-500 font-mono">Offline Safe</span>
               </div>
             </div>
           </div>

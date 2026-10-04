@@ -73,6 +73,56 @@ import {
 import { executeThemeTransition } from './utils/themeTransition';
 import { sanitizeUserForStorage } from './utils/security';
 
+export type SystemNavTab = 'POS' | 'BISA' | 'INVENTORY' | 'FINANCIALS' | 'STAFF' | 'GRA' | 'DOCS';
+
+export function parseHashRoute(hash: string): { isShowcase: boolean; tab: SystemNavTab } {
+  const clean = (hash || '').replace(/^#\/?/, '').trim().toLowerCase();
+  
+  // Default root, empty, or #/showcase to Showcase
+  if (!clean || clean === 'showcase' || clean === 'landing' || clean === 'home') {
+    return { isShowcase: true, tab: 'POS' };
+  }
+  
+  if (clean === 'pos' || clean === 'checkout' || clean === 'terminal') {
+    return { isShowcase: false, tab: 'POS' };
+  }
+  if (clean === 'inventory' || clean === 'stock' || clean === 'uom') {
+    return { isShowcase: false, tab: 'INVENTORY' };
+  }
+  if (clean === 'debt' || clean === 'bisa' || clean === 'credit') {
+    return { isShowcase: false, tab: 'BISA' };
+  }
+  if (clean === 'financials' || clean === 'finance' || clean === 'sales' || clean === 'safedrop') {
+    return { isShowcase: false, tab: 'FINANCIALS' };
+  }
+  if (clean === 'staff' || clean === 'employees' || clean === 'shifts') {
+    return { isShowcase: false, tab: 'STAFF' };
+  }
+  if (clean === 'taxes' || clean === 'gra' || clean === 'vsdc') {
+    return { isShowcase: false, tab: 'GRA' };
+  }
+  if (clean === 'docs' || clean === 'help' || clean === 'manual') {
+    return { isShowcase: false, tab: 'DOCS' };
+  }
+
+  // Any other hash falls back to Showcase as safe default
+  return { isShowcase: true, tab: 'POS' };
+}
+
+export function getHashFromRoute(isShowcase: boolean, tab: SystemNavTab): string {
+  if (isShowcase) return '#/showcase';
+  switch (tab) {
+    case 'POS': return '#/pos';
+    case 'INVENTORY': return '#/inventory';
+    case 'BISA': return '#/debt';
+    case 'FINANCIALS': return '#/financials';
+    case 'STAFF': return '#/staff';
+    case 'GRA': return '#/taxes';
+    case 'DOCS': return '#/docs';
+    default: return '#/pos';
+  }
+}
+
 export default function App() {
   // Theme State: Crisp Light Mode by default, with dark mode toggle support
   const [isDark, setIsDark] = useState<boolean>(() => {
@@ -111,13 +161,42 @@ export default function App() {
     return sanitizeUserForStorage(SYSTEM_USERS[0]);
   });
 
-  // Navigation State
-  const [activeTab, setActiveTab] = useState<'POS' | 'BISA' | 'INVENTORY' | 'FINANCIALS' | 'STAFF' | 'GRA' | 'DOCS'>('POS');
+  // Navigation & Route State (defaults to Showcase unless explicit POS / tab route is in hash)
+  const initialRoute = typeof window !== 'undefined' ? parseHashRoute(window.location.hash) : { isShowcase: true, tab: 'POS' as SystemNavTab };
+  const [showLandingPage, setShowLandingPage] = useState<boolean>(initialRoute.isShowcase);
+  const [activeTab, setActiveTab] = useState<SystemNavTab>(initialRoute.tab);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [pageTransition, setPageTransition] = useState(false);
-  const [showLandingPage, setShowLandingPage] = useState<boolean>(() => typeof window !== 'undefined' && window.location.hash === '#showcase');
+
+  // Sync Hash Route & Browser History
+  useEffect(() => {
+    // If no hash was present on initial visit, set it to #/showcase so URL clearly shows the route
+    if (!window.location.hash || window.location.hash === '#' || window.location.hash === '#/') {
+      window.location.replace('#/showcase');
+    }
+
+    const handleHashChange = () => {
+      const { isShowcase, tab } = parseHashRoute(window.location.hash);
+      setShowLandingPage(isShowcase);
+      setActiveTab(tab);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const navigateTo = (newShowcase: boolean, newTab?: SystemNavTab) => {
+    const targetTab = newTab || activeTab;
+    const targetHash = getHashFromRoute(newShowcase, targetTab);
+    if (window.location.hash !== targetHash) {
+      window.location.hash = targetHash;
+    } else {
+      setShowLandingPage(newShowcase);
+      if (newTab) setActiveTab(newTab);
+    }
+  };
 
   // Dynamic System Users List (Loaded from Dexie & synced)
   const [systemUsersList, setSystemUsersList] = useState<SystemUser[]>(SYSTEM_USERS);
@@ -325,14 +404,14 @@ export default function App() {
   };
 
   const handleTabChange = (tabId: string) => {
-    if (tabId === activeTab) return;
+    if (tabId === activeTab && !showLandingPage) return;
     triggerHaptic('tap');
     setPageTransition(true);
     setTimeout(() => {
-      setActiveTab(tabId as any);
+      navigateTo(false, tabId as SystemNavTab);
       setMobileMenuOpen(false);
       setTimeout(() => setPageTransition(false), 50);
-    }, 150);
+    }, 120);
   };
 
   // If showcase website view is active
@@ -340,10 +419,7 @@ export default function App() {
     return (
       <>
         <ProductLandingPage
-          onLaunchPos={() => {
-            if (typeof window !== 'undefined') window.location.hash = '';
-            setShowLandingPage(false);
-          }}
+          onLaunchPos={() => navigateTo(false, 'POS')}
           onOpenDownloads={() => setShowPlatformModal(true)}
           isDark={isDark}
           onToggleTheme={() => setIsDark(!isDark)}
@@ -366,7 +442,7 @@ export default function App() {
           branchName={branchName}
           isDark={isDark}
           onToggleTheme={() => setIsDark(!isDark)}
-          onOpenShowcase={() => setShowLandingPage(true)}
+          onOpenShowcase={() => navigateTo(true)}
         />
         <PlatformDownloadModal
           isOpen={showPlatformModal}
@@ -505,6 +581,24 @@ export default function App() {
         {/* Right Controls: Streamlined, Clutter-Free Utility Cluster */}
         <div className="flex items-center gap-2 sm:gap-2.5">
           
+          {/* Showcase Website Button in Header */}
+          <button
+            type="button"
+            onClick={() => {
+              triggerHaptic('tap');
+              navigateTo(true);
+            }}
+            className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer ${
+              isDark
+                ? 'border-[#282B34] bg-[#16181F] text-[#FF5722] hover:bg-[#20232B] hover:border-[#FF4500]/50'
+                : 'border-slate-300 bg-orange-50/80 text-[#C43400] hover:bg-orange-100 hover:border-orange-300 shadow-2xs'
+            }`}
+            title="Visit Product Showcase & Platform Downloads Website"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#FF4500]" />
+            <span className="hidden sm:inline font-bold">Showcase</span>
+          </button>
+
           {/* Active Shift Indicator / Cash Drawer Status */}
           {activeShift ? (
             <button
@@ -660,7 +754,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => {
-                    setShowLandingPage(true);
+                    navigateTo(true);
                     setUserMenuOpen(false);
                   }}
                   className={`w-full text-left p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between mb-2 transition-all border active:scale-[0.98] cursor-pointer ${
@@ -1078,6 +1172,7 @@ export default function App() {
         onOpenBackup={() => setShowBackupModal(true)}
         onOpenNotifications={() => setShowNotificationPrefsModal(true)}
         onOpenDownloads={() => setShowPlatformModal(true)}
+        onOpenShowcase={() => navigateTo(true)}
         isDark={isDark}
       />
 
