@@ -5,7 +5,7 @@ import { Plus, ChevronDown, Package, Coffee, Flame, Snowflake, Sparkles, Pill, C
 
 interface ProductCardProps {
   product: LocalProduct;
-  onAddToCart: (product: LocalProduct, selectedUom?: { name: string; price: number }) => void;
+  onAddToCart: (product: LocalProduct, selectedUom?: { name: string; price: number; factor?: number }) => void;
   isDark: boolean;
   showImage?: boolean;
   suggestedMatchBadge?: string;

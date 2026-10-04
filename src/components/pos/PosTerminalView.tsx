@@ -106,7 +106,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
 
   const handleToggleOrderMode = (newMode: 'RETAIL' | 'WHOLESALE') => {
     if (newMode === orderMode) return;
-    triggerHaptic('selection');
+    triggerHaptic('tap');
     if (cart.length > 0) {
       setCart(prev =>
         prev.map(item => {
@@ -370,7 +370,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
 
     const targetItem = cart.find(i => i.id === priceOverrideItem.itemId);
     const itemName = targetItem ? targetItem.name : 'Line Item';
-    const originalPrice = targetItem ? targetItem.originalPrice : priceOverrideItem.currentPrice;
+    const originalPrice = (targetItem?.originalPrice !== undefined ? targetItem.originalPrice : targetItem?.unitPrice) ?? priceOverrideItem.currentPrice;
 
     // Trigger Manager PIN Verification Modal
     setPinModalConfig({
@@ -1303,7 +1303,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
           onUpdateQuantity={updateQuantity}
           onRequestDeleteItem={requestDeleteItem}
           onOpenPriceOverride={item => {
-            setPriceOverrideItem({ itemId: item.id, currentPrice: item.unitPrice });
+            setPriceOverrideItem({ itemId: item.id || item.productId, currentPrice: item.unitPrice });
             setOverrideInputPrice(item.unitPrice);
           }}
           onOpenDiscountModal={() => setShowDiscountModal(true)}
@@ -1387,7 +1387,7 @@ export const PosTerminalView: React.FC<PosTerminalViewProps> = ({
                 onUpdateQuantity={updateQuantity}
                 onRequestDeleteItem={requestDeleteItem}
                 onOpenPriceOverride={item => {
-                  setPriceOverrideItem({ itemId: item.id, currentPrice: item.unitPrice });
+                  setPriceOverrideItem({ itemId: item.id || item.productId, currentPrice: item.unitPrice });
                   setOverrideInputPrice(item.unitPrice);
                 }}
                 onOpenDiscountModal={() => setShowDiscountModal(true)}

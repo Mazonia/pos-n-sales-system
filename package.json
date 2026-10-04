@@ -12,6 +12,7 @@
     "preview": "node ./node_modules/vite/bin/vite.js preview",
     "clean": "rm -rf dist release",
     "lint": "node ./node_modules/typescript/bin/tsc --noEmit",
+    "test": "node ./node_modules/tsx/dist/cli.mjs tests/system-audit.ts",
     "electron:dev": "node ./scripts/electron-dev.cjs",
     "electron:build": "node ./node_modules/electron-builder/cli.js",
     "build:win": "node ./node_modules/vite/bin/vite.js build && node ./node_modules/electron-builder/cli.js --win",

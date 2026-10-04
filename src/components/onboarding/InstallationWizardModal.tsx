@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { ENTERPRISE_BRANCHES, setTerminalBranch } from '../../utils/terminalConfig';
 import { TaxSchemeType } from '../../utils/ghanaTaxEngine';
+import { SYSTEM_USERS } from '../../utils/dexieSync';
 import { playSoundEffect, triggerVibration, notify } from '../../utils/notificationSystem';
 
 interface InstallationWizardModalProps {
@@ -72,7 +73,7 @@ export const InstallationWizardModal: React.FC<InstallationWizardModalProps> = (
 
     // Save terminal configuration
     const selectedBranch = ENTERPRISE_BRANCHES.find((b) => b.id === selectedBranchId) || ENTERPRISE_BRANCHES[0];
-    setTerminalBranch(selectedBranch);
+    setTerminalBranch(selectedBranch, SYSTEM_USERS[0]);
 
     // Save preferences
     localStorage.setItem('akwaaba_store_name', storeName);
@@ -187,8 +188,8 @@ export const InstallationWizardModal: React.FC<InstallationWizardModalProps> = (
                       }`}
                     >
                       <div className="font-bold text-xs text-white">{b.name}</div>
-                      <div className="text-[10px] text-slate-400 mt-0.5">{b.address}</div>
-                      <span className="text-[9.5px] mt-1.5 text-orange-400 font-mono">{b.phone}</span>
+                      <div className="text-[10px] text-slate-400 mt-0.5">{b.location}</div>
+                      <span className="text-[9.5px] mt-1.5 text-orange-400 font-mono">{b.region}</span>
                     </button>
                   ))}
                 </div>

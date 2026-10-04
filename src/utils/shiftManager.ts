@@ -33,8 +33,11 @@ export interface ShiftSummaryReport {
   // Mid shift drops
   payInsTotal: number;
   payOutsTotal: number;
+  totalPaidIn?: number;
+  totalPaidOut?: number;
   safeDropsTotal: number;
   netCashDrops: number;
+  totalGrossSales?: number;
 
   // Expected vs Counted
   expectedCashInTill: number;
@@ -240,9 +243,12 @@ export async function generateXReport(shiftId: string, branchName = 'Accra Centr
     cardSales: roundToPesewas(cardSales),
     debtSales: roundToPesewas(debtSales),
     totalRevenue: roundToPesewas(cashSales + momoSales + cardSales + debtSales),
+    totalGrossSales: roundToPesewas(cashSales + momoSales + cardSales + debtSales),
     totalOrders: completedOrders.length,
     payInsTotal: roundToPesewas(payIns),
     payOutsTotal: roundToPesewas(payOuts),
+    totalPaidIn: roundToPesewas(payIns),
+    totalPaidOut: roundToPesewas(payOuts),
     safeDropsTotal: roundToPesewas(safeDrops),
     netCashDrops: roundToPesewas(payIns - payOuts - safeDrops),
     expectedCashInTill: expected,

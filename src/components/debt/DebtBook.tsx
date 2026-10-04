@@ -1388,10 +1388,10 @@ export const DebtBook: React.FC<DebtBookProps> = ({
                           {order.orderNumber}
                         </td>
                         <td className="p-2 border border-gray-300 font-sans">
-                          {order.paymentMethod === 'BISA_DEBT' ? (
+                          {order.payments?.some(p => p.type === 'CUSTOMER_DEBT_BISA') ? (
                             <span className="font-bold text-rose-700">Credit Purchase</span>
                           ) : (
-                            <span className="text-emerald-700">Paid ({order.paymentMethod})</span>
+                            <span className="text-emerald-700">Paid ({order.payments?.map(p => p.type).join(', ') || 'PAID'})</span>
                           )}
                         </td>
                         <td className="p-2 border border-gray-300 text-center">

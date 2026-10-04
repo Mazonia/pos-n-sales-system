@@ -161,27 +161,58 @@ npm run preview
 
 ## 🖨️ Thermal Printer & Hardware Integration
 
-Akwaaba POS supports standard ESC/POS 80mm thermal receipt printers via browser print APIs and raw serial ports:
-- **Receipt Dimensions**: Optimized for standard 80mm (576 dots) continuous thermal rolls.
+Akwaaba POS supports standard ESC/POS 80mm thermal receipt printers via browser print APIs, Electron native print, and raw serial ports:
+- **Receipt Dimensions**: Optimized for standard 80mm (576 dots) continuous thermal rolls and 58mm compact mobile printers.
 - **Emoji Sanitization**: Built-in `stripEmojis` filter automatically strips unsupported Unicode symbols before outputting to legacy thermal printheads, preventing garbled output.
 - **Barcode Scanners**: Operates plug-and-play with any USB or Bluetooth HID barcode scanner emitting standard Enter key termination.
 
 ---
 
-## 🤝 Contributing
+## 🛠️ Installation Wizard & First-Run Setup
 
-We welcome contributions from developers across Ghana and the global open-source community! Please read our [Contributing Guidelines](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) before submitting pull requests.
-
----
-
-## 🔒 Security
-
-For security vulnerabilities or sensitive disclosures regarding payment processing or offline transaction integrity, please consult our [Security Policy](SECURITY.md).
+On initial startup across any platform, Akwaaba POS runs an interactive **Installation & Setup Wizard** that guides merchants through:
+1. **Store Identity & Tax Scheme**: Business naming, workstation assignment, and statutory GRA tax profile selection (Standard VAT 21.9%, Flat Rate 4%, or SME Exempt).
+2. **Hardware Configuration**: Receipt roll width (80mm vs 58mm), auto-print toggles, and audio-haptic feedback settings.
+3. **Terms of Service & Developer Liability Disclaimer**: Strict legal terms outlining merchant accountability for cash reconciliation, physical till management, local hardware, and statutory tax compliance, while establishing non-liability for developer **Mazonia**. Merchants must accept before accessing POS features.
+4. **Opening Cash Float**: Establishing the initial cash drawer float for cashier reconciliation.
 
 ---
 
-## 📄 License
+## 💾 Enterprise Backup & Disaster Recovery
+
+Akwaaba POS incorporates a multi-tiered disaster recovery system:
+- **Rolling Local Auto-Backups**: Automatically captures encrypted state snapshots upon cashier shift closure, safe drops, and end-of-day Z-Reports.
+- **Manual Enterprise Export**: Exports portable `.akwaaba.json` backup archives containing products, inventory, customers, shifts, audit logs, and offline queues.
+- **Cryptographic SHA-256 Tamper Evident Verification**: Each backup is stamped with a SHA-256 digest to prevent data corruption or unauthorized ledger tampering during restore.
+- **PIN-Protected Restore**: Requires Supervisor or Super Admin authentication to restore state.
+
+---
+
+## 🔔 Universal Custom Notifications & Audio Engine
+
+Zero browser-native alerts, prompts, or confirms:
+- **Web Audio Synthesizer**: Pure Web Audio API chime synthesis for transaction confirmations, barcode scans, cash drawer triggers, and warnings (zero external MP3 dependencies).
+- **Physical Haptic Feedback**: Dynamic vibration waveforms for touch devices (Android tablets & iPads).
+- **Granular User Preferences**: Cashiers and managers can independently toggle audio, vibration, volume levels, and alert categories via the top header bell icon.
+
+---
+
+## 📬 Support & Issue Complaints
+
+Because there are currently no developer email addresses assigned for this project, all bug reports, technical inquiries, and feature suggestions must be submitted directly through our official GitHub Issues tracker:
+
+👉 **[Submit Issue / Complaint on GitHub](https://github.com/Mazonia/pos-n-sales-system/issues)**
+
+---
+
+## 👨‍💻 Author & Engineering
+
+Engineered with Ghanaian hospitality and precision by **Mazonia**.
+
+---
+
+## 📄 License & Legal Notice
 
 Akwaaba POS & Retail OS is released under the [MIT License](LICENSE).
 
-Copyright © 2026 Akwaaba Retail OS Contributors.
+Copyright © 2026 **Mazonia**. All rights reserved.

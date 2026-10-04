@@ -171,12 +171,13 @@ export const SYSTEM_USERS: SystemUser[] = [
 ];
 
 export interface LocalCartItem {
-  id: string;
+  id?: string;
   productId: string;
   name: string;
   sku: string;
+  barcode?: string;
   unitPrice: number;
-  originalPrice: number;
+  originalPrice?: number;
   costPrice: number;
   quantity: number;
   unitName: string;

@@ -34,8 +34,8 @@ export interface FullBackupPayload {
     products: any[];
     customers: any[];
     shifts: any[];
-    holdOrders: any[];
-    offlineSyncQueue: any[];
+    orders: any[];
+    offlineQueue: any[];
     auditLogs: any[];
     purchaseOrders: any[];
   };
@@ -62,12 +62,12 @@ async function computeSHA256(text: string): Promise<string> {
  * Creates a complete snapshot of all Dexie IndexedDB tables and initiates file download
  */
 export async function createManualDatabaseBackup(currentUser: SystemUser): Promise<FullBackupPayload> {
-  const [products, customers, shifts, holdOrders, offlineSyncQueue, auditLogs, purchaseOrders] = await Promise.all([
+  const [products, customers, shifts, orders, offlineQueue, auditLogs, purchaseOrders] = await Promise.all([
     db.products.toArray(),
     db.customers.toArray(),
     db.shifts.toArray(),
-    db.holdOrders.toArray(),
-    db.offlineSyncQueue.toArray(),
+    db.orders.toArray(),
+    db.offlineQueue.toArray(),
     db.auditLogs.toArray(),
     db.purchaseOrders.toArray(),
   ]);
@@ -76,8 +76,8 @@ export async function createManualDatabaseBackup(currentUser: SystemUser): Promi
     products,
     customers,
     shifts,
-    holdOrders,
-    offlineSyncQueue,
+    orders,
+    offlineQueue,
     auditLogs,
     purchaseOrders,
   };
@@ -101,7 +101,7 @@ export async function createManualDatabaseBackup(currentUser: SystemUser): Promi
         products: products.length,
         customers: customers.length,
         shifts: shifts.length,
-        orders: offlineSyncQueue.length,
+        orders: orders.length,
         auditLogs: auditLogs.length,
         purchaseOrders: purchaseOrders.length,
       },
@@ -142,17 +142,17 @@ export async function createManualDatabaseBackup(currentUser: SystemUser): Promi
  */
 export async function triggerAutoBackup(triggerReason: string = 'Scheduled Auto-Backup'): Promise<void> {
   try {
-    const [products, customers, shifts, holdOrders, offlineSyncQueue, auditLogs, purchaseOrders] = await Promise.all([
+    const [products, customers, shifts, orders, offlineQueue, auditLogs, purchaseOrders] = await Promise.all([
       db.products.toArray(),
       db.customers.toArray(),
       db.shifts.toArray(),
-      db.holdOrders.toArray(),
-      db.offlineSyncQueue.toArray(),
+      db.orders.toArray(),
+      db.offlineQueue.toArray(),
       db.auditLogs.toArray(),
       db.purchaseOrders.toArray(),
     ]);
 
-    const rawData = { products, customers, shifts, holdOrders, offlineSyncQueue, auditLogs, purchaseOrders };
+    const rawData = { products, customers, shifts, orders, offlineQueue, auditLogs, purchaseOrders };
     const checksum = await computeSHA256(JSON.stringify(rawData));
 
     const payload: FullBackupPayload = {
@@ -171,7 +171,7 @@ export async function triggerAutoBackup(triggerReason: string = 'Scheduled Auto-
           products: products.length,
           customers: customers.length,
           shifts: shifts.length,
-          orders: offlineSyncQueue.length,
+          orders: orders.length,
           auditLogs: auditLogs.length,
           purchaseOrders: purchaseOrders.length,
         },
@@ -260,8 +260,8 @@ export async function restoreDatabase(
       db.products,
       db.customers,
       db.shifts,
-      db.holdOrders,
-      db.offlineSyncQueue,
+      db.orders,
+      db.offlineQueue,
       db.auditLogs,
       db.purchaseOrders
     ], async () => {
@@ -270,8 +270,8 @@ export async function restoreDatabase(
         db.products.clear(),
         db.customers.clear(),
         db.shifts.clear(),
-        db.holdOrders.clear(),
-        db.offlineSyncQueue.clear(),
+        db.orders.clear(),
+        db.offlineQueue.clear(),
         db.auditLogs.clear(),
         db.purchaseOrders.clear(),
       ]);
@@ -280,8 +280,8 @@ export async function restoreDatabase(
       if (payload.data.products?.length) await db.products.bulkAdd(payload.data.products);
       if (payload.data.customers?.length) await db.customers.bulkAdd(payload.data.customers);
       if (payload.data.shifts?.length) await db.shifts.bulkAdd(payload.data.shifts);
-      if (payload.data.holdOrders?.length) await db.holdOrders.bulkAdd(payload.data.holdOrders);
-      if (payload.data.offlineSyncQueue?.length) await db.offlineSyncQueue.bulkAdd(payload.data.offlineSyncQueue);
+      if (payload.data.orders?.length) await db.orders.bulkAdd(payload.data.orders);
+      if (payload.data.offlineQueue?.length) await db.offlineQueue.bulkAdd(payload.data.offlineQueue);
       if (payload.data.auditLogs?.length) await db.auditLogs.bulkAdd(payload.data.auditLogs);
       if (payload.data.purchaseOrders?.length) await db.purchaseOrders.bulkAdd(payload.data.purchaseOrders);
 

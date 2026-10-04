@@ -485,7 +485,7 @@ export const PosTerminal: React.FC<PosTerminalProps> = ({
                 <div className={`flex items-center rounded-lg border ${isDark ? 'border-white/10 bg-black/20' : 'border-black/10 bg-slate-50'}`}>
                   <button
                     type="button"
-                    onClick={() => updateQuantity(item.id, -1)}
+                    onClick={() => updateQuantity(item.id || item.productId, -1)}
                     className="p-1 hover:text-amber-500 transition"
                   >
                     <Minus className="w-3.5 h-3.5" />
@@ -495,7 +495,7 @@ export const PosTerminal: React.FC<PosTerminalProps> = ({
                   </span>
                   <button
                     type="button"
-                    onClick={() => updateQuantity(item.id, 1)}
+                    onClick={() => updateQuantity(item.id || item.productId, 1)}
                     className="p-1 hover:text-amber-500 transition"
                   >
                     <Plus className="w-3.5 h-3.5" />
@@ -506,7 +506,7 @@ export const PosTerminal: React.FC<PosTerminalProps> = ({
                   <button
                     type="button"
                     onClick={() => {
-                      setPriceOverrideItem({ itemId: item.id, currentPrice: item.unitPrice });
+                      setPriceOverrideItem({ itemId: item.id || item.productId, currentPrice: item.unitPrice });
                       setOverrideInputPrice(item.unitPrice);
                     }}
                     className={`p-1 rounded text-slate-400 hover:text-amber-500 transition`}

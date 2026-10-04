@@ -90,17 +90,22 @@ export async function hashCredential(value: string, salt: string = 'akwaaba_pos_
   return ('0000000' + (hash >>> 0).toString(16)).substr(-8);
 }
 
+export const validatePasswordComplexity = validatePasswordStrength;
+export const isPasswordComplex = (pwd: string): boolean => validatePasswordStrength(pwd).isValid;
+
 /**
  * Sanitizes system user before persisting in localStorage.
  * Ensures no sensitive credentials (pin, password, hash) are readable in web storage.
  */
-export function sanitizeUserForStorage<T extends Record<string, any>>(user: T | null): Partial<T> | null {
+export function sanitizeUserForStorage<T extends Record<string, any>>(user: T): T;
+export function sanitizeUserForStorage<T extends Record<string, any>>(user: T | null): T | null;
+export function sanitizeUserForStorage<T extends Record<string, any>>(user: T | null): T | null {
   if (!user) return null;
   const copy = { ...user };
   delete copy.pin;
   delete copy.password;
   delete copy.passwordHash;
-  return copy;
+  return copy as T;
 }
 
 /**

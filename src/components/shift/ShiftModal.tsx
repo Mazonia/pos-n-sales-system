@@ -833,7 +833,7 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
                     <div>
                       <span className="text-[10px] text-slate-500 uppercase font-sans font-bold block">Z-Report Voucher No:</span>
                       <strong className="text-slate-900 text-xs">{zReportResult.zReportNumber}</strong>
-                      <span className="text-[10px] text-slate-500 block mt-1">Closed: {new Date(zReportResult.closedAt).toLocaleTimeString('en-GH')}</span>
+                      <span className="text-[10px] text-slate-500 block mt-1">Closed: {new Date(zReportResult.closedAt || zReportResult.generatedAt).toLocaleTimeString('en-GH')}</span>
                     </div>
                     <div className="text-right">
                       <span className="text-[10px] text-slate-500 uppercase font-sans font-bold block">Till Audit Status:</span>
@@ -983,16 +983,16 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
                 <td className="p-2 font-sans font-medium">Bisa Customer Credit (Ledger Debt)</td>
                 <td className="p-2 text-right">{formatGhs(xReport.debtSales)}</td>
               </tr>
-              {xReport.totalPaidIn > 0 && (
+              {(xReport.payInsTotal || (xReport.totalPaidIn ?? 0)) > 0 && (
                 <tr>
                   <td className="p-2 font-sans font-medium text-emerald-800">Add: Additional Cash Paid-In</td>
-                  <td className="p-2 text-right text-emerald-800">+{formatGhs(xReport.totalPaidIn)}</td>
+                  <td className="p-2 text-right text-emerald-800">+{formatGhs(xReport.payInsTotal || xReport.totalPaidIn || 0)}</td>
                 </tr>
               )}
-              {xReport.totalPaidOut > 0 && (
+              {(xReport.payOutsTotal || (xReport.totalPaidOut ?? 0)) > 0 && (
                 <tr>
                   <td className="p-2 font-sans font-medium text-rose-800">Less: Cash Drops / Expense Paid-Out</td>
-                  <td className="p-2 text-right text-rose-800">-{formatGhs(xReport.totalPaidOut)}</td>
+                  <td className="p-2 text-right text-rose-800">-{formatGhs(xReport.payOutsTotal || xReport.totalPaidOut || 0)}</td>
                 </tr>
               )}
             </tbody>
@@ -1052,10 +1052,10 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
               <p><strong>Shift Number:</strong> <span className="font-mono">{zReportResult.shiftNumber}</span></p>
               <p><strong>Cashier:</strong> {zReportResult.cashierName}</p>
               <p><strong>Opened:</strong> {new Date(zReportResult.openedAt).toLocaleString('en-GH')}</p>
-              <p><strong>Closed:</strong> {new Date(zReportResult.closedAt).toLocaleString('en-GH')}</p>
+              <p><strong>Closed:</strong> {new Date(zReportResult.closedAt || zReportResult.generatedAt).toLocaleString('en-GH')}</p>
             </div>
             <div className="text-right">
-              <p><strong>Total Gross Sales:</strong> <span className="font-bold font-mono">{formatGhs(zReportResult.totalGrossSales)}</span></p>
+              <p><strong>Total Gross Sales:</strong> <span className="font-bold font-mono">{formatGhs(zReportResult.totalGrossSales || zReportResult.totalRevenue || 0)}</span></p>
               <p><strong>Audit Variance Status:</strong> <span className="font-bold uppercase font-mono">{zReportResult.varianceStatus}</span></p>
               <p><strong>Total Orders Processed:</strong> <span className="font-bold font-mono">{zReportResult.totalOrders}</span></p>
             </div>
@@ -1090,16 +1090,16 @@ export const ShiftModal: React.FC<ShiftModalProps> = ({
                 <td className="p-2 font-sans font-medium">Bisa Customer Credit (Ledger Outstanding)</td>
                 <td className="p-2 text-right">{formatGhs(zReportResult.debtSales)}</td>
               </tr>
-              {zReportResult.totalPaidIn > 0 && (
+              {(zReportResult.payInsTotal || (zReportResult.totalPaidIn ?? 0)) > 0 && (
                 <tr>
                   <td className="p-2 font-sans font-medium text-emerald-800">Add: Additional Cash Paid-In</td>
-                  <td className="p-2 text-right text-emerald-800">+{formatGhs(zReportResult.totalPaidIn)}</td>
+                  <td className="p-2 text-right text-emerald-800">+{formatGhs(zReportResult.payInsTotal || zReportResult.totalPaidIn || 0)}</td>
                 </tr>
               )}
-              {zReportResult.totalPaidOut > 0 && (
+              {(zReportResult.payOutsTotal || (zReportResult.totalPaidOut ?? 0)) > 0 && (
                 <tr>
                   <td className="p-2 font-sans font-medium text-rose-800">Less: Cash Drops / Emergency Expenses</td>
-                  <td className="p-2 text-right text-rose-800">-{formatGhs(zReportResult.totalPaidOut)}</td>
+                  <td className="p-2 text-right text-rose-800">-{formatGhs(zReportResult.payOutsTotal || zReportResult.totalPaidOut || 0)}</td>
                 </tr>
               )}
               <tr className="border-t border-gray-400 bg-gray-50 font-bold">

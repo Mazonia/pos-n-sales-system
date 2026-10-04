@@ -194,7 +194,7 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
                 <div className="flex items-center rounded-lg border border-slate-300 dark:border-[#282B34] bg-slate-100 dark:bg-[#14161A] p-0.5">
                   <button
                     type="button"
-                    onClick={() => onUpdateQuantity(item.id, -1)}
+                    onClick={() => onUpdateQuantity(item.id || item.productId, -1)}
                     className="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:text-slate-950 hover:bg-white dark:hover:bg-[#252833] transition active:scale-90"
                     title="Decrease quantity"
                   >
@@ -205,7 +205,7 @@ export const CartLedger: React.FC<CartLedgerProps> = ({
                   </span>
                   <button
                     type="button"
-                    onClick={() => onUpdateQuantity(item.id, 1)}
+                    onClick={() => onUpdateQuantity(item.id || item.productId, 1)}
                     className="w-6 h-6 rounded flex items-center justify-center text-slate-600 hover:text-slate-950 hover:bg-white dark:hover:bg-[#252833] transition active:scale-90"
                     title="Increase quantity"
                   >
