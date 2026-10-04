@@ -52,13 +52,13 @@ Akwaaba POS implements enterprise-grade cybersecurity controls across all operat
 
 ## Developer Non-Liability & Merchant Responsibility
 
-Merchants acknowledge that software is provided by **Mazonia** on an "as-is" basis. Business owners maintain sole custody for:
+Merchants acknowledge that software is engineered on an "as-is" basis. Business owners maintain sole custody for:
 - Physical cash register counts, cash security, and bank deposits.
 - Verifying Mobile Money (MTN, Telecel, AT) transaction IDs on official SIM handsets prior to goods handover.
 - Keeping 4-digit and 6-digit Supervisor, Manager, and Admin PINs confidential.
 - Statutory compliance with the Value Added Tax Act, 2013 (Act 870) and Ghana Revenue Authority (GRA) regulations.
 
-Developer **Mazonia** is not liable for cash shortages, freezer defrost losses resulting from Dumsor (power cuts), or third-party printer hardware failures.
+The developer is not liable for cash shortages, freezer defrost losses resulting from Dumsor (power cuts), or third-party printer hardware failures.
 
 ---
 

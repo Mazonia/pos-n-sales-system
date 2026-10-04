@@ -14,7 +14,21 @@
 [![GRA VSDC](https://img.shields.io/badge/GRA%20VSDC-Compliant-008285.svg)](#-gra-vsdc-compliance--ghana-tax-engine)
 [![Dumsor Resilient](https://img.shields.io/badge/Dumsor-Resilient-FF4500.svg)](#-dumsor-power-outage-resilience--cold-store-spoilage)
 
-> **📦 Multi-Platform Releases**: Pre-packaged binary installers for Windows (`.exe`), macOS (`.dmg`), and Android tablets (`.apk`) are published under [GitHub Releases](https://github.com/Mazonia/pos-n-sales-system/releases). See our full [Multi-Platform Guide](PLATFORMS.md).
+---
+
+## 📥 Direct Downloads (No Releases Page Visit Required)
+
+Download official binaries directly from this README or visit the [GitHub Releases Hub](https://github.com/Mazonia/pos-n-sales-system/releases/tag/v1.0.0):
+
+| Platform | Installer Type | Direct Download Link | Target Devices |
+|---|---|---|---|
+| 🪟 **Windows Desktop** | NSIS Setup (`.exe`) | [⬇️ **Download Windows Installer (111 MB)**](https://github.com/Mazonia/pos-n-sales-system/releases/download/v1.0.0/Akwaaba.POS.Retail.OS.Setup.1.0.0.exe) | Windows 10, 11 (64-bit PC Counter Tills) |
+| 🪟 **Windows Desktop** | Portable (`.exe`) | [⬇️ **Download Windows Portable (111 MB)**](https://github.com/Mazonia/pos-n-sales-system/releases/download/v1.0.0/Akwaaba.POS.Retail.OS.1.0.0.exe) | Flash Drive / Zero-Install Counter Stations |
+| 🍎 **macOS Desktop** | Universal (`.dmg`) | [⬇️ **View macOS Universal Release**](https://github.com/Mazonia/pos-n-sales-system/releases/tag/v1.0.0) | Apple Silicon (M1-M4) & Intel Macs |
+| 🤖 **Android Tablet** | Standalone (`.apk`) | [⬇️ **Download Android APK Package**](https://github.com/Mazonia/pos-n-sales-system/releases/tag/v1.0.0) | Android Tablets 10"-12" (Swivel Countertop Stands) |
+| 🌐 **Web PWA** | Instant Launch | [🚀 **Launch Web Version Immediately**](https://mazonia.github.io/pos-n-sales-system/) | Any Modern Browser (Chrome, Safari, Edge, Firefox) |
+
+> 💡 **Tip**: Windows users can simply click **Download Windows Installer** above to get the full executable setup directly into their Downloads folder.
 
 ---
 
@@ -65,7 +79,7 @@ On initial startup, Akwaaba POS runs an interactive **Onboarding Wizard**:
 1. **Store Identity**: Business name, branch workstation assignment, and GRA Tax Scheme.
 2. **Hardware Configuration (Optional / Skip to defaults)**: 80mm vs 58mm paper width, USB scanner gun vs camera, ESC/POS vs Bluetooth printer.
 3. **Statutory Legal Agreement & Developer Liability Disclaimer**:
-   - **Developer ("Mazonia") Non-Liability Disclaimer**:
+   - **Developer Non-Liability Disclaimer**:
      - *(a)* Physical cash shortages, staff theft, or unverified till reconciliation discrepancies;
      - *(b)* Perishable food spoilage, freezer defrosting, or inventory decay resulting from electrical power outages (Dumsor) or backup generator downtime;
      - *(c)* Third-party hardware malfunctions, ESC/POS printhead defects, thermal paper jams, or local Bluetooth drops;

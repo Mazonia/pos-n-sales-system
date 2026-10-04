@@ -9,10 +9,11 @@ initGlobalEmojiSanitizer();
 
 const isElectron = typeof window !== 'undefined' && Boolean(window.electronAPI?.isElectron);
 if (!isElectron && 'serviceWorker' in navigator) {
-  registerSW({
+  const updateSW = registerSW({
     immediate: true,
     onNeedRefresh() {
-      console.log('[Akwaaba PWA] New version available.');
+      // Force reload to activate latest version immediately with no stale flash
+      updateSW(true);
     },
     onOfflineReady() {
       console.log('[Akwaaba PWA] Application cached and ready for offline operation.');

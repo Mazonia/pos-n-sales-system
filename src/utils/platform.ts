@@ -169,82 +169,88 @@ export interface PlatformDownload {
   features: string[];
 }
 
-export const getPlatformDownloads = (version: string = '1.0.0'): PlatformDownload[] => [
-  {
-    platform: 'windows',
-    title: 'Windows Desktop (.exe)',
-    subtitle: 'Windows 10, 11 (64-bit)',
-    badge: 'Recommended for PC Tills',
-    filename: `AkwaabaPOS-Setup-${version}.exe`,
-    url: `${GITHUB_REPO_URL}/releases/latest/download/AkwaabaPOS-Setup-${version}.exe`,
-    icon: 'Monitor',
-    features: [
-      'Native USB / COM Thermal Receipt Printer (ESC/POS)',
-      'Cash Drawer Kick Pulse Trigger',
-      'F11 Kiosk Lock (Prevents Cashiers Leaving Till)',
-      'Full Offline SQLite & IndexedDB Storage',
-      'Hardware Barcode Scanner Instant Feed',
-    ],
-  },
-  {
-    platform: 'mac',
-    title: 'macOS Desktop (.dmg)',
-    subtitle: 'Apple Silicon (M1/M2/M3/M4) & Intel',
-    badge: 'Universal Binary',
-    filename: `AkwaabaPOS-${version}.dmg`,
-    url: `${GITHUB_REPO_URL}/releases/latest/download/AkwaabaPOS-${version}.dmg`,
-    icon: 'Laptop',
-    features: [
-      'Retina HiDPI Display Optimization',
-      'Silent Printing to Network / CUPS Receipt Printers',
-      'Keyboard Hotkey Quick Checkout (Ctrl+Space)',
-      'Offline-First Data Storage',
-    ],
-  },
-  {
-    platform: 'android',
-    title: 'Android Tablet (.apk)',
-    subtitle: 'Android 8.0+ (Oreo to Android 15)',
-    badge: 'Optimized for 10"-12" Tablets',
-    filename: `AkwaabaPOS-Tablet-${version}.apk`,
-    url: `${GITHUB_REPO_URL}/releases/latest/download/AkwaabaPOS-Tablet-${version}.apk`,
-    icon: 'Tablet',
-    features: [
-      'Bluetooth / Wi-Fi Portable Thermal Receipt Printing',
-      'Camera Barcode / QR Code Scanner',
-      'Touch-Optimized Big Button Till Interface',
-      'Offline Dumsor Resilience with Auto-Sync',
-      'Direct APK Sideload (No Google Play required)',
-    ],
-  },
-  {
-    platform: 'ios',
-    title: 'Apple iPad (iPadOS)',
-    subtitle: 'iPadOS 14+ (iPad, iPad Air, iPad Pro)',
-    badge: 'Retina Touch POS',
-    filename: 'Xcode / Enterprise App Store',
-    url: `${GITHUB_REPO_URL}/releases`,
-    icon: 'TabletSmartphone',
-    features: [
-      'Full iPad Split-View & Slide-Over Multitasking',
-      'High-Speed Apple Touch Engine (60/120Hz ProMotion)',
-      'AirPrint & Bluetooth ESC/POS Receipt Support',
-      'Camera Barcode Scanning',
-    ],
-  },
-  {
-    platform: 'web',
-    title: 'Web App / PWA',
-    subtitle: 'Chrome, Edge, Safari, Firefox',
-    badge: 'Instant Zero-Install',
-    filename: 'Run in Browser or Install as PWA',
-    url: 'https://mazonia.github.io/pos-n-sales-system/',
-    icon: 'Globe',
-    features: [
-      'Runs immediately on any device with a modern browser',
-      'PWA Installable to Home Screen / Desktop icon',
-      'Full Offline Mode via Service Worker and Dexie.js',
-      'GRA VSDC QR Compliance',
-    ],
-  },
-];
+export const getPlatformDownloads = (version: string = '1.0.0'): PlatformDownload[] => {
+  const currentWebUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}${window.location.pathname.replace(/\/$/, '')}/`
+    : './';
+
+  return [
+    {
+      platform: 'windows',
+      title: 'Windows Desktop (.exe)',
+      subtitle: 'Windows 10, 11 (64-bit)',
+      badge: 'Recommended for PC Tills',
+      filename: `Akwaaba POS & Retail OS Setup ${version}.exe`,
+      url: `${GITHUB_REPO_URL}/releases/tag/v${version}`,
+      icon: 'Monitor',
+      features: [
+        'Native USB / COM Thermal Receipt Printer (ESC/POS)',
+        'Cash Drawer Kick Pulse Trigger',
+        'F11 Kiosk Lock (Prevents Cashiers Leaving Till)',
+        'Full Offline SQLite & IndexedDB Storage',
+        'Hardware Barcode Scanner Instant Feed',
+      ],
+    },
+    {
+      platform: 'mac',
+      title: 'macOS Desktop (.dmg)',
+      subtitle: 'Apple Silicon (M1/M2/M3/M4) & Intel',
+      badge: 'Universal Binary',
+      filename: `AkwaabaPOS-${version}.dmg`,
+      url: `${GITHUB_REPO_URL}/releases/tag/v${version}`,
+      icon: 'Laptop',
+      features: [
+        'Retina HiDPI Display Optimization',
+        'Silent Printing to Network / CUPS Receipt Printers',
+        'Keyboard Hotkey Quick Checkout (Ctrl+Space)',
+        'Offline-First Data Storage',
+      ],
+    },
+    {
+      platform: 'android',
+      title: 'Android Tablet (.apk)',
+      subtitle: 'Android 8.0+ (Oreo to Android 15)',
+      badge: 'Optimized for 10"-12" Tablets',
+      filename: `AkwaabaPOS-Tablet-${version}.apk`,
+      url: `${GITHUB_REPO_URL}/releases/tag/v${version}`,
+      icon: 'Tablet',
+      features: [
+        'Bluetooth / Wi-Fi Portable Thermal Receipt Printing',
+        'Camera Barcode / QR Code Scanner',
+        'Touch-Optimized Big Button Till Interface',
+        'Offline Dumsor Resilience with Auto-Sync',
+        'Direct APK Sideload (No Google Play required)',
+      ],
+    },
+    {
+      platform: 'ios',
+      title: 'Apple iPad (iPadOS)',
+      subtitle: 'iPadOS 14+ (iPad, iPad Air, iPad Pro)',
+      badge: 'Retina Touch POS',
+      filename: 'Xcode / Enterprise App Store',
+      url: `${GITHUB_REPO_URL}/releases/tag/v${version}`,
+      icon: 'TabletSmartphone',
+      features: [
+        'Full iPad Split-View & Slide-Over Multitasking',
+        'High-Speed Apple Touch Engine (60/120Hz ProMotion)',
+        'AirPrint & Bluetooth ESC/POS Receipt Support',
+        'Camera Barcode Scanning',
+      ],
+    },
+    {
+      platform: 'web',
+      title: 'Web App / PWA',
+      subtitle: 'Chrome, Edge, Safari, Firefox',
+      badge: 'Instant Zero-Install',
+      filename: 'Run in Browser or Install as PWA',
+      url: currentWebUrl,
+      icon: 'Globe',
+      features: [
+        'Runs immediately on any device with a modern browser',
+        'PWA Installable to Home Screen / Desktop icon',
+        'Full Offline Mode via Service Worker and Dexie.js',
+        'GRA VSDC QR Compliance',
+      ],
+    },
+  ];
+};

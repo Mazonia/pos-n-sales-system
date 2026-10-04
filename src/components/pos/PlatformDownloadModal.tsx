@@ -201,19 +201,34 @@ export const PlatformDownloadModal: React.FC<PlatformDownloadModalProps> = ({ is
                       {item.filename}
                     </span>
 
-                    <a
-                      href={item.url}
-                      target={item.platform === 'web' ? '_self' : '_blank'}
-                      rel="noreferrer"
-                      className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition shadow-sm ${
-                        isMatch
-                          ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                          : 'bg-slate-700 hover:bg-slate-600 text-slate-100'
-                      }`}
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>{item.platform === 'web' ? 'Open PWA' : 'Download'}</span>
-                    </a>
+                    {item.platform === 'web' ? (
+                      <button
+                        type="button"
+                        onClick={onClose}
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition shadow-sm cursor-pointer ${
+                          isMatch
+                            ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                            : 'bg-slate-700 hover:bg-slate-600 text-slate-100'
+                        }`}
+                      >
+                        <Globe className="w-3.5 h-3.5" />
+                        <span>Launch Web Version</span>
+                      </button>
+                    ) : (
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition shadow-sm ${
+                          isMatch
+                            ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                            : 'bg-slate-700 hover:bg-slate-600 text-slate-100'
+                        }`}
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Download</span>
+                      </a>
+                    )}
                   </div>
                 </div>
               );

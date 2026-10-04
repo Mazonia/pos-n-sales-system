@@ -312,3 +312,37 @@ export async function restoreDatabase(
     };
   }
 }
+
+/**
+ * Setup Wizard Multi-Store Linking Helper:
+ * Restores store catalog, inventory, and customer databases on a new terminal device
+ */
+export async function restoreFullBackup(
+  backupJson: string,
+  managerPin: string,
+  managerName: string = 'General Manager'
+): Promise<{ success: boolean; message: string; restoredCounts: { products: number; customers: number } }> {
+  const adminUser: SystemUser = {
+    id: 'mgr-admin-01',
+    username: 'general-manager',
+    fullName: managerName,
+    role: 'GENERAL_MANAGER',
+    branchId: 'branch-accra-01',
+    branchName: 'Accra Central Hub',
+    pin: managerPin,
+  };
+  const res = await restoreDatabase(backupJson, adminUser);
+  let parsed: any = null;
+  try {
+    parsed = typeof backupJson === 'string' ? JSON.parse(backupJson) : backupJson;
+  } catch (e) {}
+  return {
+    success: res.success,
+    message: res.message,
+    restoredCounts: {
+      products: parsed?.data?.products?.length || 0,
+      customers: parsed?.data?.customers?.length || 0,
+    },
+  };
+}
+
