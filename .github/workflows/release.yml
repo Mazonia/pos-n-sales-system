@@ -193,8 +193,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
-          tag_name: ${{ github.ref_name || inputs.version || 'v1.0.0' }}
-          name: Akwaaba POS & Retail OS ${{ github.ref_name || inputs.version || 'v1.0.0' }}
+          tag_name: v1.0.0
+          name: Akwaaba POS & Retail OS v1.0.0
           draft: false
           prerelease: false
           generate_release_notes: true
